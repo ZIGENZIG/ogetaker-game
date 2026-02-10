@@ -916,7 +916,8 @@
 
     <script>
         // Конфигурация
-        const SERVER_URL = 'http://localhost:3000';
+        const SERVER_URL = window.location.origin; // Автоматически берет текущий URL сайта
+        
         let userToken = localStorage.getItem('ogetaker_userToken');
         let currentUsername = localStorage.getItem('ogetaker_username');
         let isOnlineMode = false;
