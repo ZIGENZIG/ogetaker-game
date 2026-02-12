@@ -723,6 +723,88 @@
             font-size: 0.9rem;
         }
 
+        /* Экран рейтинга */
+        #leaderboard-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 12, 29, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .leaderboard-container {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
+            border: 4px solid #ff4757;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .leaderboard-title {
+            color: #ff4757;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .leaderboard-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255,71,87,0.2);
+            transform: translateX(5px);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .leaderboard-player {
+            flex: 1;
+        }
+
+        .leaderboard-stats {
+            display: flex;
+            gap: 20px;
+            color: #aaa;
+        }
+
+        .close-button {
+            background: linear-gradient(145deg, #666, #555);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .close-button:hover {
+            background: linear-gradient(145deg, #777, #666);
+            transform: translateY(-2px);
+        }
+
         /* Адаптивность */
         @media (max-width: 1200px) {
             .level-grid {
@@ -759,6 +841,11 @@
             
             .answers-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .leaderboard-stats {
+                flex-direction: column;
+                gap: 5px;
             }
         }
     </style>
@@ -804,7 +891,7 @@
             <div class="main-menu-buttons">
                 <button class="hell-button" id="start-button">Начать игру</button>
                 <button class="hell-button" id="how-to-play">Как играть</button>
-                <button class="hell-button" id="leaderboard-button">Рейтинг игроков</button>
+                <button class="hell-button" id="leaderboard-button">🏆 Рейтинг игроков</button>
             </div>
         </div>
 
@@ -861,6 +948,10 @@
                     <div class="stat-icon" style="background: #3742fa;">👤</div>
                     Игрок: <span id="current-player">Гость</span>
                 </div>
+                <div class="stat" id="total-demons-stat" style="border-top: 1px solid #ff4757; margin-top: 10px; padding-top: 10px;">
+                    <div class="stat-icon" style="background: #ff4757;">🏆</div>
+                    Всего демонесс: <span id="total-demons-count">0</span>
+                </div>
             </div>
             
             <div id="music-control">🎵</div>
@@ -886,13 +977,13 @@
         </div>
 
         <!-- Экран рейтинга -->
-        <div id="leaderboard-screen" style="position: absolute; width: 100%; height: 100%; background: rgba(12, 12, 29, 0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 200;">
-            <div style="background: linear-gradient(145deg, #2a2a3e, #1e1e2e); border: 4px solid #ff4757; border-radius: 15px; padding: 30px; max-width: 800px; width: 90%;">
-                <h2 style="color: #ff4757; text-align: center; margin-bottom: 20px;">🏆 РЕЙТИНГ ИГРОКОВ</h2>
+        <div id="leaderboard-screen">
+            <div class="leaderboard-container">
+                <h2 class="leaderboard-title">🏆 РЕЙТИНГ ИГРОКОВ</h2>
                 <div id="leaderboard-list" style="max-height: 400px; overflow-y: auto;">
-                    <!-- Список игроков -->
+                    <!-- Список игроков будет загружен -->
                 </div>
-                <button id="close-leaderboard" style="background: linear-gradient(145deg, #666, #555); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;">Закрыть</button>
+                <button id="close-leaderboard" class="close-button">Закрыть</button>
             </div>
         </div>
 
@@ -915,14 +1006,18 @@
     </div>
 
     <script>
-        // Конфигурация
-        const SERVER_URL = window.location.origin; // Автоматически берет текущий URL сайта
+        // ========================
+        // КОНФИГУРАЦИЯ
+        // ========================
+        const SERVER_URL = window.location.origin;
         
         let userToken = localStorage.getItem('ogetaker_userToken');
         let currentUsername = localStorage.getItem('ogetaker_username');
         let isOnlineMode = false;
 
-        // Улучшенные данные игры
+        // ========================
+        // ДАННЫЕ ИГРЫ
+        // ========================
         const demons = [
             {
                 name: "Алгоритмика",
@@ -1025,7 +1120,9 @@
             }
         ];
 
-        // Уровни карт
+        // ========================
+        // УРОВНИ КАРТ
+        // ========================
         const levelLayouts = {
             1: {
                 name: "Прямоугольная карта",
@@ -1050,51 +1147,51 @@
                     return x === 0 || x === 11 || y === 0 || y === 7;
                 }
             },
-2: {
-    name: "Змейка",
-    startPosition: {x: 1, y: 4},
-    demonPositions: [
-        {x: 3, y: 2},
-        {x: 8, y: 1},
-        {x: 2, y: 6},
-        {x: 9, y: 5}
-    ],
-    questionPositions: [
-        {x: 1, y: 1}, {x: 10, y: 1},
-        {x: 4, y: 3}, {x: 7, y: 3},
-        {x: 5, y: 5}, {x: 8, y: 5},
-        {x: 2, y: 7}, {x: 9, y: 7}
-    ],
-    exitPositions: [
-        {x: 0, y: 4}  // Только левая дверь
-    ],
-    isWall: function(x, y) {
-        if (y === 0 || y === 7) return true;
-        if (x === 0 || x === 11) return true;
-        
-        if (y % 2 === 0) {
-            if ((x === 5 && y === 1) || 
-                (x === 6 && y === 2) ||
-                (x === 5 && y === 3) ||
-                (x === 6 && y === 4) ||
-                (x === 5 && y === 5) ||
-                (x === 6 && y === 6)) {
-                return false;
-            }
-            return x > 5;
-        } else {
-            if ((x === 5 && y === 1) || 
-                (x === 6 && y === 2) ||
-                (x === 5 && y === 3) ||
-                (x === 6 && y === 4) ||
-                (x === 5 && y === 5) ||
-                (x === 6 && y === 6)) {
-                return false;
-            }
-            return x < 6;
-        }
-    }
-},
+            2: {
+                name: "Змейка",
+                startPosition: {x: 1, y: 4},
+                demonPositions: [
+                    {x: 3, y: 2},
+                    {x: 8, y: 1},
+                    {x: 2, y: 6},
+                    {x: 9, y: 5}
+                ],
+                questionPositions: [
+                    {x: 1, y: 1}, {x: 10, y: 1},
+                    {x: 4, y: 3}, {x: 7, y: 3},
+                    {x: 5, y: 5}, {x: 8, y: 5},
+                    {x: 2, y: 7}, {x: 9, y: 7}
+                ],
+                exitPositions: [
+                    {x: 0, y: 4}
+                ],
+                isWall: function(x, y) {
+                    if (y === 0 || y === 7) return true;
+                    if (x === 0 || x === 11) return true;
+                    
+                    if (y % 2 === 0) {
+                        if ((x === 5 && y === 1) || 
+                            (x === 6 && y === 2) ||
+                            (x === 5 && y === 3) ||
+                            (x === 6 && y === 4) ||
+                            (x === 5 && y === 5) ||
+                            (x === 6 && y === 6)) {
+                            return false;
+                        }
+                        return x > 5;
+                    } else {
+                        if ((x === 5 && y === 1) || 
+                            (x === 6 && y === 2) ||
+                            (x === 5 && y === 3) ||
+                            (x === 6 && y === 4) ||
+                            (x === 5 && y === 5) ||
+                            (x === 6 && y === 6)) {
+                            return false;
+                        }
+                        return x < 6;
+                    }
+                }
+            },
             3: {
                 name: "Лабиринт",
                 startPosition: {x: 1, y: 1},
@@ -1136,7 +1233,9 @@
             }
         };
 
-        // Состояние игры
+        // ========================
+        // СОСТОЯНИЕ ИГРЫ
+        // ========================
         let gameState = {
             playerPosition: {x: 1, y: 4},
             demonsFound: 0,
@@ -1151,10 +1250,13 @@
             difficulty: 1,
             unlockedDifficulties: [1],
             currentLevelLayout: levelLayouts[1],
-            isOnline: false
+            isOnline: false,
+            totalDemonsCollected: 0
         };
 
-        // Элементы DOM
+        // ========================
+        // ЭЛЕМЕНТЫ DOM
+        // ========================
         const startScreen = document.getElementById('start-screen');
         const modeSelectionScreen = document.getElementById('mode-selection-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -1174,6 +1276,7 @@
         const leaderboardList = document.getElementById('leaderboard-list');
         const closeLeaderboardButton = document.getElementById('close-leaderboard');
         const currentPlayerDisplay = document.getElementById('current-player');
+        const totalDemonsDisplay = document.getElementById('total-demons-count');
 
         // Кнопки
         const startButton = document.getElementById('start-button');
@@ -1201,9 +1304,8 @@
         };
 
         // ========================
-        // СИСТЕМА СЕРВЕРНОГО СОХРАНЕНИЯ
+        // СИСТЕМА АВТОРИЗАЦИИ
         // ========================
-
         function showLoginModal() {
             loginModal.style.display = 'flex';
         }
@@ -1278,6 +1380,7 @@
                 userToken = null;
                 currentUsername = null;
                 isOnlineMode = false;
+                gameState.totalDemonsCollected = 0;
                 
                 userInfoDisplay.style.display = 'none';
                 gameState.unlockedDifficulties = [1];
@@ -1287,6 +1390,9 @@
             }
         }
 
+        // ========================
+        // СИСТЕМА СОХРАНЕНИЯ
+        // ========================
         async function loadServerProgress() {
             if (!userToken) return;
             
@@ -1298,6 +1404,11 @@
                     if (data.progress.unlockedDifficulties) {
                         gameState.unlockedDifficulties = data.progress.unlockedDifficulties;
                         updateDifficultyButtons();
+                    }
+                    
+                    if (data.progress.statistics && data.progress.statistics.totalDemonsCollected) {
+                        gameState.totalDemonsCollected = data.progress.statistics.totalDemonsCollected;
+                        if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                     }
                     
                     console.log('✅ Прогресс загружен с сервера');
@@ -1316,6 +1427,10 @@
                         gameState.unlockedDifficulties = progress.unlockedDifficulties;
                         updateDifficultyButtons();
                     }
+                    if (progress.statistics && progress.statistics.totalDemonsCollected) {
+                        gameState.totalDemonsCollected = progress.statistics.totalDemonsCollected;
+                        if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
+                    }
                 } catch (e) {
                     console.error('Ошибка загрузки локального прогресса:', e);
                 }
@@ -1333,6 +1448,11 @@
                     mistakes: gameState.mistakes,
                     unlockedDemons: gameState.unlockedDemons,
                     lastPlayed: new Date().toISOString()
+                },
+                statistics: {
+                    totalDemonsCollected: gameState.totalDemonsCollected || 0,
+                    totalQuestionsSolved: gameState.questionsSolved || 0,
+                    totalMistakes: gameState.mistakes || 0
                 }
             };
             
@@ -1345,15 +1465,28 @@
 
         async function saveServerProgress(progressData) {
             try {
+                const dataToSend = {
+                    token: userToken,
+                    progress: {
+                        unlockedDifficulties: progressData.unlockedDifficulties,
+                        currentProgress: progressData.currentProgress,
+                        statistics: {
+                            totalDemonsCollected: gameState.totalDemonsCollected || 0,
+                            totalQuestionsSolved: gameState.questionsSolved || 0,
+                            totalMistakes: gameState.mistakes || 0
+                        }
+                    }
+                };
+                
                 const response = await fetch(`${SERVER_URL}/api/save-progress`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: userToken, progress: progressData })
+                    body: JSON.stringify(dataToSend)
                 });
                 
                 const data = await response.json();
                 if (data.success) {
-                    console.log('✅ Прогресс сохранен на сервере');
+                    console.log('✅ Прогресс и статистика сохранены на сервере');
                 }
             } catch (error) {
                 console.error('❌ Ошибка сохранения прогресса:', error);
@@ -1388,6 +1521,9 @@
             }
         }
 
+        // ========================
+        // РЕЙТИНГ
+        // ========================
         async function showLeaderboard() {
             try {
                 const response = await fetch(`${SERVER_URL}/api/leaderboard`);
@@ -1401,28 +1537,35 @@
                     } else {
                         data.leaderboard.forEach((player, index) => {
                             const playerElement = document.createElement('div');
-                            playerElement.style.cssText = `
-                                background: ${index < 3 ? 'linear-gradient(145deg, #ffa502, #ff9500)' : 'rgba(255,255,255,0.05)'};
-                                padding: 10px 15px;
-                                margin: 5px 0;
-                                border-radius: 8px;
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                            `;
+                            playerElement.className = 'leaderboard-item';
                             
-                            const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                            let medal = '';
+                            let medalColor = '';
+                            
+                            if (index === 0) {
+                                medal = '👑';
+                                medalColor = '#FFD700';
+                            } else if (index === 1) {
+                                medal = '🥈';
+                                medalColor = '#C0C0C0';
+                            } else if (index === 2) {
+                                medal = '🥉';
+                                medalColor = '#CD7F32';
+                            }
                             
                             playerElement.innerHTML = `
-                                <div>
-                                    <strong>${medal} ${player.username}</strong>
-                                    <div style="font-size: 0.8rem; color: #aaa;">
-                                        Демонесс: ${player.demonsCollected} | Вопросов: ${player.questionsSolved}
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span class="leaderboard-rank" style="color: ${medalColor};">${medal || `${index + 1}.`}</span>
+                                    <div class="leaderboard-player">
+                                        <strong style="font-size: 1.1rem;">${player.username}</strong>
+                                        <div class="leaderboard-stats">
+                                            <span style="color: #ff4757;">👿 ${player.demonsCollected}</span>
+                                            <span style="color: #aaa;">📚 ${player.questionsSolved}</span>
+                                            <span style="color: #2ed573;">🏰 ${player.unlockedLevels}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div style="font-size: 0.9rem;">
-                                    Уровней: ${player.unlockedLevels}
-                                </div>
+                                ${index === 0 ? '<span style="font-size: 1.5rem;">🏆</span>' : ''}
                             `;
                             
                             leaderboardList.appendChild(playerElement);
@@ -1433,161 +1576,14 @@
                 }
             } catch (error) {
                 console.error('Ошибка загрузки рейтинга:', error);
-                leaderboardList.innerHTML = '<p style="text-align: center; color: #ff4757;">Ошибка загрузки рейтинга</p>';
+                leaderboardList.innerHTML = '<p style="text-align: center; color: #ff4757;">❌ Ошибка загрузки рейтинга</p>';
                 leaderboardScreen.style.display = 'flex';
             }
         }
 
         // ========================
-        // ОСНОВНЫЕ ФУНКЦИИ ИГРЫ
+        // ФУНКЦИИ ИГРЫ
         // ========================
-
-        window.addEventListener('DOMContentLoaded', () => {
-            userToken = localStorage.getItem('ogetaker_userToken');
-            currentUsername = localStorage.getItem('ogetaker_username');
-            
-            if (userToken && currentUsername) {
-                isOnlineMode = true;
-                usernameDisplay.textContent = currentUsername;
-                currentPlayerDisplay.textContent = currentUsername;
-                userInfoDisplay.style.display = 'block';
-                loadServerProgress();
-            } else {
-                setTimeout(() => {
-                    showLoginModal();
-                }, 1000);
-            }
-            
-            setupEventListeners();
-            
-            window.addEventListener('beforeunload', saveProgress);
-            setInterval(saveProgress, 30000);
-        });
-
-        function setupEventListeners() {
-            loginButton.addEventListener('click', handleLogin);
-            playOfflineButton.addEventListener('click', playOffline);
-            logoutButton.addEventListener('click', logout);
-            leaderboardButton.addEventListener('click', showLeaderboard);
-            closeLeaderboardButton.addEventListener('click', () => {
-                leaderboardScreen.style.display = 'none';
-            });
-            
-            loginUsernameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin();
-            });
-            loginPasswordInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin();
-            });
-
-            startButton.addEventListener('click', () => {
-                startScreen.style.display = 'none';
-                modeSelectionScreen.style.display = 'flex';
-            });
-
-            howToPlayButton.addEventListener('click', () => {
-                alert(`🎮 УПРАВЛЕНИЕ:
-• Стрелки или WASD - движение
-• Найди демонесс (цветные фигурки) для основных вопросов
-• Найди знаки вопроса для дополнительных заданий
-• Собери всех 4 демонесс знаний!
-
-🎵 МУЗЫКА:
-• Нажмите "Импорт музыки" чтобы загрузить свою музыку
-• Поддерживаются MP3, WAV, OGG
-• Нажмите на иконку 🎵 для управления звуком
-
-🏰 УРОВНИ:
-• Уровень 1: Прямоугольная карта
-• Уровень 2: Карта "Змейка" (нужно пройти 1 уровень)
-• Уровень 3: Сложный лабиринт (нужно пройти 2 уровень)
-
-🔐 СОХРАНЕНИЕ:
-• Войдите в аккаунт для сохранения прогресса на сервере
-• Или играйте оффлайн - прогресс сохранится в браузере
-• Ваши разблокированные уровни сохранятся
-
-🏆 ЦЕЛЬ: Подготовиться к ОГЭ и собрать гарем демонесс!`);
-            });
-
-            difficulty1Button.addEventListener('click', () => {
-                gameState.difficulty = 1;
-                gameState.currentLevelLayout = levelLayouts[1];
-                startGame();
-            });
-
-            difficulty2Button.addEventListener('click', () => {
-                if (gameState.unlockedDifficulties.includes(2)) {
-                    gameState.difficulty = 2;
-                    gameState.currentLevelLayout = levelLayouts[2];
-                    startGame();
-                } else {
-                    showNotification('❌ Сначала пройдите 1 уровень сложности!', 2000);
-                }
-            });
-
-            difficulty3Button.addEventListener('click', () => {
-                if (gameState.unlockedDifficulties.includes(3)) {
-                    gameState.difficulty = 3;
-                    gameState.currentLevelLayout = levelLayouts[3];
-                    startGame();
-                } else {
-                    showNotification('❌ Сначала пройдите 2 уровень сложности!', 2000);
-                }
-            });
-
-            backToMainButton.addEventListener('click', () => {
-                modeSelectionScreen.style.display = 'none';
-                startScreen.style.display = 'flex';
-            });
-
-            musicFileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                
-                if (file) {
-                    if (!file.type.startsWith('audio/')) {
-                        alert('Пожалуйста, выберите аудио файл!');
-                        return;
-                    }
-                    
-                    const fileURL = URL.createObjectURL(file);
-                    gameState.customMusic = fileURL;
-                    musicFileName.textContent = file.name;
-                    
-                    if (gameState.musicEnabled) {
-                        backgroundMusic.src = fileURL;
-                        backgroundMusic.play().catch(e => {
-                            console.log('Автовоспроизведение заблокировано');
-                        });
-                    }
-                    
-                    showNotification('🎵 Музыка успешно загружена!');
-                }
-            });
-
-            musicControl.addEventListener('click', toggleMusic);
-
-            document.addEventListener('keydown', (e) => {
-                if (questionScreen.style.display === 'flex') return;
-                if (leaderboardScreen.style.display === 'flex') return;
-                
-                switch(e.key) {
-                    case 'ArrowUp': case 'w': case 'W': movePlayer(0, -1); break;
-                    case 'ArrowDown': case 's': case 'S': movePlayer(0, 1); break;
-                    case 'ArrowLeft': case 'a': case 'A': movePlayer(-1, 0); break;
-                    case 'ArrowRight': case 'd': case 'D': movePlayer(1, 0); break;
-                    case 'Escape': 
-                        if (gameScreen.style.display === 'block') {
-                            gameScreen.style.display = 'none';
-                            modeSelectionScreen.style.display = 'flex';
-                        }
-                        break;
-                }
-            });
-
-            document.addEventListener('contextmenu', e => e.preventDefault());
-        }
-
         function updateDifficultyButtons() {
             if (gameState.unlockedDifficulties.includes(2)) {
                 difficulty2Button.classList.remove('locked');
@@ -1596,14 +1592,10 @@
                 difficulty2Button.style.color = '#fff';
                 
                 const lockIcon = difficulty2Button.querySelector('.lock-icon');
-                if (lockIcon) {
-                    lockIcon.style.display = 'none';
-                }
+                if (lockIcon) lockIcon.style.display = 'none';
                 
                 const label2 = difficulty2Button.querySelector('.difficulty-label');
-                if (label2) {
-                    label2.textContent = 'Карта "Змейка"';
-                }
+                if (label2) label2.textContent = 'Карта "Змейка"';
             }
             
             if (gameState.unlockedDifficulties.includes(3)) {
@@ -1613,14 +1605,10 @@
                 difficulty3Button.style.color = '#fff';
                 
                 const lockIcon = difficulty3Button.querySelector('.lock-icon');
-                if (lockIcon) {
-                    lockIcon.style.display = 'none';
-                }
+                if (lockIcon) lockIcon.style.display = 'none';
                 
                 const label3 = difficulty3Button.querySelector('.difficulty-label');
-                if (label3) {
-                    label3.textContent = 'Карта "Лабиринт"';
-                }
+                if (label3) label3.textContent = 'Карта "Лабиринт"';
             }
         }
 
@@ -1632,9 +1620,7 @@
                 updateDifficultyButtons();
                 showNotification('🎉 Уровень 2 "Змейка" разблокирован!', 3000);
                 
-                if (isOnlineMode) {
-                    unlockLevelOnServer(2);
-                }
+                if (isOnlineMode) unlockLevelOnServer(2);
             }
             
             if (currentDifficulty === 2 && !gameState.unlockedDifficulties.includes(3)) {
@@ -1642,9 +1628,7 @@
                 updateDifficultyButtons();
                 showNotification('🎉 Уровень 3 "Лабиринт" разблокирован!', 3000);
                 
-                if (isOnlineMode) {
-                    unlockLevelOnServer(3);
-                }
+                if (isOnlineMode) unlockLevelOnServer(3);
             }
             
             saveProgress();
@@ -1658,9 +1642,7 @@
             
             if (gameState.musicEnabled) {
                 backgroundMusic.volume = 0.3;
-                backgroundMusic.play().catch(e => {
-                    console.log('Автовоспроизведение заблокировано');
-                });
+                backgroundMusic.play().catch(e => console.log('Автовоспроизведение заблокировано'));
             }
             
             initLevel();
@@ -1692,18 +1674,11 @@
                 document.getElementById('game-screen').appendChild(particle);
                 
                 const angle = Math.random() * Math.PI * 2;
-                const speed = 2 + Math.random() * 3;
                 const distance = 20 + Math.random() * 30;
                 
                 const animation = particle.animate([
-                    { 
-                        transform: `translate(0, 0) scale(1)`,
-                        opacity: 1
-                    },
-                    { 
-                        transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`,
-                        opacity: 0
-                    }
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
                 ], {
                     duration: 800 + Math.random() * 400,
                     easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
@@ -1743,11 +1718,7 @@
             }
             
             createPlayer();
-            
-            demons.forEach(demon => {
-                createDemon(demon);
-            });
-            
+            demons.forEach(demon => createDemon(demon));
             createQuestions();
             
             gameState.exitsCreated = false;
@@ -1758,6 +1729,8 @@
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
             stats.demons.textContent = '0';
+            
+            if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
         }
 
         function createQuestions() {
@@ -1874,6 +1847,11 @@
                 stats.solved.textContent = gameState.questionsSolved;
                 stats.demons.textContent = new Set(gameState.unlockedDemons).size;
                 
+                // УВЕЛИЧИВАЕМ СЧЕТЧИК ДЕМОНЕСС ДЛЯ РЕЙТИНГА
+                gameState.totalDemonsCollected++;
+                if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
+                console.log(`👿 Всего демонесс собрано: ${gameState.totalDemonsCollected}`);
+                
                 const portrait = document.querySelector('.demon-portrait');
                 const rect = portrait.getBoundingClientRect();
                 createParticles(rect.left + rect.width/2, rect.top + rect.height/2, gameState.currentDemon.color, 15);
@@ -1976,6 +1954,8 @@
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
             stats.demons.textContent = '0';
+            
+            if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
         }
 
         function checkCollisions() {
@@ -1989,7 +1969,7 @@
                 }
             });
             
-            if (currentCell.classList.contains('question')) {
+            if (currentCell && currentCell.classList.contains('question')) {
                 showAdditionalQuestion();
                 currentCell.classList.remove('question', 'pulse');
             }
@@ -2060,6 +2040,159 @@
                 showNotification('🔇 Музыка выключена');
             }
         }
+
+        // ========================
+        // ИНИЦИАЛИЗАЦИЯ И СОБЫТИЯ
+        // ========================
+        function setupEventListeners() {
+            loginButton.addEventListener('click', handleLogin);
+            playOfflineButton.addEventListener('click', playOffline);
+            logoutButton.addEventListener('click', logout);
+            leaderboardButton.addEventListener('click', showLeaderboard);
+            closeLeaderboardButton.addEventListener('click', () => {
+                leaderboardScreen.style.display = 'none';
+            });
+            
+            loginUsernameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+            loginPasswordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+
+            startButton.addEventListener('click', () => {
+                startScreen.style.display = 'none';
+                modeSelectionScreen.style.display = 'flex';
+            });
+
+            howToPlayButton.addEventListener('click', () => {
+                alert(`🎮 УПРАВЛЕНИЕ:
+• Стрелки или WASD - движение
+• Найди демонесс (цветные фигурки) для основных вопросов
+• Найди знаки вопроса для дополнительных заданий
+• Собери всех 4 демонесс знаний!
+
+🏆 РЕЙТИНГ:
+• Каждая собранная демонесса = +1 в рейтинг
+• Соревнуйся с другими игроками
+• Топ-3 получают медали
+
+🎵 МУЗЫКА:
+• Нажмите "Импорт музыки" чтобы загрузить свою музыку
+• Поддерживаются MP3, WAV, OGG
+• Нажмите на иконку 🎵 для управления звуком
+
+🏰 УРОВНИ:
+• Уровень 1: Прямоугольная карта
+• Уровень 2: Карта "Змейка" (нужно пройти 1 уровень)
+• Уровень 3: Сложный лабиринт (нужно пройти 2 уровень)
+
+🔐 СОХРАНЕНИЕ:
+• Войдите в аккаунт для сохранения прогресса на сервере
+• Или играйте оффлайн - прогресс сохранится в браузере
+• Ваши разблокированные уровни сохранятся
+
+🏆 ЦЕЛЬ: Подготовиться к ОГЭ и собрать гарем демонесс!`);
+            });
+
+            difficulty1Button.addEventListener('click', () => {
+                gameState.difficulty = 1;
+                gameState.currentLevelLayout = levelLayouts[1];
+                startGame();
+            });
+
+            difficulty2Button.addEventListener('click', () => {
+                if (gameState.unlockedDifficulties.includes(2)) {
+                    gameState.difficulty = 2;
+                    gameState.currentLevelLayout = levelLayouts[2];
+                    startGame();
+                } else {
+                    showNotification('❌ Сначала пройдите 1 уровень сложности!', 2000);
+                }
+            });
+
+            difficulty3Button.addEventListener('click', () => {
+                if (gameState.unlockedDifficulties.includes(3)) {
+                    gameState.difficulty = 3;
+                    gameState.currentLevelLayout = levelLayouts[3];
+                    startGame();
+                } else {
+                    showNotification('❌ Сначала пройдите 2 уровень сложности!', 2000);
+                }
+            });
+
+            backToMainButton.addEventListener('click', () => {
+                modeSelectionScreen.style.display = 'none';
+                startScreen.style.display = 'flex';
+            });
+
+            musicFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    if (!file.type.startsWith('audio/')) {
+                        alert('Пожалуйста, выберите аудио файл!');
+                        return;
+                    }
+                    
+                    const fileURL = URL.createObjectURL(file);
+                    gameState.customMusic = fileURL;
+                    musicFileName.textContent = file.name;
+                    
+                    if (gameState.musicEnabled) {
+                        backgroundMusic.src = fileURL;
+                        backgroundMusic.play().catch(e => console.log('Автовоспроизведение заблокировано'));
+                    }
+                    
+                    showNotification('🎵 Музыка успешно загружена!');
+                }
+            });
+
+            musicControl.addEventListener('click', toggleMusic);
+
+            document.addEventListener('keydown', (e) => {
+                if (questionScreen.style.display === 'flex') return;
+                if (leaderboardScreen.style.display === 'flex') return;
+                
+                switch(e.key) {
+                    case 'ArrowUp': case 'w': case 'W': movePlayer(0, -1); break;
+                    case 'ArrowDown': case 's': case 'S': movePlayer(0, 1); break;
+                    case 'ArrowLeft': case 'a': case 'A': movePlayer(-1, 0); break;
+                    case 'ArrowRight': case 'd': case 'D': movePlayer(1, 0); break;
+                    case 'Escape': 
+                        if (gameScreen.style.display === 'block') {
+                            gameScreen.style.display = 'none';
+                            modeSelectionScreen.style.display = 'flex';
+                        }
+                        break;
+                }
+            });
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
+        }
+
+        // Запуск при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            userToken = localStorage.getItem('ogetaker_userToken');
+            currentUsername = localStorage.getItem('ogetaker_username');
+            
+            if (userToken && currentUsername) {
+                isOnlineMode = true;
+                usernameDisplay.textContent = currentUsername;
+                currentPlayerDisplay.textContent = currentUsername;
+                userInfoDisplay.style.display = 'block';
+                loadServerProgress();
+            } else {
+                setTimeout(() => {
+                    showLoginModal();
+                }, 1000);
+            }
+            
+            setupEventListeners();
+            
+            window.addEventListener('beforeunload', saveProgress);
+            setInterval(saveProgress, 30000);
+        });
     </script>
 </body>
 </html>
