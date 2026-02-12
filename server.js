@@ -15,12 +15,10 @@ app.use(bodyParser.json());
 // ВАЖНО: Раздаем статические файлы из текущей папки
 app.use(express.static(__dirname));
 
-// Главная страница - ОБЯЗАТЕЛЬНО ДОБАВЬТЕ ЭТОТ МАРШРУТ
+// Главная страница
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
-
-// Все остальные маршруты API остаются как были...
 
 // Пути к файлам данных
 const DATA_DIR = path.join(__dirname, 'data');
@@ -91,7 +89,7 @@ app.post('/api/register', async (req, res) => {
         const newUser = {
             id: uuidv4(),
             username,
-            password, // В реальном приложении нужно хэшировать пароль!
+            password,
             token,
             created: new Date().toISOString(),
             lastLogin: new Date().toISOString()
@@ -117,11 +115,9 @@ app.post('/api/register', async (req, res) => {
                 lastPlayed: new Date().toISOString()
             },
             statistics: {
-                totalGames: 0,
                 totalDemonsCollected: 0,
                 totalQuestionsSolved: 0,
-                totalMistakes: 0,
-                bestTime: null
+                totalMistakes: 0
             }
         };
         
@@ -173,31 +169,34 @@ app.post('/api/save-progress', async (req, res) => {
             ...progress,
             lastUpdated: new Date().toISOString()
         };
-        
+
         await fs.writeFile(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
-        // ОБНОВЛЕНИЕ СТАТИСТИКИ
-if (progress.statistics) {
-    if (!progressData.progresses[user.id].statistics) {
-        progressData.progresses[user.id].statistics = {
-            totalDemonsCollected: 0,
-            totalQuestionsSolved: 0,
-            totalMistakes: 0
-        };
-    }
-    
-    // СУММИРУЕМ, а не заменяем
-    progressData.progresses[user.id].statistics.totalDemonsCollected += 
-        progress.statistics.totalDemonsCollected || 0;
         
-    progressData.progresses[user.id].statistics.totalQuestionsSolved += 
-        progress.statistics.totalQuestionsSolved || 0;
+        // ОБНОВЛЕНИЕ СТАТИСТИКИ - отдельно и правильно!
+        if (progress.statistics) {
+            if (!progressData.progresses[user.id].statistics) {
+                progressData.progresses[user.id].statistics = {
+                    totalDemonsCollected: 0,
+                    totalQuestionsSolved: 0,
+                    totalMistakes: 0
+                };
+            }
+            
+            // СУММИРУЕМ, а не заменяем
+            progressData.progresses[user.id].statistics.totalDemonsCollected += 
+                progress.statistics.totalDemonsCollected || 0;
+                
+            progressData.progresses[user.id].statistics.totalQuestionsSolved += 
+                progress.statistics.totalQuestionsSolved || 0;
+                
+            progressData.progresses[user.id].statistics.totalMistakes += 
+                progress.statistics.totalMistakes || 0;
+            
+            // Сохраняем обновленную статистику
+            await fs.writeFile(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
+            console.log(`📊 Статистика обновлена для ${user.username}: +${progress.statistics.totalDemonsCollected || 0} демонесс`);
+        }
         
-    progressData.progresses[user.id].statistics.totalMistakes += 
-        progress.statistics.totalMistakes || 0;
-    
-    // Сохраняем обновленную статистику
-    await fs.writeFile(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
-}
         res.json({
             success: true,
             message: 'Прогресс сохранен',
@@ -237,6 +236,15 @@ app.get('/api/load-progress', async (req, res) => {
                 progress: null,
                 message: 'Прогресс не найден, будет создан новый'
             });
+        }
+        
+        // Убеждаемся, что статистика есть
+        if (!userProgress.statistics) {
+            userProgress.statistics = {
+                totalDemonsCollected: 0,
+                totalQuestionsSolved: 0,
+                totalMistakes: 0
+            };
         }
         
         res.json({
@@ -325,13 +333,26 @@ app.get('/api/stats', async (req, res) => {
         if (!userProgress) {
             return res.json({
                 success: true,
-                stats: null
+                stats: {
+                    totalDemonsCollected: 0,
+                    totalQuestionsSolved: 0,
+                    totalMistakes: 0
+                }
             });
+        }
+        
+        // Убеждаемся, что статистика есть
+        if (!userProgress.statistics) {
+            userProgress.statistics = {
+                totalDemonsCollected: 0,
+                totalQuestionsSolved: 0,
+                totalMistakes: 0
+            };
         }
         
         res.json({
             success: true,
-            stats: userProgress.statistics || {},
+            stats: userProgress.statistics,
             progress: userProgress.currentProgress || {}
         });
         
@@ -341,7 +362,7 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
-// 6. Получение рейтинга игроков
+// 6. Получение рейтинга игроков - ИСПРАВЛЕНО!
 app.get('/api/leaderboard', async (req, res) => {
     try {
         const progressData = JSON.parse(await fs.readFile(PROGRESS_FILE, 'utf8'));
@@ -354,7 +375,16 @@ app.get('/api/leaderboard', async (req, res) => {
             const progress = progressData.progresses[userId];
             const user = usersData.users.find(u => u.id === userId);
             
-            if (user && progress.statistics) {
+            if (user && progress) {
+                // Убеждаемся, что статистика существует
+                if (!progress.statistics) {
+                    progress.statistics = {
+                        totalDemonsCollected: 0,
+                        totalQuestionsSolved: 0,
+                        totalMistakes: 0
+                    };
+                }
+                
                 leaderboard.push({
                     username: user.username,
                     demonsCollected: progress.statistics.totalDemonsCollected || 0,
@@ -367,6 +397,9 @@ app.get('/api/leaderboard', async (req, res) => {
         
         // Сортируем по количеству собранных демонесс
         leaderboard.sort((a, b) => b.demonsCollected - a.demonsCollected);
+        
+        console.log(`📊 Отправляем рейтинг: ${leaderboard.length} игроков`);
+        console.log(`👑 Топ-1: ${leaderboard[0]?.username} с ${leaderboard[0]?.demonsCollected} демонесс`);
         
         res.json({
             success: true,
@@ -394,6 +427,5 @@ async function startServer() {
         console.log(`📁 API доступно по: http://localhost:${PORT}/api/...`);
     });
 }
-
 
 startServer().catch(console.error);
