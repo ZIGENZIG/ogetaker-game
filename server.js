@@ -175,7 +175,29 @@ app.post('/api/save-progress', async (req, res) => {
         };
         
         await fs.writeFile(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
+        // ОБНОВЛЕНИЕ СТАТИСТИКИ
+if (progress.statistics) {
+    if (!progressData.progresses[user.id].statistics) {
+        progressData.progresses[user.id].statistics = {
+            totalDemonsCollected: 0,
+            totalQuestionsSolved: 0,
+            totalMistakes: 0
+        };
+    }
+    
+    // СУММИРУЕМ, а не заменяем
+    progressData.progresses[user.id].statistics.totalDemonsCollected += 
+        progress.statistics.totalDemonsCollected || 0;
         
+    progressData.progresses[user.id].statistics.totalQuestionsSolved += 
+        progress.statistics.totalQuestionsSolved || 0;
+        
+    progressData.progresses[user.id].statistics.totalMistakes += 
+        progress.statistics.totalMistakes || 0;
+    
+    // Сохраняем обновленную статистику
+    await fs.writeFile(PROGRESS_FILE, JSON.stringify(progressData, null, 2));
+}
         res.json({
             success: true,
             message: 'Прогресс сохранен',
@@ -372,5 +394,6 @@ async function startServer() {
         console.log(`📁 API доступно по: http://localhost:${PORT}/api/...`);
     });
 }
+
 
 startServer().catch(console.error);
