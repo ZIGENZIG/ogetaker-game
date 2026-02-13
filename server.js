@@ -26,6 +26,47 @@ const pool = new Pool({
     }
 });
 
+// Простое кэширование для рейтинга
+let leaderboardCache = {
+    data: null,
+    timestamp: 0,
+    ttl: 60000 // 60 секунд
+};
+
+// Функция для получения рейтинга с кэшем
+async function getLeaderboardWithCache() {
+    const now = Date.now();
+    
+    // Если кэш ещё валиден
+    if (leaderboardCache.data && (now - leaderboardCache.timestamp) < leaderboardCache.ttl) {
+        console.log('📦 Использую кэшированный рейтинг');
+        return leaderboardCache.data;
+    }
+    
+    // Получаем свежие данные
+    const result = await pool.query(
+        `SELECT username, total_demons_collected, total_questions_solved, 
+                array_length(unlocked_difficulties, 1) as unlocked_levels
+         FROM progress 
+         WHERE total_demons_collected > 0 OR total_questions_solved > 0
+         ORDER BY total_demons_collected DESC, total_questions_solved DESC
+         LIMIT 20`
+    );
+
+    const leaderboard = result.rows.map(row => ({
+        username: row.username,
+        demonsCollected: parseInt(row.total_demons_collected) || 0,
+        questionsSolved: parseInt(row.total_questions_solved) || 0,
+        unlockedLevels: row.unlocked_levels || 1
+    }));
+    
+    // Сохраняем в кэш
+    leaderboardCache.data = leaderboard;
+    leaderboardCache.timestamp = now;
+    
+    return leaderboard;
+}
+
 // Инициализация таблиц
 async function initializeDatabase() {
     try {
@@ -60,7 +101,14 @@ async function initializeDatabase() {
             )
         `);
 
-        console.log('✅ База данных инициализирована');
+        // Индексы для быстрого поиска
+        await pool.query(`
+            CREATE INDEX IF NOT EXISTS idx_users_token ON users(token);
+            CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+            CREATE INDEX IF NOT EXISTS idx_progress_demons ON progress(total_demons_collected DESC);
+        `);
+
+        console.log('✅ База данных инициализирована с индексами');
     } catch (error) {
         console.error('❌ Ошибка инициализации БД:', error);
     }
@@ -134,7 +182,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// 2. Сохранение прогресса - ИСПРАВЛЕНО (без удвоения)
+// 2. Сохранение прогресса - ИСПРАВЛЕНО
 app.post('/api/save-progress', async (req, res) => {
     try {
         const { token, progress } = req.body;
@@ -178,35 +226,39 @@ app.post('/api/save-progress', async (req, res) => {
             ]
         );
 
-        // Обновляем статистику - ИСПРАВЛЕНО (НЕ суммируем, а устанавливаем)
+        // Обновляем статистику - ИСПРАВЛЕНО
         if (progress.statistics) {
-            // Получаем текущие значения
+            // Получаем текущие значения из БД
             const currentStats = await pool.query(
-                'SELECT total_demons_collected FROM progress WHERE user_id = $1',
+                'SELECT total_demons_collected, total_questions_solved, total_mistakes FROM progress WHERE user_id = $1',
                 [user.id]
             );
             
-            const currentDemons = currentStats.rows[0]?.total_demons_collected || 0;
-            const newDemons = progress.statistics.totalDemonsCollected || 0;
+            const currentDemons = parseInt(currentStats.rows[0]?.total_demons_collected) || 0;
+            const currentQuestions = parseInt(currentStats.rows[0]?.total_questions_solved) || 0;
+            const currentMistakes = parseInt(currentStats.rows[0]?.total_mistakes) || 0;
             
-            // Если новое значение БОЛЬШЕ текущего - обновляем
-            if (newDemons > currentDemons) {
+            // Новые значения из клиента
+            const newDemons = parseInt(progress.statistics.totalDemonsCollected) || 0;
+            const newQuestions = parseInt(progress.statistics.totalQuestionsSolved) || 0;
+            const newMistakes = parseInt(progress.statistics.totalMistakes) || 0;
+            
+            // Проверяем, действительно ли новые значения больше
+            if (newDemons >= currentDemons && newQuestions >= currentQuestions) {
                 await pool.query(
                     `UPDATE progress SET
                         total_demons_collected = $1,
                         total_questions_solved = $2,
                         total_mistakes = $3
                     WHERE user_id = $4`,
-                    [
-                        newDemons,
-                        progress.statistics.totalQuestionsSolved || 0,
-                        progress.statistics.totalMistakes || 0,
-                        user.id
-                    ]
+                    [newDemons, newQuestions, newMistakes, user.id]
                 );
-                console.log(`📊 Статистика обновлена: ${newDemons} демонесс`);
+                console.log(`📊 Статистика обновлена: демонесс ${currentDemons} → ${newDemons}`);
+                
+                // Инвалидируем кэш рейтинга
+                leaderboardCache.timestamp = 0;
             } else {
-                console.log(`📊 Пропускаем обновление: ${newDemons} <= ${currentDemons}`);
+                console.log(`⚠️ Статистика не обновлена: ${newDemons} <= ${currentDemons}`);
             }
         }
 
@@ -334,24 +386,10 @@ app.post('/api/unlock-level', async (req, res) => {
     }
 });
 
-// 5. Рейтинг - ИСПРАВЛЕНО (без дубликатов)
+// 5. Рейтинг - С КЭШИРОВАНИЕМ
 app.get('/api/leaderboard', async (req, res) => {
     try {
-        const result = await pool.query(
-            `SELECT username, total_demons_collected, total_questions_solved, 
-                    array_length(unlocked_difficulties, 1) as unlocked_levels
-             FROM progress 
-             WHERE total_demons_collected > 0 OR total_questions_solved > 0
-             ORDER BY total_demons_collected DESC, total_questions_solved DESC
-             LIMIT 20`
-        );
-
-        const leaderboard = result.rows.map(row => ({
-            username: row.username,
-            demonsCollected: parseInt(row.total_demons_collected) || 0,
-            questionsSolved: parseInt(row.total_questions_solved) || 0,
-            unlockedLevels: row.unlocked_levels || 1
-        }));
+        const leaderboard = await getLeaderboardWithCache();
 
         console.log(`📊 Рейтинг отправлен: ${leaderboard.length} игроков`);
         if (leaderboard.length > 0) {
@@ -367,6 +405,15 @@ app.get('/api/leaderboard', async (req, res) => {
         console.error('❌ Ошибка получения рейтинга:', error);
         res.status(500).json({ error: 'Ошибка получения рейтинга' });
     }
+});
+
+// Health check для Render
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
 });
 
 // Обработка несуществующих API
