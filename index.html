@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>OGETAKER - Готовься к ОГЭ с демонессами!</title>
     <style>
         * {
@@ -10,6 +10,10 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -17,6 +21,10 @@
             color: #fff;
             overflow: hidden;
             image-rendering: crisp-edges;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
         }
 
         #game-container {
@@ -24,6 +32,7 @@
             height: 100vh;
             position: relative;
             background: radial-gradient(ellipse at center, #2d1b4e 0%, #0c0c1d 70%);
+            overflow: hidden;
         }
 
         /* Стартовый экран */
@@ -40,34 +49,40 @@
                 radial-gradient(circle at 80% 20%, rgba(55, 66, 250, 0.3) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 165, 2, 0.2) 0%, transparent 50%);
             z-index: 100;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .title {
-            font-size: 5rem;
+            font-size: clamp(2.5rem, 15vw, 5rem);
             font-weight: 900;
             color: #ff4757;
             text-shadow: 
                 0 0 10px #ff4757,
-                4px 4px 0 #000,
-                8px 8px 0 rgba(0, 0, 0, 0.3);
-            margin-bottom: 1rem;
+                2px 2px 0 #000,
+                4px 4px 0 rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             animation: titleGlow 2s ease-in-out infinite alternate;
+            text-align: center;
+            word-break: break-word;
         }
 
         @keyframes titleGlow {
-            from { text-shadow: 0 0 10px #ff4757, 4px 4px 0 #000, 8px 8px 0 rgba(0, 0, 0, 0.3); }
-            to { text-shadow: 0 0 20px #ff4757, 4px 4px 0 #000, 8px 8px 0 rgba(0, 0, 0, 0.3); }
+            from { text-shadow: 0 0 10px #ff4757, 2px 2px 0 #000, 4px 4px 0 rgba(0, 0, 0, 0.3); }
+            to { text-shadow: 0 0 20px #ff4757, 2px 2px 0 #000, 4px 4px 0 rgba(0, 0, 0, 0.3); }
         }
 
         .subtitle {
-            font-size: 1.8rem;
+            font-size: clamp(1rem, 5vw, 1.8rem);
             color: #fff;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             text-align: center;
-            text-shadow: 2px 2px 0 #000;
+            text-shadow: 1px 1px 0 #000;
             animation: subtitleFloat 3s ease-in-out infinite;
+            padding: 0 15px;
         }
 
         @keyframes subtitleFloat {
@@ -79,59 +94,42 @@
         .main-menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 12px;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 15px;
         }
 
         /* Кнопки */
         .hell-button {
             background: linear-gradient(145deg, #ff4757, #ff3742);
             color: #fff;
-            border: 4px solid #000;
-            padding: 18px 50px;
-            font-size: 1.6rem;
+            border: 3px solid #000;
+            padding: 15px 20px;
+            font-size: clamp(1.2rem, 5vw, 1.6rem);
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            margin: 0;
-            transition: all 0.3s;
+            transition: all 0.2s;
             box-shadow: 
-                6px 6px 0 #000,
-                0 0 0 3px #ff4757;
+                4px 4px 0 #000,
+                0 0 0 2px #ff4757;
             position: relative;
             overflow: hidden;
-            min-width: 280px;
-            text-align: center;
-        }
-
-        .hell-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+            min-width: 200px;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .hell-button:hover {
-            transform: translate(-3px, -3px);
-            box-shadow: 
-                9px 9px 0 #000,
-                0 0 0 3px #ff6b81;
-            background: linear-gradient(145deg, #ff6b81, #ff4757);
-        }
-
-        .hell-button:hover::before {
-            left: 100%;
+            text-align: center;
+            border-radius: 8px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .hell-button:active {
-            transform: translate(3px, 3px);
+            transform: translate(2px, 2px);
             box-shadow: 
-                3px 3px 0 #000,
-                0 0 0 3px #ff4757;
+                2px 2px 0 #000,
+                0 0 0 2px #ff4757;
         }
 
         /* Меню выбора режима */
@@ -148,50 +146,61 @@
                 radial-gradient(circle at 80% 20%, rgba(55, 66, 250, 0.4) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 165, 2, 0.3) 0%, transparent 50%);
             z-index: 150;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .mode-title {
-            font-size: 3rem;
+            font-size: clamp(1.8rem, 8vw, 3rem);
             color: #fff;
-            text-shadow: 3px 3px 0 #000;
-            margin-bottom: 30px;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 15px;
             text-align: center;
+            word-break: break-word;
         }
 
         .mode-description {
-            font-size: 1.2rem;
+            font-size: clamp(0.9rem, 4vw, 1.2rem);
             color: #aaa;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
             max-width: 600px;
-            line-height: 1.5;
+            line-height: 1.4;
+            padding: 0 15px;
         }
 
         .difficulty-buttons {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 15px;
         }
 
         .difficulty-button {
             background: linear-gradient(145deg, #3742fa, #2f35e0);
             color: #fff;
-            border: 4px solid #000;
-            padding: 20px 40px;
-            font-size: 1.4rem;
+            border: 3px solid #000;
+            padding: 15px 20px;
+            font-size: clamp(1rem, 4vw, 1.4rem);
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            transition: all 0.3s;
+            transition: all 0.2s;
             box-shadow: 
-                6px 6px 0 #000,
-                0 0 0 3px #3742fa;
+                4px 4px 0 #000,
+                0 0 0 2px #3742fa;
             position: relative;
             overflow: hidden;
-            min-width: 300px;
+            width: 100%;
             text-align: left;
-            padding-left: 100px;
+            padding-left: 70px;
+            border-radius: 8px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         /* Заблокированные кнопки */
@@ -200,134 +209,101 @@
             color: #888;
             cursor: not-allowed;
             box-shadow: 
-                6px 6px 0 #000,
-                0 0 0 3px #444;
-        }
-
-        .difficulty-button.locked::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .difficulty-button.locked:hover {
-            transform: none;
-            box-shadow: 
-                6px 6px 0 #000,
-                0 0 0 3px #444;
-            background: linear-gradient(145deg, #333, #222);
-        }
-
-        .difficulty-button.locked:hover::before {
-            left: -100%;
-        }
-
-        .difficulty-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .difficulty-button:hover:not(.locked) {
-            transform: translate(-3px, -3px);
-            box-shadow: 
-                9px 9px 0 #000,
-                0 0 0 3px #5352ed;
-            background: linear-gradient(145deg, #5352ed, #3742fa);
-        }
-
-        .difficulty-button:hover:not(.locked)::before {
-            left: 100%;
+                4px 4px 0 #000,
+                0 0 0 2px #444;
         }
 
         .difficulty-button:active:not(.locked) {
-            transform: translate(3px, 3px);
+            transform: translate(2px, 2px);
             box-shadow: 
-                3px 3px 0 #000,
-                0 0 0 3px #3742fa;
+                2px 2px 0 #000,
+                0 0 0 2px #5352ed;
         }
 
         .difficulty-number {
             position: absolute;
-            left: 30px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 900;
         }
 
         .difficulty-label {
             display: block;
-            font-size: 1.2rem;
-            margin-top: 5px;
+            font-size: 0.9rem;
+            margin-top: 3px;
             opacity: 0.9;
         }
 
-        /* Элементы для замков на заблокированных кнопках */
+        /* Элементы для замков */
         .lock-icon {
             position: absolute;
-            right: 20px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.4rem;
+            font-size: 1.2rem;
         }
 
         .back-button {
             background: linear-gradient(145deg, #666, #555);
             color: #fff;
-            border: 4px solid #000;
-            padding: 12px 30px;
-            font-size: 1.2rem;
+            border: 3px solid #000;
+            padding: 12px 25px;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             box-shadow: 
-                4px 4px 0 #000,
-                0 0 0 3px #666;
+                3px 3px 0 #000,
+                0 0 0 2px #666;
+            border-radius: 8px;
+            margin: 10px 0;
+            min-width: 150px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        .back-button:hover {
-            background: linear-gradient(145deg, #777, #666);
-            transform: translate(-2px, -2px);
+        .back-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 
+                1px 1px 0 #000,
+                0 0 0 2px #777;
         }
 
         /* Секция импорта музыки */
         .music-import-section {
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 15px;
         }
 
         .import-btn {
             background: linear-gradient(145deg, #3742fa, #2f35e0);
             border: 3px solid #000;
-            padding: 12px 25px;
+            padding: 12px 20px;
             color: white;
             cursor: pointer;
             font-size: 1rem;
             border-radius: 8px;
-            transition: all 0.3s;
+            transition: all 0.2s;
             margin: 5px;
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        .import-btn:hover {
-            background: linear-gradient(145deg, #5352ed, #3742fa);
+        .import-btn:active {
             transform: translateY(-2px);
         }
 
         .file-name {
             display: block;
             margin-top: 8px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.8;
+            word-break: break-all;
         }
 
         /* Игровой экран */
@@ -339,314 +315,364 @@
             background: 
                 radial-gradient(circle at 10% 20%, rgba(255, 71, 87, 0.1) 0%, transparent 30%),
                 radial-gradient(circle at 90% 80%, rgba(55, 66, 250, 0.1) 0%, transparent 30%);
+            overflow: hidden;
         }
 
-        /* Сетка уровня */
+        /* Статистика - адаптивная */
+        #stats {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 80px;
+            background: linear-gradient(145deg, rgba(42, 42, 62, 0.9), rgba(30, 30, 46, 0.9));
+            padding: 10px;
+            border: 3px solid #ff4757;
+            border-radius: 10px;
+            z-index: 5;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            font-size: clamp(0.7rem, 3vw, 0.9rem);
+        }
+
+        .stat {
+            margin: 2px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stat-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Музыкальный контроллер */
+        #music-control {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(145deg, rgba(42, 42, 62, 0.9), rgba(30, 30, 46, 0.9));
+            padding: 12px;
+            border: 3px solid #ff4757;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 5;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+            transition: all 0.2s;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        #music-control:active {
+            transform: scale(0.95);
+        }
+
+        /* Сетка уровня - адаптивная */
         .level-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             perspective: 1000px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 70px 10px 10px 10px;
         }
 
         .level-grid {
             display: grid;
-            grid-template-columns: repeat(12, 60px);
-            grid-template-rows: repeat(8, 60px);
-            gap: 4px;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 2px;
             background: linear-gradient(145deg, #1e1e2e, #2a2a3e);
-            padding: 20px;
-            border: 6px solid #000;
-            border-radius: 10px;
+            padding: 10px;
+            border: 4px solid #000;
+            border-radius: 8px;
             box-shadow: 
-                0 0 30px rgba(255, 71, 87, 0.3),
-                15px 15px 0 rgba(0, 0, 0, 0.5);
-            transform: rotateX(5deg);
+                0 0 20px rgba(255, 71, 87, 0.3),
+                8px 8px 0 rgba(0, 0, 0, 0.5);
+            transform: rotateX(2deg);
+            width: min(95vw, 95vh);
+            aspect-ratio: 12/8;
         }
 
         .cell {
-            width: 60px;
-            height: 60px;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(145deg, #3a3a52, #2d2d42);
-            border-radius: 8px;
+            border-radius: 4px;
             position: relative;
-            transition: all 0.3s;
-            box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.1),
-                        inset -2px -2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+            box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.1),
+                        inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+            min-width: 0;
         }
 
-        .cell.wall {
-            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
-            box-shadow: 
-                inset 0 0 10px rgba(0, 0, 0, 0.5),
-                0 0 10px rgba(255, 71, 87, 0.2);
+        /* Мобильное управление */
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-top: 2px solid #ff4757;
         }
 
-        .cell.path {
-            background: linear-gradient(145deg, #4a4a6a, #3a3a52);
+        .mobile-btn {
+            background: linear-gradient(145deg, #3742fa, #2f35e0);
+            border: 3px solid #000;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            font-size: 2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #000;
+            transition: all 0.1s;
+            margin: 0 auto;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
 
-        .cell.exit {
-            background: linear-gradient(145deg, #2ed573, #1e90ff);
-            animation: exitPulse 2s ease-in-out infinite;
+        .mobile-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
         }
 
-        @keyframes exitPulse {
-            0%, 100% { 
-                transform: scale(1); 
-                box-shadow: inset 0 0 10px rgba(46, 213, 115, 0.5);
-            }
-            50% { 
-                transform: scale(1.05); 
-                box-shadow: inset 0 0 20px rgba(46, 213, 115, 0.8);
-            }
+        .mobile-btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
         }
 
         /* Персонаж */
         .player {
             position: absolute;
-            width: 75px;
-            height: 105px;
+            width: min(45px, 8vw);
+            height: min(63px, 11vw);
             transform: scale(1.2);
             transform-origin: center;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10;
-            filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.7));
             background-image: url("knight.png");
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            pointer-events: none;
         }
 
         /* Демонессы */
         .demon {
             position: absolute;
-            width: 75px;
-            height: 105px;
+            width: min(45px, 8vw);
+            height: min(63px, 11vw);
             transform: scale(1.2);
             transform-origin: center;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10;
-            filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.7));
             background-image: url("demoness.png");
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            pointer-events: none;
         }
 
-        /* Анимации */
-        @keyframes playerWalk {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        @keyframes demonFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-8px) rotate(2deg); }
-            75% { transform: translateY(4px) rotate(-2deg); }
-        }
-
-        @keyframes cellPulse {
-            0%, 100% { transform: scale(1); box-shadow: inset 2px 2px 4px rgba(255, 255, 255, 0.1); }
-            50% { transform: scale(1.05); box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3); }
-        }
-
-        .walking {
-            animation: playerWalk 0.6s ease-in-out infinite;
-        }
-
-        .floating {
-            animation: demonFloat 3s ease-in-out infinite;
-        }
-
-        .pulse {
-            animation: cellPulse 2s ease-in-out infinite;
-        }
-
-        /* Вопросы */
-        .question {
-            background: linear-gradient(145deg, #ffa502, #ff9500) !important;
-            animation: cellPulse 1.5s ease-in-out infinite;
-        }
-
-        .question::after {
-            content: "?";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
-        }
-
-        /* Экран вопроса */
+        /* Экран вопроса - адаптивный */
         #question-screen {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: rgba(12, 12, 29, 0.95);
+            background: rgba(12, 12, 29, 0.98);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 50;
+            padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .question-container {
             background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
-            border: 6px solid #ff4757;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 800px;
-            margin: 20px;
+            border: 4px solid #ff4757;
+            border-radius: 15px;
+            padding: 25px 20px;
+            max-width: 600px;
+            width: 100%;
+            margin: 15px;
             box-shadow: 
-                0 0 40px rgba(255, 71, 87, 0.5),
-                15px 15px 0 rgba(0, 0, 0, 0.5);
+                0 0 30px rgba(255, 71, 87, 0.5),
+                10px 10px 0 rgba(0, 0, 0, 0.5);
             position: relative;
         }
 
         .demon-portrait {
             position: absolute;
-            top: -80px;
+            top: -40px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 120px;
-            border: 6px solid #ff4757;
+            width: 70px;
+            height: 70px;
+            border: 4px solid #ff4757;
             border-radius: 50%;
             background: linear-gradient(145deg, #ff4757, #ff3742);
-            box-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
         }
 
         .question-text {
-            font-size: 1.4rem;
-            margin: 30px 0 25px 0;
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            margin: 25px 0 20px 0;
             color: #fff;
-            line-height: 1.6;
+            line-height: 1.5;
             text-align: center;
+            word-break: break-word;
         }
 
         .answers-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
         }
 
         .answer-option {
             background: linear-gradient(145deg, #3742fa, #2f35e0);
             border: 3px solid #000;
-            padding: 20px;
+            padding: 15px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1.1rem;
-            border-radius: 10px;
+            transition: all 0.2s;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            border-radius: 8px;
             text-align: center;
             position: relative;
             overflow: hidden;
-        }
-
-        .answer-option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .answer-option:hover {
-            background: linear-gradient(145deg, #5352ed, #3742fa);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(55, 66, 250, 0.4);
-        }
-
-        .answer-option:hover::before {
-            left: 100%;
-        }
-
-        /* Статистика */
-        #stats {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
-            padding: 20px;
-            border: 4px solid #ff4757;
-            border-radius: 15px;
-            z-index: 5;
-            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
-        }
-
-        .stat {
-            margin: 8px 0;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            word-break: break-word;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
 
-        .solved-icon { background: #2ed573; }
-        .mistakes-icon { background: #ff4757; }
-        .demons-icon { background: #3742fa; }
+        .answer-option:active {
+            background: linear-gradient(145deg, #5352ed, #3742fa);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(55, 66, 250, 0.4);
+        }
 
-        /* Музыкальный контроллер */
-        #music-control {
+        /* Экран рейтинга - адаптивный */
+        #leaderboard-screen {
             position: absolute;
-            top: 30px;
-            right: 30px;
-            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 12, 29, 0.98);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
             padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .leaderboard-container {
+            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
             border: 4px solid #ff4757;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 5;
-            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
-            transition: all 0.3s;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        #music-control:hover {
-            transform: scale(1.1);
+        .leaderboard-title {
+            color: #ff4757;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            text-shadow: 2px 2px 0 #000;
+            word-break: break-word;
         }
 
-        /* Частицы */
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        /* Уведомления */
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(145deg, #3742fa, #2f35e0);
-            color: white;
-            padding: 12px 24px;
+        .leaderboard-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            margin: 8px 0;
             border-radius: 8px;
-            border: 3px solid #000;
-            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
+        }
+
+        .leaderboard-item:active {
+            background: rgba(255,71,87,0.2);
+            transform: translateX(3px);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.3rem;
             font-weight: bold;
-            box-shadow: 0 0 20px rgba(55, 66, 250, 0.5);
-            opacity: 1;
-            transition: opacity 0.5s;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .leaderboard-player {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .leaderboard-stats {
+            display: flex;
+            gap: 10px;
+            color: #aaa;
+            flex-wrap: wrap;
         }
 
         /* Окно входа */
@@ -656,218 +682,210 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            font-family: 'Segoe UI', sans-serif;
+            padding: 15px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .login-container {
             background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
             border: 4px solid #ff4757;
             border-radius: 15px;
-            padding: 40px;
+            padding: 25px 20px;
             max-width: 400px;
-            width: 90%;
+            width: 100%;
             text-align: center;
-            box-shadow: 0 0 40px rgba(255,71,87,0.5);
+            box-shadow: 0 0 30px rgba(255,71,87,0.5);
         }
 
         .login-title {
             color: #ff4757;
-            margin-bottom: 30px;
-            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-size: clamp(1.5rem, 6vw, 1.8rem);
+            word-break: break-word;
         }
 
         .login-input {
             width: 100%;
             padding: 15px;
-            margin: 10px 0;
+            margin: 8px 0;
             background: #1e1e2e;
             border: 2px solid #3742fa;
             border-radius: 8px;
             color: white;
             font-size: 16px;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .login-button {
             background: linear-gradient(145deg, #ff4757, #ff3742);
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 15px 20px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            margin: 10px;
+            margin: 8px 0;
             width: 100%;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
 
-        .login-button:hover {
+        .login-button:active {
             background: linear-gradient(145deg, #ff6b81, #ff4757);
             transform: translateY(-2px);
         }
 
         .user-info {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 5px;
+            left: 5px;
+            right: 5px;
             color: white;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px;
             border-radius: 5px;
             z-index: 1000;
-            font-size: 0.9rem;
-        }
-
-        /* Экран рейтинга */
-        #leaderboard-screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: rgba(12, 12, 29, 0.95);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-        }
-
-        .leaderboard-container {
-            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
-            border: 4px solid #ff4757;
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .leaderboard-title {
-            color: #ff4757;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2rem;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        .leaderboard-item {
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            transition: all 0.3s;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
-        .leaderboard-item:hover {
-            background: rgba(255,71,87,0.2);
-            transform: translateX(5px);
-        }
-
-        .leaderboard-rank {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-
-        .leaderboard-player {
-            flex: 1;
-        }
-
-        .leaderboard-stats {
-            display: flex;
-            gap: 20px;
-            color: #aaa;
-        }
-
-        .close-button {
-            background: linear-gradient(145deg, #666, #555);
-            color: white;
+        #logout-button {
+            margin-left: auto;
+            background: #ff4757;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 3px;
             cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            font-size: 1.1rem;
-            transition: all 0.3s;
+            font-size: 0.8rem;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
-        .close-button:hover {
-            background: linear-gradient(145deg, #777, #666);
-            transform: translateY(-2px);
+        #logout-button:active {
+            background: #ff6b81;
         }
 
-        /* Адаптивность */
-        @media (max-width: 1200px) {
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            background: linear-gradient(145deg, #3742fa, #2f35e0);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 3px solid #000;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(55, 66, 250, 0.5);
+            opacity: 1;
+            transition: opacity 0.3s;
+            text-align: center;
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
+            word-break: break-word;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+
+        /* Адаптация для планшетов */
+        @media (min-width: 768px) {
             .level-grid {
-                grid-template-columns: repeat(12, 50px);
-                grid-template-rows: repeat(8, 50px);
+                gap: 3px;
+                padding: 15px;
+                border-width: 5px;
             }
-            
-            .cell {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .title {
-                font-size: 3.5rem;
-            }
-        }
 
-        @media (max-width: 768px) {
-            .level-grid {
-                grid-template-columns: repeat(12, 40px);
-                grid-template-rows: repeat(8, 40px);
-                gap: 2px;
+            #stats {
+                grid-template-columns: repeat(3, 1fr);
                 padding: 15px;
             }
-            
-            .cell {
+
+            .mobile-btn {
+                width: 80px;
+                height: 80px;
+            }
+
+            .answers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Адаптация для маленьких экранов */
+        @media (max-width: 480px) {
+            .level-grid {
+                gap: 1px;
+                padding: 5px;
+                border-width: 3px;
+            }
+
+            #stats {
+                grid-template-columns: 1fr;
+                right: 60px;
+                font-size: 0.7rem;
+            }
+
+            .stat {
+                white-space: normal;
+            }
+
+            #mobile-controls {
+                display: grid;
+            }
+
+            #music-control {
                 width: 40px;
                 height: 40px;
+                font-size: 1.1rem;
+                padding: 8px;
             }
-            
-            .title {
-                font-size: 2.5rem;
+
+            .player, .demon {
+                width: 35px;
+                height: 49px;
             }
-            
-            .answers-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .leaderboard-stats {
-                flex-direction: column;
-                gap: 5px;
-            }
+        }
+
+        /* Предотвращение зума */
+        input, button, select, textarea {
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div id="user-info" class="user-info" style="display: none;">
         👤 <span id="username-display">Гость</span>
-        <button id="logout-button" style="margin-left: 10px; background: #ff4757; border: none; color: white; padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Выйти</button>
+        <button id="logout-button">Выйти</button>
     </div>
 
     <div id="login-modal">
         <div class="login-container">
             <h2 class="login-title">ВХОД В OGETAKER</h2>
-            <input type="text" id="login-username" class="login-input" placeholder="Имя пользователя">
-            <input type="password" id="login-password" class="login-input" placeholder="Пароль">
+            <input type="text" id="login-username" class="login-input" placeholder="Имя пользователя" inputmode="text" autocomplete="username">
+            <input type="password" id="login-password" class="login-input" placeholder="Пароль" inputmode="text" autocomplete="current-password">
             <button id="login-button" class="login-button">Войти / Зарегистрироваться</button>
-            <p style="color: #aaa; margin-top: 20px; font-size: 14px;">
+            <p style="color: #aaa; margin-top: 15px; font-size: 13px;">
                 🔒 Прогресс сохраняется на сервере<br>
                 🎮 Доступ с любого устройства<br>
                 📊 Статистика и рейтинг игроков
             </p>
-            <button id="play-offline" class="login-button" style="background: linear-gradient(145deg, #666, #555); margin-top: 10px;">
+            <button id="play-offline" class="login-button" style="background: linear-gradient(145deg, #666, #555); margin-top: 8px;">
                 Играть без сохранения
             </button>
         </div>
@@ -930,27 +948,27 @@
             <div id="stats">
                 <div class="stat">
                     <div class="stat-icon solved-icon">✓</div>
-                    Решено: <span id="solved-count">0</span>/8
+                    <span>Решено: <span id="solved-count">0</span>/8</span>
                 </div>
                 <div class="stat">
                     <div class="stat-icon mistakes-icon">✗</div>
-                    Ошибок: <span id="mistakes-count">0</span>
+                    <span>Ошибок: <span id="mistakes-count">0</span></span>
                 </div>
                 <div class="stat">
                     <div class="stat-icon demons-icon">👿</div>
-                    Демонесс: <span id="demons-count">0</span>/4
+                    <span>Демонесс: <span id="demons-count">0</span>/4</span>
                 </div>
                 <div class="stat" id="difficulty-display">
                     <div class="stat-icon" style="background: #ffa502;">🎮</div>
-                    Уровень: <span id="current-difficulty">1</span>
+                    <span>Уровень: <span id="current-difficulty">1</span></span>
                 </div>
                 <div class="stat" id="player-name-display">
                     <div class="stat-icon" style="background: #3742fa;">👤</div>
-                    Игрок: <span id="current-player">Гость</span>
+                    <span>Игрок: <span id="current-player">Гость</span></span>
                 </div>
-                <div class="stat" id="total-demons-stat" style="border-top: 1px solid #ff4757; margin-top: 10px; padding-top: 10px;">
+                <div class="stat" id="total-demons-stat">
                     <div class="stat-icon" style="background: #ff4757;">🏆</div>
-                    Всего демонесс: <span id="total-demons-count">0</span>
+                    <span>Всего: <span id="total-demons-count">0</span></span>
                 </div>
             </div>
             
@@ -960,6 +978,16 @@
                 <div class="level-grid" id="level-grid">
                     <!-- Уровень будет сгенерирован JavaScript -->
                 </div>
+            </div>
+
+            <!-- Мобильное управление -->
+            <div id="mobile-controls">
+                <div></div>
+                <button class="mobile-btn" id="mobile-up">↑</button>
+                <div></div>
+                <button class="mobile-btn" id="mobile-left">←</button>
+                <button class="mobile-btn" id="mobile-down">↓</button>
+                <button class="mobile-btn" id="mobile-right">→</button>
             </div>
         </div>
 
@@ -983,24 +1011,24 @@
                 <div id="leaderboard-list" style="max-height: 400px; overflow-y: auto;">
                     <!-- Список игроков будет загружен -->
                 </div>
-                <button id="close-leaderboard" class="close-button">Закрыть</button>
+                <button id="close-leaderboard" class="close-button back-button" style="width: 100%; margin-top: 15px;">Закрыть</button>
             </div>
         </div>
 
         <!-- Аудио элементы -->
-        <audio id="background-music" loop>
+        <audio id="background-music" loop preload="none">
             <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
         </audio>
-        <audio id="move-sound">
+        <audio id="move-sound" preload="none">
             <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
         </audio>
-        <audio id="question-sound">
+        <audio id="question-sound" preload="none">
             <source src="https://assets.mixkit.co/sfx/preview/mixkit-magic-sparkle-sound-309.mp3" type="audio/mpeg">
         </audio>
-        <audio id="correct-sound">
+        <audio id="correct-sound" preload="none">
             <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
         </audio>
-        <audio id="wrong-sound">
+        <audio id="wrong-sound" preload="none">
             <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
         </audio>
     </div>
@@ -1014,6 +1042,9 @@
         let userToken = localStorage.getItem('ogetaker_userToken');
         let currentUsername = localStorage.getItem('ogetaker_username');
         let isOnlineMode = false;
+
+        // Проверка на мобильное устройство
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
         // ========================
         // ДАННЫЕ ИГРЫ
@@ -1289,6 +1320,12 @@
         const loginUsernameInput = document.getElementById('login-username');
         const loginPasswordInput = document.getElementById('login-password');
 
+        // Мобильное управление
+        const mobileUp = document.getElementById('mobile-up');
+        const mobileDown = document.getElementById('mobile-down');
+        const mobileLeft = document.getElementById('mobile-left');
+        const mobileRight = document.getElementById('mobile-right');
+
         // Аудио элементы
         const backgroundMusic = document.getElementById('background-music');
         const moveSound = document.getElementById('move-sound');
@@ -1302,6 +1339,68 @@
             mistakes: document.getElementById('mistakes-count'),
             demons: document.getElementById('demons-count')
         };
+
+        // ========================
+        // МОБИЛЬНЫЕ ФУНКЦИИ
+        // ========================
+        function setupMobileControls() {
+            if (isMobile) {
+                document.getElementById('mobile-controls').style.display = 'grid';
+                
+                // Добавляем touch-события для мобильных кнопок
+                mobileUp.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    movePlayer(0, -1);
+                });
+                mobileDown.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    movePlayer(0, 1);
+                });
+                mobileLeft.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    movePlayer(-1, 0);
+                });
+                mobileRight.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    movePlayer(1, 0);
+                });
+
+                // Добавляем mouse события для десктопного тестирования
+                mobileUp.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    movePlayer(0, -1);
+                });
+                mobileDown.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    movePlayer(0, 1);
+                });
+                mobileLeft.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    movePlayer(-1, 0);
+                });
+                mobileRight.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    movePlayer(1, 0);
+                });
+            }
+        }
+
+        // Предотвращаем скролл при касании игрового поля
+        function preventTouchScroll() {
+            document.body.addEventListener('touchmove', (e) => {
+                if (gameScreen.style.display === 'block' || questionScreen.style.display === 'flex') {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
+
+        // Адаптация размера шрифта для статистики
+        function adaptStatsFont() {
+            if (window.innerWidth <= 480) {
+                const statsElement = document.getElementById('stats');
+                statsElement.style.fontSize = '0.7rem';
+            }
+        }
 
         // ========================
         // СИСТЕМА АВТОРИЗАЦИИ
@@ -1342,7 +1441,7 @@
                     
                     usernameDisplay.textContent = currentUsername;
                     currentPlayerDisplay.textContent = currentUsername;
-                    userInfoDisplay.style.display = 'block';
+                    userInfoDisplay.style.display = 'flex';
                     
                     await loadServerProgress();
                     
@@ -1363,7 +1462,7 @@
             
             usernameDisplay.textContent = currentUsername;
             currentPlayerDisplay.textContent = currentUsername;
-            userInfoDisplay.style.display = 'block';
+            userInfoDisplay.style.display = 'flex';
             
             loadLocalProgress();
             
@@ -1554,18 +1653,17 @@
                             }
                             
                             playerElement.innerHTML = `
-                                <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                                     <span class="leaderboard-rank" style="color: ${medalColor};">${medal || `${index + 1}.`}</span>
                                     <div class="leaderboard-player">
-                                        <strong style="font-size: 1.1rem;">${player.username}</strong>
-                                        <div class="leaderboard-stats">
-                                            <span style="color: #ff4757;">👿 ${player.demonsCollected}</span>
-                                            <span style="color: #aaa;">📚 ${player.questionsSolved}</span>
-                                            <span style="color: #2ed573;">🏰 ${player.unlockedLevels}</span>
-                                        </div>
+                                        <strong>${player.username}</strong>
+                                    </div>
+                                    <div class="leaderboard-stats">
+                                        <span style="color: #ff4757;">👿 ${player.demonsCollected}</span>
+                                        <span style="color: #aaa;">📚 ${player.questionsSolved}</span>
+                                        <span style="color: #2ed573;">🏰 ${player.unlockedLevels}</span>
                                     </div>
                                 </div>
-                                ${index === 0 ? '<span style="font-size: 1.5rem;">🏆</span>' : ''}
                             `;
                             
                             leaderboardList.appendChild(playerElement);
@@ -1589,7 +1687,6 @@
                 difficulty2Button.classList.remove('locked');
                 difficulty2Button.style.cursor = 'pointer';
                 difficulty2Button.style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
-                difficulty2Button.style.color = '#fff';
                 
                 const lockIcon = difficulty2Button.querySelector('.lock-icon');
                 if (lockIcon) lockIcon.style.display = 'none';
@@ -1602,7 +1699,6 @@
                 difficulty3Button.classList.remove('locked');
                 difficulty3Button.style.cursor = 'pointer';
                 difficulty3Button.style.background = 'linear-gradient(145deg, #ff4757, #ff3742)';
-                difficulty3Button.style.color = '#fff';
                 
                 const lockIcon = difficulty3Button.querySelector('.lock-icon');
                 if (lockIcon) lockIcon.style.display = 'none';
@@ -1670,6 +1766,8 @@
                 particle.style.height = '4px';
                 particle.style.background = color;
                 particle.style.borderRadius = '50%';
+                particle.style.position = 'absolute';
+                particle.style.zIndex = '2';
                 
                 document.getElementById('game-screen').appendChild(particle);
                 
@@ -1797,7 +1895,6 @@
                 
                 player.style.transform = 'scale(1.2)';
                 player.style.opacity = '1';
-                player.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             }
         }
 
@@ -1833,7 +1930,7 @@
                 answersContainer.appendChild(answerElement);
             });
             
-            questionSound.play();
+            questionSound.play().catch(e => console.log('Звук вопроса не воспроизведён'));
             questionScreen.style.display = 'flex';
         }
 
@@ -1841,13 +1938,12 @@
             const isCorrect = selectedIndex === gameState.currentDemon.correct;
             
             if (isCorrect) {
-                correctSound.play();
+                correctSound.play().catch(e => console.log('Звук не воспроизведён'));
                 gameState.questionsSolved++;
                 gameState.unlockedDemons.push(gameState.currentDemon.name);
                 stats.solved.textContent = gameState.questionsSolved;
                 stats.demons.textContent = new Set(gameState.unlockedDemons).size;
                 
-                // УВЕЛИЧИВАЕМ СЧЕТЧИК ДЕМОНЕСС ДЛЯ РЕЙТИНГА
                 gameState.totalDemonsCollected++;
                 if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                 console.log(`👿 Всего демонесс собрано: ${gameState.totalDemonsCollected}`);
@@ -1868,7 +1964,7 @@
                 
                 saveProgress();
             } else {
-                wrongSound.play();
+                wrongSound.play().catch(e => console.log('Звук не воспроизведён'));
                 gameState.mistakes++;
                 stats.mistakes.textContent = gameState.mistakes;
             }
@@ -1894,7 +1990,7 @@
                     gameState.playerPosition = {x: newX, y: newY};
                     updatePlayerPosition();
                     
-                    moveSound.play();
+                    moveSound.play().catch(e => console.log('Звук не воспроизведён'));
                     
                     const playerRect = player.getBoundingClientRect();
                     createParticles(playerRect.left + 15, playerRect.top + 65, '#ff4757', 3);
@@ -1992,7 +2088,7 @@
                 answersContainer.appendChild(answerElement);
             });
             
-            questionSound.play();
+            questionSound.play().catch(e => console.log('Звук не воспроизведён'));
             questionScreen.style.display = 'flex';
         }
 
@@ -2000,7 +2096,7 @@
             const isCorrect = selectedIndex === question.correct;
             
             if (isCorrect) {
-                correctSound.play();
+                correctSound.play().catch(e => console.log('Звук не воспроизведён'));
                 gameState.questionsSolved++;
                 stats.solved.textContent = gameState.questionsSolved;
                 
@@ -2014,7 +2110,7 @@
                 
                 saveProgress();
             } else {
-                wrongSound.play();
+                wrongSound.play().catch(e => console.log('Звук не воспроизведён'));
                 gameState.mistakes++;
                 stats.mistakes.textContent = gameState.mistakes;
             }
@@ -2029,7 +2125,7 @@
                 if (gameState.customMusic) {
                     backgroundMusic.src = gameState.customMusic;
                 }
-                backgroundMusic.play();
+                backgroundMusic.play().catch(e => console.log('Автовоспроизведение заблокировано'));
                 musicControl.textContent = '🎵';
                 musicControl.style.borderColor = '#ff4757';
                 showNotification('🔊 Музыка включена');
@@ -2052,13 +2148,6 @@
             closeLeaderboardButton.addEventListener('click', () => {
                 leaderboardScreen.style.display = 'none';
             });
-            
-            loginUsernameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin();
-            });
-            loginPasswordInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleLogin();
-            });
 
             startButton.addEventListener('click', () => {
                 startScreen.style.display = 'none';
@@ -2067,32 +2156,24 @@
 
             howToPlayButton.addEventListener('click', () => {
                 alert(`🎮 УПРАВЛЕНИЕ:
-• Стрелки или WASD - движение
-• Найди демонесс (цветные фигурки) для основных вопросов
-• Найди знаки вопроса для дополнительных заданий
+• Нажимай кнопки на экране или стрелки
+• Найди демонесс для основных вопросов
+• Найди знаки вопроса для доп. заданий
 • Собери всех 4 демонесс знаний!
 
 🏆 РЕЙТИНГ:
-• Каждая собранная демонесса = +1 в рейтинг
-• Соревнуйся с другими игроками
-• Топ-3 получают медали
+• Каждая демонесса = +1 в рейтинг
 
 🎵 МУЗЫКА:
-• Нажмите "Импорт музыки" чтобы загрузить свою музыку
-• Поддерживаются MP3, WAV, OGG
-• Нажмите на иконку 🎵 для управления звуком
+• Импорт своей музыки
+• Кнопка 🎵 для управления
 
 🏰 УРОВНИ:
-• Уровень 1: Прямоугольная карта
-• Уровень 2: Карта "Змейка" (нужно пройти 1 уровень)
-• Уровень 3: Сложный лабиринт (нужно пройти 2 уровень)
+• 1: Прямоугольная карта
+• 2: Карта "Змейка" 
+• 3: Сложный лабиринт
 
-🔐 СОХРАНЕНИЕ:
-• Войдите в аккаунт для сохранения прогресса на сервере
-• Или играйте оффлайн - прогресс сохранится в браузере
-• Ваши разблокированные уровни сохранятся
-
-🏆 ЦЕЛЬ: Подготовиться к ОГЭ и собрать гарем демонесс!`);
+🏆 ЦЕЛЬ: Подготовиться к ОГЭ!`);
             });
 
             difficulty1Button.addEventListener('click', () => {
@@ -2107,7 +2188,7 @@
                     gameState.currentLevelLayout = levelLayouts[2];
                     startGame();
                 } else {
-                    showNotification('❌ Сначала пройдите 1 уровень сложности!', 2000);
+                    showNotification('❌ Сначала пройдите 1 уровень!', 2000);
                 }
             });
 
@@ -2117,7 +2198,7 @@
                     gameState.currentLevelLayout = levelLayouts[3];
                     startGame();
                 } else {
-                    showNotification('❌ Сначала пройдите 2 уровень сложности!', 2000);
+                    showNotification('❌ Сначала пройдите 2 уровень!', 2000);
                 }
             });
 
@@ -2150,9 +2231,15 @@
 
             musicControl.addEventListener('click', toggleMusic);
 
+            // Клавиатурное управление
             document.addEventListener('keydown', (e) => {
                 if (questionScreen.style.display === 'flex') return;
                 if (leaderboardScreen.style.display === 'flex') return;
+                
+                // Предотвращаем скролл страницы стрелками
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    e.preventDefault();
+                }
                 
                 switch(e.key) {
                     case 'ArrowUp': case 'w': case 'W': movePlayer(0, -1); break;
@@ -2168,7 +2255,25 @@
                 }
             });
 
+            // Обработка ввода на мобильных
+            loginUsernameInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.slice(0, 20);
+            });
+
+            loginPasswordInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.slice(0, 20);
+            });
+
             document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Обработка resize
+            window.addEventListener('resize', () => {
+                if (gameScreen.style.display === 'block') {
+                    updatePlayerPosition();
+                    demons.forEach(demon => updateDemonPosition(demon));
+                }
+                adaptStatsFont();
+            });
         }
 
         // Запуск при загрузке страницы
@@ -2180,7 +2285,7 @@
                 isOnlineMode = true;
                 usernameDisplay.textContent = currentUsername;
                 currentPlayerDisplay.textContent = currentUsername;
-                userInfoDisplay.style.display = 'block';
+                userInfoDisplay.style.display = 'flex';
                 loadServerProgress();
             } else {
                 setTimeout(() => {
@@ -2189,6 +2294,9 @@
             }
             
             setupEventListeners();
+            setupMobileControls();
+            preventTouchScroll();
+            adaptStatsFont();
             
             window.addEventListener('beforeunload', saveProgress);
             setInterval(saveProgress, 30000);
