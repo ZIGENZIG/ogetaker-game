@@ -935,7 +935,7 @@
             
             <div class="main-menu-buttons">
                 <button class="hell-button" id="start-button">Начать игру</button>
-                <button class="hell-button" id="how-to-play">Как играть</button>
+                <button class="hell-button" id="how-to-play-button">Как играть</button>
                 <button class="hell-button" id="leaderboard-button">🏆 Рейтинг игроков</button>
             </div>
         </div>
@@ -1026,107 +1026,58 @@
             <div class="leaderboard-container">
                 <h2 class="leaderboard-title">🏆 РЕЙТИНГ ИГРОКОВ</h2>
                 <div id="leaderboard-list" style="max-height: 400px; overflow-y: auto;">
-                    <!-- Список игроков будет загружен динамически -->
+                    <!-- Список игроков будет загружен -->
                 </div>
                 <button id="close-leaderboard" class="close-button">Закрыть</button>
             </div>
         </div>
-<!-- Экран как играть -->
-<div id="how-to-play-screen">
-    <div class="how-to-play-container">
-        <h2 class="how-to-play-title">❓ КАК ИГРАТЬ</h2>
-        
-        <div class="how-to-play-section">
-            <h3>🎮 УПРАВЛЕНИЕ</h3>
-            <div class="how-to-play-grid">
-                <div class="how-to-play-card">
-                    <h4>Клавиатура</h4>
+
+        <!-- Экран как играть -->
+        <div id="how-to-play-screen">
+            <div class="how-to-play-container">
+                <h2 class="how-to-play-title">❓ КАК ИГРАТЬ</h2>
+                
+                <div class="how-to-play-section">
+                    <h3>🎮 УПРАВЛЕНИЕ</h3>
                     <p>Стрелки или WASD - движение</p>
+                    <p>Мышь - нажимай на кнопки в меню</p>
                 </div>
-                <div class="how-to-play-card">
-                    <h4>Мышь</h4>
-                    <p>Нажимай на кнопки в меню</p>
+
+                <div class="how-to-play-section">
+                    <h3>👿 ДЕМОНЕССЫ ЗНАНИЙ</h3>
+                    <p>Найди всех 4 демонесс и отвечай на их вопросы</p>
+                    <p>Каждая демонесса = +1 в рейтинг</p>
                 </div>
+
+                <div class="how-to-play-section">
+                    <h3>🏰 УРОВНИ</h3>
+                    <p>Уровень 1: Прямоугольная карта</p>
+                    <p>Уровень 2: Карта "Змейка" (нужно пройти 1 уровень)</p>
+                    <p>Уровень 3: Сложный лабиринт (нужно пройти 2 уровень)</p>
+                </div>
+
+                <div class="how-to-play-section">
+                    <h3>🎯 ЦЕЛЬ ИГРЫ</h3>
+                    <p>Найди всех демонесс, ответь на вопросы и найди выход</p>
+                    <p>Собирай знаки вопросов для дополнительных заданий</p>
+                </div>
+
+                <div class="how-to-play-section">
+                    <h3>🎵 МУЗЫКА</h3>
+                    <p>Импортируй свою музыку через кнопку "Импорт музыки"</p>
+                    <p>Кликни на иконку 🎵 для вкл/выкл</p>
+                </div>
+
+                <div class="how-to-play-section">
+                    <h3>🔐 СОХРАНЕНИЕ</h3>
+                    <p>Войди в аккаунт для сохранения на сервере</p>
+                    <p>Играй оффлайн - прогресс сохранится в браузере</p>
+                </div>
+                
+                <button id="close-how-to-play" class="close-button">Закрыть</button>
             </div>
         </div>
 
-        <div class="how-to-play-section">
-            <h3>🏰 УРОВНИ</h3>
-            <div class="how-to-play-grid">
-                <div class="how-to-play-card">
-                    <h4>Уровень 1</h4>
-                    <p>Прямоугольная карта - идеально для начала</p>
-                </div>
-                <div class="how-to-play-card">
-                    <h4>Уровень 2</h4>
-                    <p>Карта "Змейка" - нужно пройти 1 уровень</p>
-                </div>
-                <div class="how-to-play-card">
-                    <h4>Уровень 3</h4>
-                    <p>Сложный лабиринт - нужно пройти 2 уровень</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="how-to-play-section">
-            <h3>🎯 ЦЕЛЬ ИГРЫ</h3>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">📚</span>
-                <span class="how-to-play-text">Найди всех демонесс и отвечай на вопросы</span>
-                <span class="how-to-play-detail">+1 демонесса</span>
-            </div>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">❓</span>
-                <span class="how-to-play-text">Собирай знаки вопросов для доп. заданий</span>
-                <span class="how-to-play-detail">+1 вопрос</span>
-            </div>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">🚪</span>
-                <span class="how-to-play-text">Найди выход после сбора всех демонесс</span>
-                <span class="how-to-play-detail">Уровень пройден</span>
-            </div>
-        </div>
-
-        <div class="how-to-play-section">
-            <h3>🎵 МУЗЫКА</h3>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">🎵</span>
-                <span class="how-to-play-text">Импортируй свою музыку через кнопку</span>
-                <span class="how-to-play-detail">MP3/WAV/OGG</span>
-            </div>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">🔊</span>
-                <span class="how-to-play-text">Кликни на иконку для вкл/выкл</span>
-                <span class="how-to-play-detail">в игре</span>
-            </div>
-        </div>
-
-        <div class="how-to-play-section">
-            <h3>🔐 СОХРАНЕНИЕ</h3>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">🌐</span>
-                <span class="how-to-play-text">Войди в аккаунт для сохранения на сервере</span>
-                <span class="how-to-play-detail">везде</span>
-            </div>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">💻</span>
-                <span class="how-to-play-text">Играй оффлайн - прогресс в браузере</span>
-                <span class="how-to-play-detail">локально</span>
-            </div>
-        </div>
-
-        <div class="how-to-play-section">
-            <h3>🏆 РЕЙТИНГ</h3>
-            <div class="how-to-play-item">
-                <span class="how-to-play-icon">👿</span>
-                <span class="how-to-play-text">Каждая демонесса = +1 в рейтинг</span>
-                <span class="how-to-play-detail">соревнуйся!</span>
-            </div>
-        </div>
-        
-        <button id="close-how-to-play" class="close-button">Закрыть</button>
-    </div>
-</div>
         <!-- Аудио элементы -->
         <audio id="background-music" loop>
             <source src="https://assets.mixkit.co/music/preview/mixkit-tech-house-vibes-130.mp3" type="audio/mpeg">
@@ -1422,7 +1373,7 @@
 
         // Кнопки
         const startButton = document.getElementById('start-button');
-        const howToPlayButton = document.getElementById('how-to-play');
+        const howToPlayButton = document.getElementById('how-to-play-button');
         const difficulty1Button = document.getElementById('difficulty-1');
         const difficulty2Button = document.getElementById('difficulty-2');
         const difficulty3Button = document.getElementById('difficulty-3');
@@ -2302,7 +2253,7 @@
                 isOnlineMode = true;
                 usernameDisplay.textContent = currentUsername;
                 currentPlayerDisplay.textContent = currentUsername;
-                userInfoDisplay.style.display = 'block';а
+                userInfoDisplay.style.display = 'block';
                 loadServerProgress();
             } else {
                 setTimeout(() => {
