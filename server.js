@@ -134,7 +134,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// 2. Сохранение прогресса
+// 2. Сохранение прогресса - ИСПРАВЛЕНО (без удвоения)
 app.post('/api/save-progress', async (req, res) => {
     try {
         const { token, progress } = req.body;
@@ -178,22 +178,36 @@ app.post('/api/save-progress', async (req, res) => {
             ]
         );
 
-        // Обновляем статистику
+        // Обновляем статистику - ИСПРАВЛЕНО (НЕ суммируем, а устанавливаем)
         if (progress.statistics) {
-            await pool.query(
-                `UPDATE progress SET
-                    total_demons_collected = total_demons_collected + $1,
-                    total_questions_solved = total_questions_solved + $2,
-                    total_mistakes = total_mistakes + $3
-                WHERE user_id = $4`,
-                [
-                    progress.statistics.totalDemonsCollected || 0,
-                    progress.statistics.totalQuestionsSolved || 0,
-                    progress.statistics.totalMistakes || 0,
-                    user.id
-                ]
+            // Получаем текущие значения
+            const currentStats = await pool.query(
+                'SELECT total_demons_collected FROM progress WHERE user_id = $1',
+                [user.id]
             );
-            console.log(`📊 Статистика обновлена: +${progress.statistics.totalDemonsCollected || 0} демонесс`);
+            
+            const currentDemons = currentStats.rows[0]?.total_demons_collected || 0;
+            const newDemons = progress.statistics.totalDemonsCollected || 0;
+            
+            // Если новое значение БОЛЬШЕ текущего - обновляем
+            if (newDemons > currentDemons) {
+                await pool.query(
+                    `UPDATE progress SET
+                        total_demons_collected = $1,
+                        total_questions_solved = $2,
+                        total_mistakes = $3
+                    WHERE user_id = $4`,
+                    [
+                        newDemons,
+                        progress.statistics.totalQuestionsSolved || 0,
+                        progress.statistics.totalMistakes || 0,
+                        user.id
+                    ]
+                );
+                console.log(`📊 Статистика обновлена: ${newDemons} демонесс`);
+            } else {
+                console.log(`📊 Пропускаем обновление: ${newDemons} <= ${currentDemons}`);
+            }
         }
 
         res.json({
@@ -320,7 +334,7 @@ app.post('/api/unlock-level', async (req, res) => {
     }
 });
 
-// 5. Рейтинг
+// 5. Рейтинг - ИСПРАВЛЕНО (без дубликатов)
 app.get('/api/leaderboard', async (req, res) => {
     try {
         const result = await pool.query(
@@ -340,6 +354,9 @@ app.get('/api/leaderboard', async (req, res) => {
         }));
 
         console.log(`📊 Рейтинг отправлен: ${leaderboard.length} игроков`);
+        if (leaderboard.length > 0) {
+            console.log(`👑 Топ-1: ${leaderboard[0].username} с ${leaderboard[0].demonsCollected} демонесс`);
+        }
 
         res.json({
             success: true,
@@ -367,6 +384,7 @@ async function startServer() {
     await initializeDatabase();
     app.listen(PORT, () => {
         console.log(`✅ Сервер запущен на порту ${PORT}`);
+        console.log(`🌐 http://localhost:${PORT}`);
     });
 }
 
