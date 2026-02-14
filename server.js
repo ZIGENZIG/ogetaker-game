@@ -9,347 +9,6 @@
     let isOnlineMode = false;
 
     // ========================
-    // ДАННЫЕ ИГРЫ - С РАНДОМНЫМИ ВОПРОСАМИ ПО УРОВНЯМ
-    // ========================
-    const demons = [
-        // ------------------------------------
-        // УРОВЕНЬ 1 - ЛЁГКИЕ ВОПРОСЫ (индексы 0-3)
-        // ------------------------------------
-        {
-            name: "Алгоритмика",
-            description: "Королева логики и последовательностей",
-            color: "#ff4757",
-            position: {x: 3, y: 2},
-            questions: [
-                {
-                    text: "В одной из кодировок Unicode каждый символ кодируется 16 битами. Вова написал текст: «Алый, синий, фуксия, красный». Ученик вычеркнул из списка название одного цвета и лишние запятые. Размер нового предложения оказался на 12 байт меньше. Какое название вычеркнули?",
-                    answers: ["Алый", "Синий", "Фуксия", "Красный"],
-                    correct: 0
-                },
-                {
-                    text: "Статья содержит 4 страницы, на каждой странице 32 строки, в каждой строке 40 символов. Информационный объём статьи — 10 Кбайт. Сколько бит используется для кодировки одного символа?",
-                    answers: ["8", "16", "24", "32"],
-                    correct: 1
-                },
-                {
-                    text: "Для какого из приведённых чисел истинно высказывание: НЕ (Первая цифра чётная) И (Последняя цифра нечётная)?",
-                    answers: ["1234", "2468", "3579", "4826"],
-                    correct: 2
-                },
-                {
-                    text: "Доступ к файлу img.bmp, находящемуся на сервере pic.kz, осуществляется по протоколу http. Фрагменты адреса: А) img, Б) /, В) kz, Г) ://, Д) http, Е) .bmp, Ж) pic. Какая последовательность букв кодирует адрес файла?",
-                    answers: ["ДГЖБАЕВ", "ДГБЖАЕВ", "ГДБЖАЕВ", "ДЖГБАЕВ"],
-                    correct: 0
-                },
-                {
-                    text: "В языке запросов «ИЛИ» — это |, «И» — это &. По запросу «Кошки» найдено 1500 страниц, «Собаки» — 1200, «Кошки & Собаки» — 300. Сколько страниц будет по запросу «Кошки | Собаки»?",
-                    answers: ["2400", "2500", "2700", "3000"],
-                    correct: 0
-                }
-            ]
-        },
-        {
-            name: "Программура",
-            description: "Хранительница кода и синтаксиса", 
-            color: "#3742fa",
-            position: {x: 8, y: 2},
-            questions: [
-                {
-                    text: "Для какого числа ложно высказывание: (Первая цифра чётная) ИЛИ (Последняя цифра чётная)?",
-                    answers: ["1234", "2468", "1357", "4826"],
-                    correct: 2
-                },
-                {
-                    text: "Какая последовательность букв соответствует адресу: https://school.ru/data/info.txt? А) https, Б) ://, В) school, Г) .ru, Д) /, Е) data, Ж) /, З) info, И) .txt",
-                    answers: ["АБВГДЕЖЗИ", "АБВГЕДЖЗИ", "АБГВДЕЖЗИ", "АБВГДЖЕЗИ"],
-                    correct: 0
-                },
-                {
-                    text: "По запросу «Фрукты» нашли 2000 страниц, «Овощи» — 1500, «Фрукты | Овощи» — 3000. Сколько страниц по запросу «Фрукты & Овощи»?",
-                    answers: ["500", "600", "700", "800"],
-                    correct: 0
-                },
-                {
-                    text: "Переведите число 37 из десятичной системы в двоичную.",
-                    answers: ["100101₂", "101101₂", "100111₂", "101011₂"],
-                    correct: 0
-                }
-            ]
-        },
-        {
-            name: "Системология",
-            description: "Повелительница операционных систем",
-            color: "#2ed573",
-            position: {x: 2, y: 5},
-            questions: [
-                {
-                    text: "Сколько бит в одном байте?",
-                    answers: ["4", "8", "16", "32"],
-                    correct: 1
-                },
-                {
-                    text: "Сколько байт в 2 Кбайтах?",
-                    answers: ["1024", "2048", "4096", "8192"],
-                    correct: 1
-                },
-                {
-                    text: "Что такое ОЗУ?",
-                    answers: [
-                        "Оперативное запоминающее устройство",
-                        "Основное защитное управление",
-                        "Оптическое запоминающее устройство",
-                        "Общее запоминающее устройство"
-                    ],
-                    correct: 0
-                },
-                {
-                    text: "Какой объём информации содержит 1 Мбайт?",
-                    answers: ["1024 Кбайт", "1000 Кбайт", "1024 байт", "1000 байт"],
-                    correct: 0
-                }
-            ]
-        },
-        {
-            name: "Теория",
-            description: "Богиня фундаментальных знаний",
-            color: "#ffa502",
-            position: {x: 7, y: 5},
-            questions: [
-                {
-                    text: "Как называется наименьшая единица измерения информации?",
-                    answers: ["Байт", "Бит", "Кбайт", "Мбайт"],
-                    correct: 1
-                },
-                {
-                    text: "Сколько бит в 3 байтах?",
-                    answers: ["16", "24", "32", "48"],
-                    correct: 1
-                },
-                {
-                    text: "Что означает приставка «кило-» в информатике?",
-                    answers: ["1000", "1024", "8", "16"],
-                    correct: 1
-                },
-                {
-                    text: "Какое количество байт в слове «ИНФОРМАТИКА» в кодировке ASCII (1 байт на символ)?",
-                    answers: ["10", "11", "12", "13"],
-                    correct: 1
-                }
-            ]
-        },
-        
-        // ------------------------------------
-        // УРОВЕНЬ 2 - СРЕДНИЕ ВОПРОСЫ (индексы 4-7)
-        // ------------------------------------
-        {
-            name: "Алгоритмика",
-            description: "Королева логики",
-            color: "#ffa502",
-            position: {x: 3, y: 2},
-            questions: [
-                {
-                    text: "Вася шифрует слова, записывая номер буквы в алфавите. Шифровка 161201 расшифровывается как слово из 4 букв. Какое это слово? (А-1, Б-2, В-3, Г-4, Д-5, Е-6, Ё-7, Ж-8, З-9, И-10, Й-11, К-12, Л-13, М-14, Н-15, О-16, П-17, Р-18, С-19, Т-20, У-21, Ф-22, Х-23, Ц-24, Ч-25, Ш-26, Щ-27, Ъ-28, Ы-29, Ь-30, Э-31, Ю-32, Я-33)",
-                    answers: ["ЕДА", "ДОМ", "НОС", "РОТ"],
-                    correct: 0
-                },
-                {
-                    text: "Напишите наибольшее целое число x, для которого истинно: НЕ (X < 10) И (X < 15)",
-                    answers: ["9", "10", "14", "15"],
-                    correct: 2
-                },
-                {
-                    text: "Для какого числа ложно высказывание: (X > 5) ИЛИ НЕ (X < 10)?",
-                    answers: ["3", "7", "10", "12"],
-                    correct: 0
-                },
-                {
-                    text: "Между пунктами A и B расстояние 5 км, между B и C — 3 км, между A и C — 7 км. Какое расстояние между B и D, если A-D=10 км, C-D=4 км, а кратчайший путь A-B-C-D=12 км?",
-                    answers: ["2", "3", "4", "5"],
-                    correct: 2
-                }
-            ]
-        },
-        {
-            name: "Программура",
-            description: "Хранительница кода",
-            color: "#ff4757",
-            position: {x: 8, y: 1},
-            questions: [
-                {
-                    text: "У исполнителя Квадратор команды: 1. вычти 2, 2. умножь на 3. Составьте алгоритм из 4 команд, который из 5 получает 7.",
-                    answers: ["1212", "2121", "1221", "2112"],
-                    correct: 2
-                },
-                {
-                    text: "Программа 11221 переводит число 3 в число 42. Найдите b, если вторая команда — умножь на b, первая — прибавь 2.",
-                    answers: ["4", "5", "6", "7"],
-                    correct: 1
-                },
-                {
-                    text: "Чему равно значение переменной a после выполнения: a:=8; b:=3; a:=a-b*2; b:=a+b; a:=b-a;",
-                    answers: ["2", "3", "4", "5"],
-                    correct: 1
-                }
-            ]
-        },
-        {
-            name: "Системология",
-            description: "Повелительница систем",
-            color: "#3742fa",
-            position: {x: 2, y: 6},
-            questions: [
-                {
-                    text: "Между пунктами A, B, C, D, E есть дороги: A-B=2, A-C=5, B-C=3, B-D=4, C-D=2, C-E=6, D-E=1. Найдите длину кратчайшего пути из A в E через C.",
-                    answers: ["7", "8", "9", "10"],
-                    correct: 1
-                },
-                {
-                    text: "Сколько различных путей из A в K, если A→B, A→C, B→D, C→D, D→E, D→K, E→K?",
-                    answers: ["2", "3", "4", "5"],
-                    correct: 2
-                }
-            ]
-        },
-        {
-            name: "Теория",
-            description: "Богиня знаний",
-            color: "#2ed573",
-            position: {x: 9, y: 5},
-            questions: [
-                {
-                    text: "Для исполнителя Бета команды: 1. прибавь 2; 2. умножь на b. Программа 12111 переводит 7 в 51. Найдите b.",
-                    answers: ["3", "4", "5", "6"],
-                    correct: 2
-                },
-                {
-                    text: "Программа 1121 переводит 2 в 26. Найдите b, если 1 — прибавь 3, 2 — умножь на b.",
-                    answers: ["4", "5", "6", "7"],
-                    correct: 0
-                }
-            ]
-        },
-        
-        // ------------------------------------
-        // УРОВЕНЬ 3 - СЛОЖНЫЕ ВОПРОСЫ (индексы 8-11)
-        // ------------------------------------
-        {
-            name: "Алгоритмика",
-            description: "Королева логики",
-            color: "#ff4757",
-            position: {x: 4, y: 1},
-            questions: [
-                {
-                    text: "Для исполнителя Бета с командами 1: вычти 3, 2: возведи в квадрат. Составьте алгоритм из 5 команд, который из 4 получает 49.",
-                    answers: ["12211", "21211", "12122", "21122"],
-                    correct: 3
-                },
-                {
-                    text: "Программа 21122 из числа 3 даёт число 121. Найдите b, если 1: умножь на b, 2: прибавь 4.",
-                    answers: ["5", "6", "7", "8"],
-                    correct: 0
-                }
-            ]
-        },
-        {
-            name: "Программура",
-            description: "Хранительница кода",
-            color: "#ffa502",
-            position: {x: 10, y: 2},
-            questions: [
-                {
-                    text: "Файл 15 Кбайт передаётся за 60 секунд. Сколько Кбайт передастся за 25 секунд?",
-                    answers: ["4", "5,25", "6,25", "7,25"],
-                    correct: 2
-                },
-                {
-                    text: "Файл размером 2 Мбайта передаётся за 1 минуту. Сколько Мбайт передастся за 2 часа?",
-                    answers: ["120", "240", "480", "960"],
-                    correct: 1
-                }
-            ]
-        },
-        {
-            name: "Системология",
-            description: "Повелительница систем",
-            color: "#2ed573",
-            position: {x: 2, y: 5},
-            questions: [
-                {
-                    text: "В программе: a:=10; b:=4; b:=a/2*b; a:=a-b*3. Чему равно a?",
-                    answers: ["-50", "-20", "10", "30"],
-                    correct: 0
-                },
-                {
-                    text: "a:=7; b:=2; a:=a*b-3; b:=a+b*2; a:=a-b+5. Найдите a.",
-                    answers: ["4", "5", "6", "7"],
-                    correct: 1
-                }
-            ]
-        },
-        {
-            name: "Теория",
-            description: "Богиня знаний",
-            color: "#3742fa",
-            position: {x: 7, y: 6},
-            questions: [
-                {
-                    text: "Вычислите: 11011111₂ + 1011₈ - 111₁₆. Ответ в десятичной системе.",
-                    answers: ["429", "439", "449", "459"],
-                    correct: 0
-                },
-                {
-                    text: "Вычислите: 101010₂ + 72₈ - 3A₁₆. Ответ в десятичной системе.",
-                    answers: ["64", "74", "84", "94"],
-                    correct: 1
-                }
-            ]
-        }
-    ];
-
-    const additionalQuestions = [
-        {
-            question: "Что такое HTML?",
-            answers: [
-                "Язык программирования",
-                "Язык разметки гипертекста",
-                "Система управления базами данных", 
-                "Протокол передачи данных"
-            ],
-            correct: 1
-        },
-        {
-            question: "Какая структура данных работает по принципу 'первым пришел - первым ушел'?",
-            answers: [
-                "Стек",
-                "Очередь",
-                "Массив",
-                "Список"
-            ],
-            correct: 1
-        },
-        {
-            question: "Что такое бит?",
-            answers: [
-                "Единица измерения информации, равная 8 байтам",
-                "Минимальная единица информации (0 или 1)",
-                "Единица измерения скорости интернета",
-                "Тип данных в программировании"
-            ],
-            correct: 1
-        },
-        {
-            question: "Какой протокол используется для передачи веб-страниц?",
-            answers: [
-                "FTP",
-                "HTTP",
-                "SMTP", 
-                "TCP"
-            ],
-            correct: 1
-        }
-    ];
-
-    // ========================
     // УРОВНИ КАРТ
     // ========================
     const levelLayouts = {
@@ -357,10 +16,10 @@
             name: "Прямоугольная карта",
             startPosition: {x: 1, y: 4},
             demonPositions: [
-                {x: 3, y: 2},  // Алгоритмика
-                {x: 8, y: 2},  // Программура
-                {x: 2, y: 5},  // Системология
-                {x: 7, y: 5}   // Теория
+                {x: 3, y: 2},
+                {x: 8, y: 2},
+                {x: 2, y: 5},
+                {x: 7, y: 5}
             ],
             questionPositions: [
                 {x: 4, y: 1}, {x: 9, y: 1},
@@ -380,10 +39,10 @@
             name: "Змейка",
             startPosition: {x: 1, y: 4},
             demonPositions: [
-                {x: 3, y: 2},  // Алгоритмика
-                {x: 8, y: 1},  // Программура
-                {x: 2, y: 6},  // Системология
-                {x: 9, y: 5}   // Теория
+                {x: 3, y: 2},
+                {x: 8, y: 1},
+                {x: 2, y: 6},
+                {x: 9, y: 5}
             ],
             questionPositions: [
                 {x: 1, y: 1}, {x: 10, y: 1},
@@ -425,10 +84,10 @@
             name: "Лабиринт",
             startPosition: {x: 1, y: 1},
             demonPositions: [
-                {x: 4, y: 1},  // Алгоритмика
-                {x: 10, y: 2}, // Программура
-                {x: 2, y: 5},  // Системология
-                {x: 7, y: 6}   // Теория
+                {x: 4, y: 1},
+                {x: 10, y: 2},
+                {x: 2, y: 5},
+                {x: 7, y: 6}
             ],
             questionPositions: [
                 {x: 6, y: 1}, {x: 3, y: 2},
@@ -463,6 +122,16 @@
     };
 
     // ========================
+    // ДЕМОНЕССЫ (ТОЛЬКО ИМЕНА)
+    // ========================
+    const demons = [
+        { name: "Алгоритмика", color: "#ff4757", position: {x: 3, y: 2} },
+        { name: "Программура", color: "#3742fa", position: {x: 8, y: 2} },
+        { name: "Системология", color: "#2ed573", position: {x: 2, y: 5} },
+        { name: "Теория", color: "#ffa502", position: {x: 7, y: 5} }
+    ];
+
+    // ========================
     // СОСТОЯНИЕ ИГРЫ
     // ========================
     let gameState = {
@@ -471,7 +140,6 @@
         questionsSolved: 0,
         mistakes: 0,
         currentDemon: null,
-        currentQuestion: null,
         unlockedDemons: [],
         musicEnabled: true,
         isMoving: false,
@@ -534,21 +202,6 @@
         mistakes: document.getElementById('mistakes-count'),
         demons: document.getElementById('demons-count')
     };
-
-    // ========================
-    // ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ СЛУЧАЙНОГО ВОПРОСА
-    // ========================
-    function getRandomQuestion(demon) {
-        if (!demon.questions || demon.questions.length === 0) {
-            return {
-                text: "Что такое алгоритм?",
-                answers: ["Последовательность действий", "Язык", "Формула", "Данные"],
-                correct: 0
-            };
-        }
-        const randomIndex = Math.floor(Math.random() * demon.questions.length);
-        return demon.questions[randomIndex];
-    }
 
     // ========================
     // СИСТЕМА АВТОРИЗАЦИИ
@@ -835,10 +488,17 @@
     
     // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДВИЖЕНИЯ
     function movePlayer(dx, dy) {
-        if (gameState.isMoving) return;
+        console.log('Попытка движения:', dx, dy);
+        
+        if (gameState.isMoving) {
+            console.log('Движение заблокировано');
+            return;
+        }
         
         const newX = gameState.playerPosition.x + dx;
         const newY = gameState.playerPosition.y + dy;
+        
+        console.log('Новая позиция:', newX, newY);
         
         if (newX >= 0 && newX < 12 && newY >= 0 && newY < 8) {
             const targetCell = document.querySelector(`.cell[data-x="${newX}"][data-y="${newY}"]`);
@@ -869,9 +529,13 @@
                     }
                     gameState.isMoving = false;
                     checkCollisions();
+                    console.log('Движение разблокировано');
                 }, 400);
+            } else {
+                console.log('Стена или нет ячейки');
             }
         } else if (gameState.exitsCreated) {
+            console.log('Проверка выхода');
             const layout = gameState.currentLevelLayout;
             const isOnExit = layout.exitPositions.some(exit => 
                 exit.x === gameState.playerPosition.x && exit.y === gameState.playerPosition.y
@@ -996,23 +660,6 @@
         const layout = gameState.currentLevelLayout;
         gameState.playerPosition = {...layout.startPosition};
         
-        // Определяем, каких демонесс использовать в зависимости от уровня
-        let levelDemons = [];
-        if (gameState.difficulty === 1) {
-            levelDemons = demons.slice(0, 4); // Первые 4 (легкие)
-        } else if (gameState.difficulty === 2) {
-            levelDemons = demons.slice(4, 8); // Следующие 4 (средние)
-        } else {
-            levelDemons = demons.slice(8, 12); // Последние 4 (сложные)
-        }
-        
-        // Обновляем позиции демонесс для этого уровня
-        levelDemons.forEach((demon, index) => {
-            if (layout.demonPositions[index]) {
-                demon.position = {...layout.demonPositions[index]};
-            }
-        });
-        
         for (let y = 0; y < 8; y++) {
             for (let x = 0; x < 12; x++) {
                 const cell = document.createElement('div');
@@ -1031,7 +678,7 @@
         }
         
         createPlayer();
-        levelDemons.forEach(demon => createDemon(demon));
+        demons.forEach(demon => createDemon(demon));
         createQuestions();
         
         gameState.exitsCreated = false;
@@ -1130,9 +777,12 @@
     function showDemonQuestion(demon) {
         gameState.currentDemon = demon;
         
-        // Получаем случайный вопрос для этой демонессы
-        const questionData = getRandomQuestion(demon);
-        gameState.currentQuestion = questionData;
+        // ВРЕМЕННЫЙ ВОПРОС (заглушка)
+        const questionData = {
+            text: "Что такое алгоритм?",
+            answers: ["Последовательность действий", "Язык программирования", "Математическая формула", "Тип данных"],
+            correct: 0
+        };
         
         const portrait = document.querySelector('.demon-portrait');
         portrait.style.background = `linear-gradient(145deg, ${demon.color}, ${demon.color}99)`;
@@ -1155,7 +805,7 @@
     }
 
     function checkDemonAnswer(selectedIndex) {
-        const isCorrect = selectedIndex === gameState.currentQuestion.correct;
+        const isCorrect = selectedIndex === 0; // Правильный ответ всегда первый
         
         if (isCorrect) {
             correctSound.play();
@@ -1177,7 +827,7 @@
                 setTimeout(() => demonElement.remove(), 500);
             }
             
-            if (gameState.unlockedDemons.length >= 4) { // На каждом уровне по 4 демонессы
+            if (gameState.unlockedDemons.length >= 4) {
                 createExits();
             }
             
@@ -1222,7 +872,6 @@
         gameState.questionsSolved = 0;
         gameState.mistakes = 0;
         gameState.currentDemon = null;
-        gameState.currentQuestion = null;
         gameState.unlockedDemons = [];
         gameState.exitsCreated = false;
         
@@ -1236,17 +885,7 @@
     function checkCollisions() {
         const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
         
-        // Определяем, каких демонесс использовать в зависимости от уровня
-        let levelDemons = [];
-        if (gameState.difficulty === 1) {
-            levelDemons = demons.slice(0, 4);
-        } else if (gameState.difficulty === 2) {
-            levelDemons = demons.slice(4, 8);
-        } else {
-            levelDemons = demons.slice(8, 12);
-        }
-        
-        levelDemons.forEach(demon => {
+        demons.forEach(demon => {
             if (demon.position.x === gameState.playerPosition.x && 
                 demon.position.y === gameState.playerPosition.y &&
                 !gameState.unlockedDemons.includes(demon.name)) {
@@ -1261,7 +900,11 @@
     }
 
     function showAdditionalQuestion() {
-        const randomQuestion = additionalQuestions[Math.floor(Math.random() * additionalQuestions.length)];
+        const randomQuestion = {
+            question: "Что такое HTML?",
+            answers: ["Язык программирования", "Язык разметки", "База данных", "Протокол"],
+            correct: 1
+        };
         
         document.querySelector('.demon-portrait').style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
         document.getElementById('current-question').textContent = randomQuestion.question;
@@ -1293,17 +936,7 @@
             const rect = portrait.getBoundingClientRect();
             createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffa502', 10);
             
-            // Проверяем, каких демонесс использовать для текущего уровня
-            let levelDemons = [];
-            if (gameState.difficulty === 1) {
-                levelDemons = demons.slice(0, 4);
-            } else if (gameState.difficulty === 2) {
-                levelDemons = demons.slice(4, 8);
-            } else {
-                levelDemons = demons.slice(8, 12);
-            }
-            
-            if (gameState.unlockedDemons.length >= levelDemons.length && gameState.questionsSolved >= 8) {
+            if (gameState.unlockedDemons.length >= 4 && gameState.questionsSolved >= 8) {
                 createExits();
             }
             
@@ -1424,40 +1057,59 @@
 
         musicControl.addEventListener('click', toggleMusic);
 
-        document.addEventListener('keydown', (e) => {
+        // ПРОСТОЙ И НАДЁЖНЫЙ ОБРАБОТЧИК КЛАВИШ
+        document.addEventListener('keydown', function(e) {
+            console.log('Клавиша нажата:', e.key);
+            
+            // Игнорируем если вводим текст в поле
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+            
+            // Проверяем, открыты ли другие экраны
             if (questionScreen.style.display === 'flex') return;
             if (leaderboardScreen.style.display === 'flex') return;
             if (howToPlayScreen.style.display === 'flex') return;
             
-            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
-                e.key === 'w' || e.key === 'W' || e.key === 's' || e.key === 'S' || e.key === 'a' || e.key === 'A' || e.key === 'd' || e.key === 'D') {
-                e.preventDefault();
+            // Только если игровой экран открыт
+            if (gameScreen.style.display === 'block') {
+                // Отключаем скролл страницы
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
+                    e.key === 'w' || e.key === 'W' || e.key === 's' || e.key === 'S' || e.key === 'a' || e.key === 'A' || e.key === 'd' || e.key === 'D') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                // Движение
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                    movePlayer(0, -1);
+                } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                    movePlayer(0, 1);
+                } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                    movePlayer(-1, 0);
+                } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                    movePlayer(1, 0);
+                }
             }
             
-            switch(e.key) {
-                case 'ArrowUp': case 'w': case 'W': 
-                    movePlayer(0, -1); 
-                    break;
-                case 'ArrowDown': case 's': case 'S': 
-                    movePlayer(0, 1); 
-                    break;
-                case 'ArrowLeft': case 'a': case 'A': 
-                    movePlayer(-1, 0); 
-                    break;
-                case 'ArrowRight': case 'd': case 'D': 
-                    movePlayer(1, 0); 
-                    break;
-                case 'Escape': 
-                    if (gameScreen.style.display === 'block') {
-                        gameScreen.style.display = 'none';
-                        modeSelectionScreen.style.display = 'flex';
-                    }
-                    break;
+            // Escape работает везде
+            if (e.key === 'Escape') {
+                if (gameScreen.style.display === 'block') {
+                    gameScreen.style.display = 'none';
+                    modeSelectionScreen.style.display = 'flex';
+                }
             }
-        });
+        }, true);
 
         document.addEventListener('contextmenu', e => e.preventDefault());
     }
+
+    // ПРИНУДИТЕЛЬНЫЙ ФОКУС НА ИГРЕ
+    document.body.addEventListener('click', function() {
+        if (gameScreen.style.display === 'block') {
+            document.body.focus();
+        }
+    });
 
     // Запуск при загрузке страницы
     window.addEventListener('DOMContentLoaded', () => {
