@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OGETAKER - Готовься к ОГЭ с демонессами!</title>
     <style>
-        /* ТВОЙ СТИЛЬ ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ - Я ЕГО НЕ ТРОГАЮ */
+        /* Твой стиль остается без изменений - я его не трогаю */
         * {
             margin: 0;
             padding: 0;
@@ -76,7 +76,6 @@
             50% { transform: translateY(-5px); }
         }
 
-        /* Главное меню кнопок */
         .main-menu-buttons {
             display: flex;
             flex-direction: column;
@@ -84,7 +83,6 @@
             margin: 20px 0;
         }
 
-        /* Кнопки */
         .hell-button {
             background: linear-gradient(145deg, #ff4757, #ff3742);
             color: #fff;
@@ -135,7 +133,6 @@
                 0 0 0 3px #ff4757;
         }
 
-        /* Меню выбора режима */
         #mode-selection-screen {
             position: absolute;
             width: 100%;
@@ -195,7 +192,6 @@
             padding-left: 100px;
         }
 
-        /* Заблокированные кнопки */
         .difficulty-button.locked {
             background: linear-gradient(145deg, #333, #222);
             color: #888;
@@ -274,7 +270,6 @@
             opacity: 0.9;
         }
 
-        /* Элементы для замков на заблокированных кнопках */
         .lock-icon {
             position: absolute;
             right: 20px;
@@ -301,7 +296,6 @@
             transform: translate(-2px, -2px);
         }
 
-        /* Секция импорта музыки */
         .music-import-section {
             margin: 20px 0;
             text-align: center;
@@ -331,7 +325,6 @@
             opacity: 0.8;
         }
 
-        /* Игровой экран */
         #game-screen {
             position: absolute;
             width: 100%;
@@ -342,7 +335,6 @@
                 radial-gradient(circle at 90% 80%, rgba(55, 66, 250, 0.1) 0%, transparent 30%);
         }
 
-        /* Сетка уровня */
         .level-container {
             position: absolute;
             top: 50%;
@@ -404,7 +396,6 @@
             }
         }
 
-        /* Персонаж */
         .player {
             position: absolute;
             width: 75px;
@@ -418,9 +409,9 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            pointer-events: none;
         }
 
-        /* Демонессы */
         .demon {
             position: absolute;
             width: 75px;
@@ -434,18 +425,18 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            pointer-events: none;
         }
 
-        /* Анимации */
         @keyframes playerWalk {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            0%, 100% { transform: translateY(0) scale(1.2); }
+            50% { transform: translateY(-5px) scale(1.2); }
         }
 
         @keyframes demonFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-8px) rotate(2deg); }
-            75% { transform: translateY(4px) rotate(-2deg); }
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1.2); }
+            25% { transform: translateY(-8px) rotate(2deg) scale(1.2); }
+            75% { transform: translateY(4px) rotate(-2deg) scale(1.2); }
         }
 
         @keyframes cellPulse {
@@ -454,7 +445,7 @@
         }
 
         .walking {
-            animation: playerWalk 0.6s ease-in-out infinite;
+            animation: playerWalk 0.6s ease-in-out infinite !important;
         }
 
         .floating {
@@ -465,7 +456,6 @@
             animation: cellPulse 2s ease-in-out infinite;
         }
 
-        /* Вопросы */
         .question {
             background: linear-gradient(145deg, #ffa502, #ff9500) !important;
             animation: cellPulse 1.5s ease-in-out infinite;
@@ -483,7 +473,6 @@
             text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
         }
 
-        /* Экран вопроса */
         #question-screen {
             position: absolute;
             width: 100%;
@@ -571,7 +560,6 @@
             left: 100%;
         }
 
-        /* Статистика */
         #stats {
             position: absolute;
             top: 30px;
@@ -606,7 +594,6 @@
         .mistakes-icon { background: #ff4757; }
         .demons-icon { background: #3742fa; }
 
-        /* Музыкальный контроллер */
         #music-control {
             position: absolute;
             top: 30px;
@@ -625,14 +612,12 @@
             transform: scale(1.1);
         }
 
-        /* Частицы */
         .particle {
             position: absolute;
             pointer-events: none;
             z-index: 2;
         }
 
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
@@ -650,7 +635,6 @@
             transition: opacity 0.5s;
         }
 
-        /* Окно входа */
         #login-modal {
             position: fixed;
             top: 0;
@@ -724,7 +708,6 @@
             font-size: 0.9rem;
         }
 
-        /* Экран рейтинга и как играть */
         #leaderboard-screen, #how-to-play-screen {
             position: absolute;
             width: 100%;
@@ -808,7 +791,6 @@
             transform: translateY(-2px);
         }
 
-        /* Стили для секций в "Как играть" */
         .how-to-play-section {
             margin-bottom: 25px;
         }
@@ -847,7 +829,62 @@
             line-height: 1.4;
         }
 
-        /* Адаптивность */
+        /* Debug консоль */
+        #debug-console {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10000;
+            font-family: monospace;
+            max-width: 400px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #ff4757;
+            font-size: 12px;
+        }
+
+        .debug-title {
+            color: #ff4757;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ff4757;
+        }
+
+        #debug-log {
+            word-wrap: break-word;
+        }
+
+        /* Тестовые кнопки */
+        #test-buttons {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10000;
+            border: 2px solid #3742fa;
+        }
+
+        .test-btn {
+            margin: 2px;
+            padding: 5px 10px;
+            background: #3742fa;
+            color: white;
+            border: 1px solid #000;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .test-btn:hover {
+            background: #5352ed;
+        }
+
         @media (max-width: 1200px) {
             .level-grid {
                 grid-template-columns: repeat(12, 50px);
@@ -894,6 +931,26 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Подсказка по управлению */
+        .controls-hint {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ff4757;
+            color: #fff;
+            font-size: 1.2rem;
+            z-index: 5;
+        }
+
+        .controls-hint span {
+            color: #ff4757;
+            font-weight: bold;
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
@@ -925,7 +982,6 @@
             <h1 class="title">OGETAKER</h1>
             <p class="subtitle">Готовься к ОГЭ с демонессами знаний!</p>
             
-            <!-- Секция импорта музыки -->
             <div class="music-import-section">
                 <input type="file" id="music-file" accept="audio/*" style="display: none;">
                 <button class="import-btn" onclick="document.getElementById('music-file').click()">
@@ -1002,6 +1058,11 @@
             
             <div id="music-control">🎵</div>
             
+            <!-- Подсказка по управлению -->
+            <div class="controls-hint">
+                <span>WASD</span> - движение
+            </div>
+            
             <div class="level-container">
                 <div class="level-grid" id="level-grid">
                     <!-- Уровень будет сгенерирован JavaScript -->
@@ -1033,15 +1094,16 @@
             </div>
         </div>
 
-        <!-- Экран как играть -->
+        <!-- Экран как играть (ОБНОВЛЕН) -->
         <div id="how-to-play-screen">
             <div class="how-to-play-container">
                 <h2 class="how-to-play-title">❓ КАК ИГРАТЬ</h2>
                 
                 <div class="how-to-play-section">
                     <h3>🎮 УПРАВЛЕНИЕ</h3>
-                    <p>WASD - движение</p>
+                    <p><strong style="color: #ff4757;">WASD</strong> - движение персонажа</p>
                     <p>Мышь - нажимай на кнопки в меню</p>
+                    <p>Esc - выход в меню выбора уровня</p>
                 </div>
 
                 <div class="how-to-play-section">
@@ -1097,7 +1159,41 @@
         </audio>
     </div>
 
+    <!-- Debug консоль (можно удалить после отладки) -->
+    <div id="debug-console">
+        <div class="debug-title">🔧 DEBUG CONSOLE</div>
+        <div id="debug-log"></div>
+    </div>
+
+    <!-- Тестовые кнопки (можно удалить после отладки) -->
+    <div id="test-buttons">
+        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(1,0)'); movePlayer(1,0)">➡️ Вправо</button>
+        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(-1,0)'); movePlayer(-1,0)">⬅️ Влево</button>
+        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(0,-1)'); movePlayer(0,-1)">⬆️ Вверх</button>
+        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(0,1)'); movePlayer(0,1)">⬇️ Вниз</button>
+        <button class="test-btn" onclick="console.log(gameState); alert('gameState в консоли (F12)')">ℹ️ Состояние</button>
+        <button class="test-btn" onclick="updatePlayerPosition()">🔄 Обновить</button>
+    </div>
+
     <script>
+        // ========================
+        // DEBUG ФУНКЦИЯ
+        // ========================
+        function debug(message) {
+            console.log(message);
+            const log = document.getElementById('debug-log');
+            if (log) {
+                const entry = document.createElement('div');
+                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                log.appendChild(entry);
+                log.scrollTop = log.scrollHeight;
+                
+                if (log.children.length > 10) {
+                    log.removeChild(log.children[0]);
+                }
+            }
+        }
+
         // ========================
         // КОНФИГУРАЦИЯ
         // ========================
@@ -1148,7 +1244,7 @@
                 answers: [
                     "Оперативное запоминающее устройство",
                     "Основное защитное управление",
-                    "Оптическое запнимающее устройство",
+                    "Оптическое запоминающее устройство",
                     "Объемное защитное управление"
                 ],
                 correct: 0
@@ -1372,7 +1468,6 @@
         const currentPlayerDisplay = document.getElementById('current-player');
         const totalDemonsDisplay = document.getElementById('total-demons-count');
 
-        // Кнопки
         const startButton = document.getElementById('start-button');
         const howToPlayButton = document.getElementById('how-to-play-button');
         const difficulty1Button = document.getElementById('difficulty-1');
@@ -1383,19 +1478,663 @@
         const loginUsernameInput = document.getElementById('login-username');
         const loginPasswordInput = document.getElementById('login-password');
 
-        // Аудио элементы
         const backgroundMusic = document.getElementById('background-music');
         const moveSound = document.getElementById('move-sound');
         const questionSound = document.getElementById('question-sound');
         const correctSound = document.getElementById('correct-sound');
         const wrongSound = document.getElementById('wrong-sound');
 
-        // Статистика
         const stats = {
             solved: document.getElementById('solved-count'),
             mistakes: document.getElementById('mistakes-count'),
             demons: document.getElementById('demons-count')
         };
+
+        // ========================
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДВИЖЕНИЯ
+        // ========================
+        function movePlayer(dx, dy) {
+            debug(`🎮 movePlayer вызван: dx=${dx}, dy=${dy}`);
+            debug(`📍 Текущая позиция: x=${gameState.playerPosition.x}, y=${gameState.playerPosition.y}`);
+            debug(`🚦 isMoving = ${gameState.isMoving}`);
+            
+            if (gameState.isMoving) {
+                debug('⛔ Движение заблокировано - уже движется');
+                return;
+            }
+            
+            const gameScreenDisplay = gameScreen.style.display;
+            debug(`🖥️ gameScreen.display = ${gameScreenDisplay}`);
+            
+            if (gameScreenDisplay !== 'block') {
+                debug('⛔ Игровой экран не активен');
+                return;
+            }
+            
+            if (questionScreen.style.display === 'flex') {
+                debug('⛔ Открыт экран вопроса');
+                return;
+            }
+            
+            if (leaderboardScreen.style.display === 'flex') {
+                debug('⛔ Открыт экран рейтинга');
+                return;
+            }
+            
+            if (howToPlayScreen.style.display === 'flex') {
+                debug('⛔ Открыт экран "Как играть"');
+                return;
+            }
+            
+            const newX = gameState.playerPosition.x + dx;
+            const newY = gameState.playerPosition.y + dy;
+            
+            debug(`🎯 Новая позиция: x=${newX}, y=${newY}`);
+            
+            if (newX < 0 || newX >= 12 || newY < 0 || newY >= 8) {
+                debug('⛔ Выход за границы карты');
+                
+                if (gameState.exitsCreated) {
+                    const isOnExit = gameState.currentLevelLayout.exitPositions.some(exit => 
+                        exit.x === gameState.playerPosition.x && exit.y === gameState.playerPosition.y
+                    );
+                    debug(`🚪 Находится на выходе: ${isOnExit}`);
+                    
+                    if (isOnExit) {
+                        debug('🎉 Активация выхода!');
+                        handleExit();
+                    }
+                }
+                return;
+            }
+            
+            const targetCell = document.querySelector(`.cell[data-x="${newX}"][data-y="${newY}"]`);
+            debug(`🔍 targetCell найден: ${targetCell ? 'да' : 'нет'}`);
+            
+            if (!targetCell) {
+                debug('❌ Клетка не найдена в DOM!');
+                return;
+            }
+            
+            debug(`📋 Классы клетки: ${targetCell.className}`);
+            const isWall = targetCell.classList.contains('wall');
+            debug(`🧱 Это стена: ${isWall}`);
+            
+            if (isWall) {
+                debug('❌ Целевая клетка - стена!');
+                return;
+            }
+            
+            debug('✅ Движение разрешено!');
+            
+            gameState.isMoving = true;
+            debug('🔒 isMoving установлен в true');
+            
+            const player = document.getElementById('player');
+            debug(`👤 player элемент найден: ${player ? 'да' : 'нет'}`);
+            
+            if (!player) {
+                debug('❌ player не найден! Создаем заново...');
+                createPlayer();
+            }
+            
+            if (player) {
+                player.classList.add('walking');
+                debug('👣 Добавлен класс walking');
+            }
+            
+            gameState.playerPosition = {x: newX, y: newY};
+            debug(`✅ Позиция обновлена: x=${newX}, y=${newY}`);
+            
+            updatePlayerPosition();
+            debug('🔄 updatePlayerPosition() вызван');
+            
+            if (moveSound) {
+                moveSound.play().catch(e => debug(`🔇 Ошибка звука: ${e.message}`));
+            }
+            
+            if (player) {
+                const rect = player.getBoundingClientRect();
+                debug(`📐 Позиция на экране: left=${Math.round(rect.left)}, top=${Math.round(rect.top)}`);
+                createParticles(rect.left + 15, rect.top + 65, '#ff4757', 3);
+            }
+            
+            setTimeout(() => {
+                if (player) player.classList.remove('walking');
+                gameState.isMoving = false;
+                debug('🔓 Блокировка движения снята');
+                checkCollisions();
+            }, 300);
+        }
+
+        // ========================
+        // ОБРАБОТЧИК КЛАВИШ (ТОЛЬКО WASD)
+        // ========================
+        document.addEventListener('keydown', function(e) {
+            debug(`⌨️ Нажата клавиша: ${e.key} (code: ${e.code})`);
+            
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                debug('⏭️ Игнорируем - ввод в текстовое поле');
+                return;
+            }
+            
+            // Блокируем все клавиши со стрелками
+            if (e.key.startsWith('Arrow')) {
+                e.preventDefault();
+                debug('🚫 Стрелки заблокированы');
+                return;
+            }
+            
+            // Проверяем экраны
+            if (questionScreen.style.display === 'flex' ||
+                leaderboardScreen.style.display === 'flex' ||
+                howToPlayScreen.style.display === 'flex') {
+                debug('⏭️ Игнорируем - открыт другой экран');
+                return;
+            }
+            
+            // Только WASD
+            if (gameScreen.style.display === 'block') {
+                e.preventDefault(); // Предотвращаем скролл
+                
+                switch(e.key.toLowerCase()) {
+                    case 'w':
+                        debug('⬆️ WASD: Вверх');
+                        movePlayer(0, -1);
+                        break;
+                    case 's':
+                        debug('⬇️ WASD: Вниз');
+                        movePlayer(0, 1);
+                        break;
+                    case 'a':
+                        debug('⬅️ WASD: Влево');
+                        movePlayer(-1, 0);
+                        break;
+                    case 'd':
+                        debug('➡️ WASD: Вправо');
+                        movePlayer(1, 0);
+                        break;
+                    default:
+                        debug(`ℹ️ Другая клавиша: ${e.key}`);
+                }
+            }
+            
+            // Escape
+            if (e.key === 'Escape') {
+                debug('🔙 Escape нажат');
+                if (gameScreen.style.display === 'block') {
+                    gameScreen.style.display = 'none';
+                    modeSelectionScreen.style.display = 'flex';
+                    debug('✅ Возврат в меню выбора уровня');
+                }
+            }
+        });
+
+        // Блокируем контекстное меню
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // ========================
+        // ФУНКЦИИ ИГРЫ
+        // ========================
+        function updatePlayerPosition() {
+            debug('🔄 updatePlayerPosition() вызван');
+            
+            const player = document.getElementById('player');
+            const cell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
+            
+            debug(`👤 player: ${player ? 'есть' : 'НЕТ!'}`);
+            debug(`🧱 cell: ${cell ? 'есть' : 'НЕТ!'}`);
+            
+            if (!player) {
+                debug('❌ КРИТИЧЕСКАЯ ОШИБКА: player не существует!');
+                createPlayer();
+                return;
+            }
+            
+            if (!cell) {
+                debug(`❌ КРИТИЧЕСКАЯ ОШИБКА: клетка [${gameState.playerPosition.x},${gameState.playerPosition.y}] не найдена!`);
+                return;
+            }
+            
+            const rect = cell.getBoundingClientRect();
+            const containerRect = document.querySelector('.level-container').getBoundingClientRect();
+            
+            debug(`📐 rect клетки: left=${Math.round(rect.left)}, top=${Math.round(rect.top)}`);
+            debug(`📐 containerRect: left=${Math.round(containerRect.left)}, top=${Math.round(containerRect.top)}`);
+            
+            const left = rect.left - containerRect.left + rect.width / 2 - 25;
+            const top = rect.top - containerRect.top + rect.height / 2 - 35;
+            
+            debug(`🎯 Новая позиция: left=${Math.round(left)}px, top=${Math.round(top)}px`);
+            
+            player.style.left = left + 'px';
+            player.style.top = top + 'px';
+            player.style.transform = 'scale(1.2)';
+            player.style.opacity = '1';
+            player.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            
+            debug('✅ Позиция игрока обновлена');
+        }
+
+        function createPlayer() {
+            debug('👤 createPlayer() вызван');
+            
+            const oldPlayer = document.getElementById('player');
+            if (oldPlayer) {
+                oldPlayer.remove();
+                debug('✅ Старый игрок удален');
+            }
+            
+            const player = document.createElement('div');
+            player.className = 'player';
+            player.id = 'player';
+            document.querySelector('.level-container').appendChild(player);
+            
+            debug('✅ Новый игрок создан');
+            
+            // Даем время на отрисовку
+            setTimeout(() => {
+                updatePlayerPosition();
+            }, 50);
+        }
+
+        function initLevel() {
+            debug('🏁 initLevel() вызван');
+            debug(`🎮 Выбран уровень сложности: ${gameState.difficulty}`);
+            
+            levelGrid.innerHTML = '';
+            debug('✅ levelGrid очищен');
+            
+            const layout = gameState.currentLevelLayout;
+            gameState.playerPosition = {...layout.startPosition};
+            debug(`📍 Стартовая позиция: x=${gameState.playerPosition.x}, y=${gameState.playerPosition.y}`);
+            
+            // Создаем клетки
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 12; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    
+                    if (layout.isWall(x, y)) {
+                        cell.classList.add('wall');
+                    } else {
+                        cell.classList.add('path');
+                    }
+                    
+                    levelGrid.appendChild(cell);
+                }
+            }
+            debug('✅ Клетки созданы');
+            
+            // Обновляем позиции демонов
+            demons.forEach((demon, index) => {
+                if (layout.demonPositions[index]) {
+                    demon.position = {...layout.demonPositions[index]};
+                }
+            });
+            
+            createPlayer();
+            
+            demons.forEach(demon => {
+                createDemon(demon);
+                debug(`✅ Демон ${demon.name} создан`);
+            });
+            
+            createQuestions();
+            debug('✅ Вопросы созданы');
+            
+            gameState.exitsCreated = false;
+            gameState.unlockedDemons = [];
+            gameState.questionsSolved = 0;
+            gameState.mistakes = 0;
+            
+            stats.solved.textContent = '0';
+            stats.mistakes.textContent = '0';
+            stats.demons.textContent = '0';
+            
+            if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
+            
+            debug('🏁 initLevel() завершен');
+        }
+
+        function createDemon(demon) {
+            const oldDemon = document.querySelector(`.demon[data-name="${demon.name}"]`);
+            if (oldDemon) oldDemon.remove();
+            
+            const demonElement = document.createElement('div');
+            demonElement.className = `demon ${demon.name} floating`;
+            demonElement.dataset.name = demon.name;
+            document.querySelector('.level-container').appendChild(demonElement);
+            
+            setTimeout(() => {
+                const cell = document.querySelector(`.cell[data-x="${demon.position.x}"][data-y="${demon.position.y}"]`);
+                if (cell) {
+                    const rect = cell.getBoundingClientRect();
+                    const containerRect = document.querySelector('.level-container').getBoundingClientRect();
+                    
+                    demonElement.style.left = (rect.left - containerRect.left + rect.width / 2 - 27.5) + 'px';
+                    demonElement.style.top = (rect.top - containerRect.top + rect.height / 2 - 40) + 'px';
+                }
+            }, 50);
+        }
+
+        function createQuestions() {
+            const layout = gameState.currentLevelLayout;
+            
+            layout.questionPositions.forEach(pos => {
+                const cell = document.querySelector(`.cell[data-x="${pos.x}"][data-y="${pos.y}"]`);
+                if (cell && !cell.classList.contains('wall')) {
+                    cell.classList.add('question', 'pulse');
+                }
+            });
+        }
+
+        function createExits() {
+            if (gameState.exitsCreated) return;
+            
+            const layout = gameState.currentLevelLayout;
+            
+            layout.exitPositions.forEach(exitPos => {
+                const exitCell = document.querySelector(`.cell[data-x="${exitPos.x}"][data-y="${exitPos.y}"]`);
+                if (exitCell) {
+                    exitCell.classList.remove('wall');
+                    exitCell.classList.add('exit');
+                    exitCell.innerHTML = '🚪';
+                }
+            });
+            
+            gameState.exitsCreated = true;
+            showNotification('Выходы открыты! Иди к выходам для завершения уровня!', 3000);
+        }
+
+        function checkCollisions() {
+            demons.forEach(demon => {
+                if (demon.position.x === gameState.playerPosition.x && 
+                    demon.position.y === gameState.playerPosition.y &&
+                    !gameState.unlockedDemons.includes(demon.name)) {
+                    showDemonQuestion(demon);
+                }
+            });
+            
+            const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
+            if (currentCell && currentCell.classList.contains('question')) {
+                showAdditionalQuestion();
+                currentCell.classList.remove('question', 'pulse');
+            }
+        }
+
+        function showDemonQuestion(demon) {
+            gameState.currentDemon = demon;
+            
+            const portrait = document.querySelector('.demon-portrait');
+            portrait.style.background = `linear-gradient(145deg, ${demon.color}, ${demon.color}99)`;
+            
+            document.getElementById('current-question').textContent = demon.question;
+            
+            const answersContainer = document.getElementById('answers-container');
+            answersContainer.innerHTML = '';
+            
+            demon.answers.forEach((answer, index) => {
+                const answerElement = document.createElement('div');
+                answerElement.className = 'answer-option';
+                answerElement.textContent = answer;
+                answerElement.onclick = () => checkDemonAnswer(index);
+                answersContainer.appendChild(answerElement);
+            });
+            
+            questionSound.play();
+            questionScreen.style.display = 'flex';
+        }
+
+        function checkDemonAnswer(selectedIndex) {
+            const isCorrect = selectedIndex === gameState.currentDemon.correct;
+            
+            if (isCorrect) {
+                correctSound.play();
+                gameState.questionsSolved++;
+                gameState.unlockedDemons.push(gameState.currentDemon.name);
+                stats.solved.textContent = gameState.questionsSolved;
+                stats.demons.textContent = new Set(gameState.unlockedDemons).size;
+                
+                gameState.totalDemonsCollected++;
+                if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
+                
+                const portrait = document.querySelector('.demon-portrait');
+                const rect = portrait.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, gameState.currentDemon.color, 15);
+                
+                const demonElement = document.querySelector(`.demon[data-name="${gameState.currentDemon.name}"]`);
+                if (demonElement) {
+                    demonElement.style.opacity = '0';
+                    setTimeout(() => demonElement.remove(), 500);
+                }
+                
+                if (gameState.unlockedDemons.length >= demons.length) {
+                    createExits();
+                }
+                
+                saveProgress();
+            } else {
+                wrongSound.play();
+                gameState.mistakes++;
+                stats.mistakes.textContent = gameState.mistakes;
+            }
+            
+            questionScreen.style.display = 'none';
+        }
+
+        function showAdditionalQuestion() {
+            const randomQuestion = additionalQuestions[Math.floor(Math.random() * additionalQuestions.length)];
+            
+            document.querySelector('.demon-portrait').style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
+            document.getElementById('current-question').textContent = randomQuestion.question;
+            
+            const answersContainer = document.getElementById('answers-container');
+            answersContainer.innerHTML = '';
+            
+            randomQuestion.answers.forEach((answer, index) => {
+                const answerElement = document.createElement('div');
+                answerElement.className = 'answer-option';
+                answerElement.textContent = answer;
+                answerElement.onclick = () => checkAdditionalAnswer(randomQuestion, index);
+                answersContainer.appendChild(answerElement);
+            });
+            
+            questionSound.play();
+            questionScreen.style.display = 'flex';
+        }
+
+        function checkAdditionalAnswer(question, selectedIndex) {
+            const isCorrect = selectedIndex === question.correct;
+            
+            if (isCorrect) {
+                correctSound.play();
+                gameState.questionsSolved++;
+                stats.solved.textContent = gameState.questionsSolved;
+                
+                const portrait = document.querySelector('.demon-portrait');
+                const rect = portrait.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffa502', 10);
+                
+                if (gameState.unlockedDemons.length >= demons.length && gameState.questionsSolved >= 8) {
+                    createExits();
+                }
+                
+                saveProgress();
+            } else {
+                wrongSound.play();
+                gameState.mistakes++;
+                stats.mistakes.textContent = gameState.mistakes;
+            }
+            
+            questionScreen.style.display = 'none';
+        }
+
+        function handleExit() {
+            showNotification(`🎉 Поздравляем! Вы прошли ${gameState.difficulty} уровень!`, 3000);
+            
+            completeLevel();
+            
+            const player = document.getElementById('player');
+            player.style.transition = 'all 1.5s ease-out';
+            player.style.transform = 'scale(0.5) rotate(360deg)';
+            player.style.opacity = '0';
+            
+            const playerRect = player.getBoundingClientRect();
+            createParticles(playerRect.left + 25, playerRect.top + 35, '#2ed573', 30);
+            
+            setTimeout(() => {
+                gameScreen.style.display = 'none';
+                modeSelectionScreen.style.display = 'flex';
+                
+                player.style.transition = '';
+                player.style.transform = '';
+                player.style.opacity = '1';
+                
+                resetGameState();
+            }, 3000);
+        }
+
+        function completeLevel() {
+            const currentDifficulty = gameState.difficulty;
+            
+            if (currentDifficulty === 1 && !gameState.unlockedDifficulties.includes(2)) {
+                gameState.unlockedDifficulties.push(2);
+                updateDifficultyButtons();
+                showNotification('🎉 Уровень 2 "Змейка" разблокирован!', 3000);
+                
+                if (isOnlineMode) unlockLevelOnServer(2);
+            }
+            
+            if (currentDifficulty === 2 && !gameState.unlockedDifficulties.includes(3)) {
+                gameState.unlockedDifficulties.push(3);
+                updateDifficultyButtons();
+                showNotification('🎉 Уровень 3 "Лабиринт" разблокирован!', 3000);
+                
+                if (isOnlineMode) unlockLevelOnServer(3);
+            }
+            
+            saveProgress();
+        }
+
+        function resetGameState() {
+            gameState.playerPosition = {x: 1, y: 4};
+            gameState.demonsFound = 0;
+            gameState.questionsSolved = 0;
+            gameState.mistakes = 0;
+            gameState.currentDemon = null;
+            gameState.unlockedDemons = [];
+            gameState.exitsCreated = false;
+            
+            stats.solved.textContent = '0';
+            stats.mistakes.textContent = '0';
+            stats.demons.textContent = '0';
+            
+            if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
+        }
+
+        function updateDifficultyButtons() {
+            if (gameState.unlockedDifficulties.includes(2)) {
+                difficulty2Button.classList.remove('locked');
+                difficulty2Button.style.cursor = 'pointer';
+                difficulty2Button.style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
+                difficulty2Button.style.color = '#fff';
+                
+                const lockIcon = difficulty2Button.querySelector('.lock-icon');
+                if (lockIcon) lockIcon.style.display = 'none';
+                
+                const label2 = difficulty2Button.querySelector('.difficulty-label');
+                if (label2) label2.textContent = 'Карта "Змейка"';
+            }
+            
+            if (gameState.unlockedDifficulties.includes(3)) {
+                difficulty3Button.classList.remove('locked');
+                difficulty3Button.style.cursor = 'pointer';
+                difficulty3Button.style.background = 'linear-gradient(145deg, #ff4757, #ff3742)';
+                difficulty3Button.style.color = '#fff';
+                
+                const lockIcon = difficulty3Button.querySelector('.lock-icon');
+                if (lockIcon) lockIcon.style.display = 'none';
+                
+                const label3 = difficulty3Button.querySelector('.difficulty-label');
+                if (label3) label3.textContent = 'Карта "Лабиринт"';
+            }
+        }
+
+        function startGame() {
+            modeSelectionScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            
+            currentDifficultyDisplay.textContent = gameState.difficulty;
+            
+            if (gameState.musicEnabled) {
+                backgroundMusic.volume = 0.3;
+                backgroundMusic.play().catch(e => debug('🔇 Автовоспроизведение заблокировано'));
+            }
+            
+            initLevel();
+        }
+
+        function showNotification(message, duration = 2000) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, duration);
+        }
+
+        function createParticles(x, y, color, count = 5) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.background = color;
+                particle.style.borderRadius = '50%';
+                
+                document.getElementById('game-screen').appendChild(particle);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 20 + Math.random() * 30;
+                
+                const animation = particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 800 + Math.random() * 400,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+                
+                animation.onfinish = () => particle.remove();
+            }
+        }
+
+        function toggleMusic() {
+            gameState.musicEnabled = !gameState.musicEnabled;
+            
+            if (gameState.musicEnabled) {
+                if (gameState.customMusic) {
+                    backgroundMusic.src = gameState.customMusic;
+                }
+                backgroundMusic.play();
+                musicControl.textContent = '🎵';
+                musicControl.style.borderColor = '#ff4757';
+                showNotification('🔊 Музыка включена');
+            } else {
+                backgroundMusic.pause();
+                musicControl.textContent = '🔇';
+                musicControl.style.borderColor = '#666';
+                showNotification('🔇 Музыка выключена');
+            }
+        }
 
         // ========================
         // СИСТЕМА АВТОРИЗАЦИИ
@@ -1484,9 +2223,6 @@
             }
         }
 
-        // ========================
-        // СИСТЕМА СОХРАНЕНИЯ
-        // ========================
         async function loadServerProgress() {
             if (!userToken) return;
             
@@ -1505,7 +2241,7 @@
                         if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                     }
                     
-                    console.log('✅ Прогресс загружен с сервера');
+                    debug('✅ Прогресс загружен с сервера');
                 }
             } catch (error) {
                 console.error('❌ Ошибка загрузки прогресса:', error);
@@ -1534,15 +2270,11 @@
         async function saveProgress() {
             const progressData = {
                 unlockedDifficulties: gameState.unlockedDifficulties,
-                currentProgress: {
-                    difficulty: gameState.difficulty,
-                    playerPosition: gameState.playerPosition,
-                    demonsFound: gameState.demonsFound,
-                    questionsSolved: gameState.questionsSolved,
-                    mistakes: gameState.mistakes,
-                    unlockedDemons: gameState.unlockedDemons,
-                    lastPlayed: new Date().toISOString()
-                },
+                currentDifficulty: gameState.difficulty,
+                playerPosition: gameState.playerPosition,
+                questionsSolved: gameState.questionsSolved,
+                mistakes: gameState.mistakes,
+                unlockedDemons: gameState.unlockedDemons,
                 statistics: {
                     totalDemonsCollected: gameState.totalDemonsCollected || 0,
                     totalQuestionsSolved: gameState.questionsSolved || 0,
@@ -1561,15 +2293,7 @@
             try {
                 const dataToSend = {
                     token: userToken,
-                    progress: {
-                        unlockedDifficulties: progressData.unlockedDifficulties,
-                        currentProgress: progressData.currentProgress,
-                        statistics: {
-                            totalDemonsCollected: gameState.totalDemonsCollected || 0,
-                            totalQuestionsSolved: gameState.questionsSolved || 0,
-                            totalMistakes: gameState.mistakes || 0
-                        }
-                    }
+                    progress: progressData
                 };
                 
                 const response = await fetch(`${SERVER_URL}/api/save-progress`, {
@@ -1580,7 +2304,7 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    console.log('✅ Прогресс и статистика сохранены на сервере');
+                    debug('✅ Прогресс сохранен на сервере');
                 }
             } catch (error) {
                 console.error('❌ Ошибка сохранения прогресса:', error);
@@ -1590,7 +2314,7 @@
         function saveLocalProgress(progressData) {
             try {
                 localStorage.setItem('ogetaker_localProgress', JSON.stringify(progressData));
-                console.log('✅ Прогресс сохранен локально');
+                debug('✅ Прогресс сохранен локально');
             } catch (error) {
                 console.error('❌ Ошибка локального сохранения:', error);
             }
@@ -1608,16 +2332,13 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    console.log(`✅ Уровень ${level} разблокирован на сервере`);
+                    debug(`✅ Уровень ${level} разблокирован на сервере`);
                 }
             } catch (error) {
                 console.error('❌ Ошибка разблокировки:', error);
             }
         }
 
-        // ========================
-        // РЕЙТИНГ
-        // ========================
         async function showLeaderboard() {
             try {
                 const response = await fetch(`${SERVER_URL}/api/leaderboard`);
@@ -1673,470 +2394,6 @@
                 console.error('Ошибка загрузки рейтинга:', error);
                 leaderboardList.innerHTML = '<p style="text-align: center; color: #ff4757;">❌ Ошибка загрузки рейтинга</p>';
                 leaderboardScreen.style.display = 'flex';
-            }
-        }
-
-        // ========================
-        // ФУНКЦИИ ИГРЫ
-        // ========================
-        function updateDifficultyButtons() {
-            if (gameState.unlockedDifficulties.includes(2)) {
-                difficulty2Button.classList.remove('locked');
-                difficulty2Button.style.cursor = 'pointer';
-                difficulty2Button.style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
-                difficulty2Button.style.color = '#fff';
-                
-                const lockIcon = difficulty2Button.querySelector('.lock-icon');
-                if (lockIcon) lockIcon.style.display = 'none';
-                
-                const label2 = difficulty2Button.querySelector('.difficulty-label');
-                if (label2) label2.textContent = 'Карта "Змейка"';
-            }
-            
-            if (gameState.unlockedDifficulties.includes(3)) {
-                difficulty3Button.classList.remove('locked');
-                difficulty3Button.style.cursor = 'pointer';
-                difficulty3Button.style.background = 'linear-gradient(145deg, #ff4757, #ff3742)';
-                difficulty3Button.style.color = '#fff';
-                
-                const lockIcon = difficulty3Button.querySelector('.lock-icon');
-                if (lockIcon) lockIcon.style.display = 'none';
-                
-                const label3 = difficulty3Button.querySelector('.difficulty-label');
-                if (label3) label3.textContent = 'Карта "Лабиринт"';
-            }
-        }
-
-        function completeLevel() {
-            const currentDifficulty = gameState.difficulty;
-            
-            if (currentDifficulty === 1 && !gameState.unlockedDifficulties.includes(2)) {
-                gameState.unlockedDifficulties.push(2);
-                updateDifficultyButtons();
-                showNotification('🎉 Уровень 2 "Змейка" разблокирован!', 3000);
-                
-                if (isOnlineMode) unlockLevelOnServer(2);
-            }
-            
-            if (currentDifficulty === 2 && !gameState.unlockedDifficulties.includes(3)) {
-                gameState.unlockedDifficulties.push(3);
-                updateDifficultyButtons();
-                showNotification('🎉 Уровень 3 "Лабиринт" разблокирован!', 3000);
-                
-                if (isOnlineMode) unlockLevelOnServer(3);
-            }
-            
-            saveProgress();
-        }
-
-        function startGame() {
-            modeSelectionScreen.style.display = 'none';
-            gameScreen.style.display = 'block';
-            
-            currentDifficultyDisplay.textContent = gameState.difficulty;
-            
-            if (gameState.musicEnabled) {
-                backgroundMusic.volume = 0.3;
-                backgroundMusic.play().catch(e => console.log('Автовоспроизведение заблокировано'));
-            }
-            
-            initLevel();
-        }
-
-        function showNotification(message, duration = 2000) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                setTimeout(() => notification.remove(), 500);
-            }, duration);
-        }
-
-        function createParticles(x, y, color, count = 5) {
-            for (let i = 0; i < count; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-                particle.style.width = '4px';
-                particle.style.height = '4px';
-                particle.style.background = color;
-                particle.style.borderRadius = '50%';
-                
-                document.getElementById('game-screen').appendChild(particle);
-                
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 20 + Math.random() * 30;
-                
-                const animation = particle.animate([
-                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
-                ], {
-                    duration: 800 + Math.random() * 400,
-                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                });
-                
-                animation.onfinish = () => particle.remove();
-            }
-        }
-
-        function initLevel() {
-            levelGrid.innerHTML = '';
-            
-            const layout = gameState.currentLevelLayout;
-            gameState.playerPosition = {...layout.startPosition};
-            
-            demons.forEach((demon, index) => {
-                if (layout.demonPositions[index]) {
-                    demon.position = {...layout.demonPositions[index]};
-                }
-            });
-            
-            for (let y = 0; y < 8; y++) {
-                for (let x = 0; x < 12; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.dataset.x = x;
-                    cell.dataset.y = y;
-                    
-                    if (layout.isWall(x, y)) {
-                        cell.classList.add('wall');
-                    } else {
-                        cell.classList.add('path');
-                    }
-                    
-                    levelGrid.appendChild(cell);
-                }
-            }
-            
-            createPlayer();
-            demons.forEach(demon => createDemon(demon));
-            createQuestions();
-            
-            gameState.exitsCreated = false;
-            gameState.unlockedDemons = [];
-            gameState.questionsSolved = 0;
-            gameState.mistakes = 0;
-            
-            stats.solved.textContent = '0';
-            stats.mistakes.textContent = '0';
-            stats.demons.textContent = '0';
-            
-            if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
-        }
-
-        function createQuestions() {
-            const layout = gameState.currentLevelLayout;
-            
-            layout.questionPositions.forEach(pos => {
-                const cell = document.querySelector(`.cell[data-x="${pos.x}"][data-y="${pos.y}"]`);
-                if (cell && !cell.classList.contains('wall')) {
-                    cell.classList.add('question', 'pulse');
-                }
-            });
-        }
-
-        function createExits() {
-            if (gameState.exitsCreated) return;
-            
-            const layout = gameState.currentLevelLayout;
-            
-            layout.exitPositions.forEach(exitPos => {
-                const exitCell = document.querySelector(`.cell[data-x="${exitPos.x}"][data-y="${exitPos.y}"]`);
-                if (exitCell) {
-                    exitCell.classList.remove('wall');
-                    exitCell.classList.add('exit');
-                    exitCell.innerHTML = '🚪';
-                }
-            });
-            
-            gameState.exitsCreated = true;
-            showNotification('Выходы открыты! Иди к выходам для завершения уровня!', 3000);
-        }
-
-        function createPlayer() {
-            const oldPlayer = document.getElementById('player');
-            if (oldPlayer) oldPlayer.remove();
-            
-            const player = document.createElement('div');
-            player.className = 'player';
-            player.id = 'player';
-            document.querySelector('.level-container').appendChild(player);
-            updatePlayerPosition();
-        }
-
-        function createDemon(demon) {
-            const oldDemon = document.querySelector(`.demon[data-name="${demon.name}"]`);
-            if (oldDemon) oldDemon.remove();
-            
-            const demonElement = document.createElement('div');
-            demonElement.className = `demon ${demon.name} floating`;
-            demonElement.dataset.name = demon.name;
-            document.querySelector('.level-container').appendChild(demonElement);
-            updateDemonPosition(demon);
-        }
-
-        function updatePlayerPosition() {
-            const player = document.getElementById('player');
-            const cell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
-            
-            if (cell && player) {
-                const rect = cell.getBoundingClientRect();
-                const containerRect = document.querySelector('.level-container').getBoundingClientRect();
-                
-                player.style.left = (rect.left - containerRect.left + rect.width / 2 - 25) + 'px';
-                player.style.top = (rect.top - containerRect.top + rect.height / 2 - 35) + 'px';
-                
-                player.style.transform = 'scale(1.2)';
-                player.style.opacity = '1';
-                player.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            }
-        }
-
-        function updateDemonPosition(demon) {
-            const demonElement = document.querySelector(`.demon[data-name="${demon.name}"]`);
-            const cell = document.querySelector(`.cell[data-x="${demon.position.x}"][data-y="${demon.position.y}"]`);
-            
-            if (cell && demonElement) {
-                const rect = cell.getBoundingClientRect();
-                const containerRect = document.querySelector('.level-container').getBoundingClientRect();
-                
-                demonElement.style.left = (rect.left - containerRect.left + rect.width / 2 - 27.5) + 'px';
-                demonElement.style.top = (rect.top - containerRect.top + rect.height / 2 - 40) + 'px';
-            }
-        }
-
-        function showDemonQuestion(demon) {
-            gameState.currentDemon = demon;
-            
-            const portrait = document.querySelector('.demon-portrait');
-            portrait.style.background = `linear-gradient(145deg, ${demon.color}, ${demon.color}99)`;
-            
-            document.getElementById('current-question').textContent = demon.question;
-            
-            const answersContainer = document.getElementById('answers-container');
-            answersContainer.innerHTML = '';
-            
-            demon.answers.forEach((answer, index) => {
-                const answerElement = document.createElement('div');
-                answerElement.className = 'answer-option';
-                answerElement.textContent = answer;
-                answerElement.onclick = () => checkDemonAnswer(index);
-                answersContainer.appendChild(answerElement);
-            });
-            
-            questionSound.play();
-            questionScreen.style.display = 'flex';
-        }
-
-        function checkDemonAnswer(selectedIndex) {
-            const isCorrect = selectedIndex === gameState.currentDemon.correct;
-            
-            if (isCorrect) {
-                correctSound.play();
-                gameState.questionsSolved++;
-                gameState.unlockedDemons.push(gameState.currentDemon.name);
-                stats.solved.textContent = gameState.questionsSolved;
-                stats.demons.textContent = new Set(gameState.unlockedDemons).size;
-                
-                gameState.totalDemonsCollected++;
-                if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
-                console.log(`👿 Всего демонесс собрано: ${gameState.totalDemonsCollected}`);
-                
-                const portrait = document.querySelector('.demon-portrait');
-                const rect = portrait.getBoundingClientRect();
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, gameState.currentDemon.color, 15);
-                
-                const demonElement = document.querySelector(`.demon[data-name="${gameState.currentDemon.name}"]`);
-                if (demonElement) {
-                    demonElement.style.opacity = '0';
-                    setTimeout(() => demonElement.remove(), 500);
-                }
-                
-                if (gameState.unlockedDemons.length >= demons.length) {
-                    createExits();
-                }
-                
-                saveProgress();
-            } else {
-                wrongSound.play();
-                gameState.mistakes++;
-                stats.mistakes.textContent = gameState.mistakes;
-            }
-            
-            questionScreen.style.display = 'none';
-        }
-
-        // ========================
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДВИЖЕНИЯ
-        // ========================
-        function movePlayer(dx, dy) {
-            console.log('movePlayer вызван', dx, dy);
-            
-            if (gameState.isMoving) {
-                console.log('движение заблокировано');
-                return;
-            }
-            
-            const newX = gameState.playerPosition.x + dx;
-            const newY = gameState.playerPosition.y + dy;
-            
-            if (newX >= 0 && newX < 12 && newY >= 0 && newY < 8) {
-                const targetCell = document.querySelector(`.cell[data-x="${newX}"][data-y="${newY}"]`);
-                
-                if (targetCell && !targetCell.classList.contains('wall')) {
-                    gameState.isMoving = true;
-                    
-                    const player = document.getElementById('player');
-                    if (player) player.classList.add('walking');
-                    
-                    gameState.playerPosition = {x: newX, y: newY};
-                    updatePlayerPosition();
-                    
-                    if (moveSound) moveSound.play();
-                    
-                    createParticles(player.getBoundingClientRect().left + 15, 
-                                  player.getBoundingClientRect().top + 65, 
-                                  '#ff4757', 3);
-                    
-                    setTimeout(() => {
-                        if (player) player.classList.remove('walking');
-                        gameState.isMoving = false;
-                        checkCollisions();
-                    }, 300);
-                }
-            } else if (gameState.exitsCreated) {
-                const isOnExit = gameState.currentLevelLayout.exitPositions.some(exit => 
-                    exit.x === gameState.playerPosition.x && exit.y === gameState.playerPosition.y
-                );
-                if (isOnExit) handleExit();
-            }
-        }
-
-        function handleExit() {
-            showNotification(`🎉 Поздравляем! Вы прошли ${gameState.difficulty} уровень!`, 3000);
-            
-            completeLevel();
-            
-            const player = document.getElementById('player');
-            player.style.transition = 'all 1.5s ease-out';
-            player.style.transform = 'scale(0.5) rotate(360deg)';
-            player.style.opacity = '0';
-            
-            const playerRect = player.getBoundingClientRect();
-            createParticles(playerRect.left + 25, playerRect.top + 35, '#2ed573', 30);
-            
-            setTimeout(() => {
-                gameScreen.style.display = 'none';
-                modeSelectionScreen.style.display = 'flex';
-                
-                player.style.transition = '';
-                player.style.transform = '';
-                player.style.opacity = '1';
-                
-                resetGameState();
-            }, 3000);
-        }
-
-        function resetGameState() {
-            gameState.playerPosition = {x: 1, y: 4};
-            gameState.demonsFound = 0;
-            gameState.questionsSolved = 0;
-            gameState.mistakes = 0;
-            gameState.currentDemon = null;
-            gameState.unlockedDemons = [];
-            gameState.exitsCreated = false;
-            
-            stats.solved.textContent = '0';
-            stats.mistakes.textContent = '0';
-            stats.demons.textContent = '0';
-            
-            if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
-        }
-
-        function checkCollisions() {
-            const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
-            
-            demons.forEach(demon => {
-                if (demon.position.x === gameState.playerPosition.x && 
-                    demon.position.y === gameState.playerPosition.y &&
-                    !gameState.unlockedDemons.includes(demon.name)) {
-                    showDemonQuestion(demon);
-                }
-            });
-            
-            if (currentCell && currentCell.classList.contains('question')) {
-                showAdditionalQuestion();
-                currentCell.classList.remove('question', 'pulse');
-            }
-        }
-
-        function showAdditionalQuestion() {
-            const randomQuestion = additionalQuestions[Math.floor(Math.random() * additionalQuestions.length)];
-            
-            document.querySelector('.demon-portrait').style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
-            document.getElementById('current-question').textContent = randomQuestion.question;
-            
-            const answersContainer = document.getElementById('answers-container');
-            answersContainer.innerHTML = '';
-            
-            randomQuestion.answers.forEach((answer, index) => {
-                const answerElement = document.createElement('div');
-                answerElement.className = 'answer-option';
-                answerElement.textContent = answer;
-                answerElement.onclick = () => checkAdditionalAnswer(randomQuestion, index);
-                answersContainer.appendChild(answerElement);
-            });
-            
-            questionSound.play();
-            questionScreen.style.display = 'flex';
-        }
-
-        function checkAdditionalAnswer(question, selectedIndex) {
-            const isCorrect = selectedIndex === question.correct;
-            
-            if (isCorrect) {
-                correctSound.play();
-                gameState.questionsSolved++;
-                stats.solved.textContent = gameState.questionsSolved;
-                
-                const portrait = document.querySelector('.demon-portrait');
-                const rect = portrait.getBoundingClientRect();
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffa502', 10);
-                
-                if (gameState.unlockedDemons.length >= demons.length && gameState.questionsSolved >= 8) {
-                    createExits();
-                }
-                
-                saveProgress();
-            } else {
-                wrongSound.play();
-                gameState.mistakes++;
-                stats.mistakes.textContent = gameState.mistakes;
-            }
-            
-            questionScreen.style.display = 'none';
-        }
-
-        function toggleMusic() {
-            gameState.musicEnabled = !gameState.musicEnabled;
-            
-            if (gameState.musicEnabled) {
-                if (gameState.customMusic) {
-                    backgroundMusic.src = gameState.customMusic;
-                }
-                backgroundMusic.play();
-                musicControl.textContent = '🎵';
-                musicControl.style.borderColor = '#ff4757';
-                showNotification('🔊 Музыка включена');
-            } else {
-                backgroundMusic.pause();
-                musicControl.textContent = '🔇';
-                musicControl.style.borderColor = '#666';
-                showNotification('🔇 Музыка выключена');
             }
         }
 
@@ -2218,7 +2475,7 @@
                     
                     if (gameState.musicEnabled) {
                         backgroundMusic.src = fileURL;
-                        backgroundMusic.play().catch(e => console.log('Автовоспроизведение заблокировано'));
+                        backgroundMusic.play().catch(e => debug('🔇 Автовоспроизведение заблокировано'));
                     }
                     
                     showNotification('🎵 Музыка успешно загружена!');
@@ -2228,44 +2485,10 @@
             musicControl.addEventListener('click', toggleMusic);
         }
 
-        // ========================
-        // ПРОСТОЙ ОБРАБОТЧИК КЛАВИШ - ТОЛЬКО WASD
-        // ========================
-        document.addEventListener('keydown', function(e) {
-            // Игнорируем если вводим текст
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            // Проверяем экраны
-            if (questionScreen.style.display === 'flex') return;
-            if (leaderboardScreen.style.display === 'flex') return;
-            if (howToPlayScreen.style.display === 'flex') return;
-            
-            // Только если игра открыта
-            if (gameScreen.style.display === 'block') {
-                // Отключаем скролл для WASD
-                if (e.key === 'w' || e.key === 'W' || e.key === 'a' || e.key === 'A' || 
-                    e.key === 's' || e.key === 'S' || e.key === 'd' || e.key === 'D') {
-                    e.preventDefault();
-                }
-                
-                // Движение
-                if (e.key === 'w' || e.key === 'W') movePlayer(0, -1);
-                else if (e.key === 's' || e.key === 'S') movePlayer(0, 1);
-                else if (e.key === 'a' || e.key === 'A') movePlayer(-1, 0);
-                else if (e.key === 'd' || e.key === 'D') movePlayer(1, 0);
-            }
-            
-            // Escape
-            if (e.key === 'Escape' && gameScreen.style.display === 'block') {
-                gameScreen.style.display = 'none';
-                modeSelectionScreen.style.display = 'flex';
-            }
-        });
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-
         // Запуск
         window.addEventListener('DOMContentLoaded', () => {
+            debug('🚀 Игра загружается...');
+            
             userToken = localStorage.getItem('ogetaker_userToken');
             currentUsername = localStorage.getItem('ogetaker_username');
             
@@ -2275,13 +2498,17 @@
                 currentPlayerDisplay.textContent = currentUsername;
                 userInfoDisplay.style.display = 'block';
                 loadServerProgress();
+                debug('✅ Загружен онлайн режим');
             } else {
                 setTimeout(showLoginModal, 1000);
+                debug('👤 Показано окно входа');
             }
             
             setupEventListeners();
             window.addEventListener('beforeunload', saveProgress);
             setInterval(saveProgress, 30000);
+            
+            debug('✅ Инициализация завершена');
         });
     </script>
 </body>
