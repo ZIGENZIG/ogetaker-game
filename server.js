@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Раздаем статические файлы (index.html)
+app.use(express.static(__dirname));
 
 // Подключение к PostgreSQL
 const pool = new Pool({
@@ -21,7 +21,7 @@ const pool = new Pool({
     }
 });
 
-// Инициализация таблиц (выполняется один раз при старте)
+// Инициализация таблиц
 async function initializeDatabase() {
     try {
         // Таблица пользователей
@@ -86,7 +86,6 @@ app.post('/api/register', async (req, res) => {
             
             // Проверяем пароль
             if (user.password === password) {
-                // Обновляем токен при каждом входе для безопасности
                 const newToken = uuidv4();
                 await pool.query(
                     'UPDATE users SET token = $1, last_login = NOW() WHERE id = $2',
@@ -118,8 +117,8 @@ app.post('/api/register', async (req, res) => {
             `INSERT INTO progress (
                 user_id, username, unlocked_difficulties, 
                 player_position_x, player_position_y, last_played
-            ) VALUES ($1, $2, $3, $4, $5, NOW())`,
-            [userId, username, [1], 1, 4]
+            ) VALUES ($1, $2, $3, $4, $5, $6)`,
+            [userId, username, [1], 1, 4, new Date()]
         );
 
         res.json({
@@ -146,7 +145,7 @@ app.post('/api/save-progress', async (req, res) => {
 
         // Находим пользователя по токену
         const userResult = await pool.query(
-            'SELECT id FROM users WHERE token = $1',
+            'SELECT id, username FROM users WHERE token = $1',
             [token]
         );
 
@@ -155,27 +154,45 @@ app.post('/api/save-progress', async (req, res) => {
         }
 
         const userId = userResult.rows[0].id;
+        const username = userResult.rows[0].username;
 
-        // Обновляем прогресс (используем COALESCE для защиты от undefined)
+        // Проверяем существование записи прогресса
+        const progressExists = await pool.query(
+            'SELECT * FROM progress WHERE user_id = $1',
+            [userId]
+        );
+
+        if (progressExists.rows.length === 0) {
+            // Создаем запись прогресса, если её нет
+            await pool.query(
+                `INSERT INTO progress (
+                    user_id, username, unlocked_difficulties, 
+                    player_position_x, player_position_y, last_played
+                ) VALUES ($1, $2, $3, $4, $5, $6)`,
+                [userId, username, [1], 1, 4, new Date()]
+            );
+        }
+
+        // Обновляем прогресс
         await pool.query(
             `UPDATE progress SET
-                unlocked_difficulties = COALESCE($1, unlocked_difficulties),
-                current_difficulty = COALESCE($2, current_difficulty),
-                player_position_x = COALESCE($3, player_position_x),
-                player_position_y = COALESCE($4, player_position_y),
-                questions_solved = COALESCE($5, questions_solved),
-                mistakes = COALESCE($6, mistakes),
-                unlocked_demons = COALESCE($7, unlocked_demons),
+                unlocked_difficulties = COALESCE($1::integer[], unlocked_difficulties),
+                current_difficulty = COALESCE($2::integer, current_difficulty),
+                player_position_x = COALESCE($3::integer, player_position_x),
+                player_position_y = COALESCE($4::integer, player_position_y),
+                questions_solved = COALESCE($5::integer, questions_solved),
+                mistakes = COALESCE($6::integer, mistakes),
+                unlocked_demons = COALESCE($7::text[], unlocked_demons),
                 last_played = NOW()
             WHERE user_id = $8`,
             [
                 progress.unlockedDifficulties || null,
-                progress.currentProgress?.difficulty || null,
-                progress.currentProgress?.playerPosition?.x || null,
-                progress.currentProgress?.playerPosition?.y || null,
-                progress.currentProgress?.questionsSolved || null,
-                progress.currentProgress?.mistakes || null,
-                progress.currentProgress?.unlockedDemons || null,
+                progress.currentDifficulty || null,
+                progress.playerPosition?.x || null,
+                progress.playerPosition?.y || null,
+                progress.questionsSolved || null,
+                progress.mistakes || null,
+                progress.unlockedDemons || null,
                 userId
             ]
         );
@@ -184,14 +201,14 @@ app.post('/api/save-progress', async (req, res) => {
         if (progress.statistics) {
             await pool.query(
                 `UPDATE progress SET
-                    total_demons_collected = COALESCE($1, total_demons_collected),
-                    total_questions_solved = COALESCE($2, total_questions_solved),
-                    total_mistakes = COALESCE($3, total_mistakes)
+                    total_demons_collected = COALESCE($1::integer, total_demons_collected),
+                    total_questions_solved = COALESCE($2::integer, total_questions_solved),
+                    total_mistakes = COALESCE($3::integer, total_mistakes)
                 WHERE user_id = $4`,
                 [
-                    progress.statistics.totalDemonsCollected || null,
-                    progress.statistics.totalQuestionsSolved || null,
-                    progress.statistics.totalMistakes || null,
+                    progress.statistics.totalDemonsCollected || 0,
+                    progress.statistics.totalQuestionsSolved || 0,
+                    progress.statistics.totalMistakes || 0,
                     userId
                 ]
             );
@@ -217,7 +234,6 @@ app.get('/api/load-progress', async (req, res) => {
             return res.status(401).json({ success: false, error: 'Требуется токен' });
         }
 
-        // Находим пользователя по токену
         const userResult = await pool.query(
             'SELECT id, username FROM users WHERE token = $1',
             [token]
@@ -229,7 +245,6 @@ app.get('/api/load-progress', async (req, res) => {
 
         const user = userResult.rows[0];
         
-        // Загружаем прогресс
         const progressResult = await pool.query(
             'SELECT * FROM progress WHERE user_id = $1',
             [user.id]
@@ -241,20 +256,16 @@ app.get('/api/load-progress', async (req, res) => {
 
         const p = progressResult.rows[0];
 
-        // Формируем ответ
         const progressData = {
             unlockedDifficulties: p.unlocked_difficulties || [1],
-            currentProgress: {
-                difficulty: p.current_difficulty || 1,
-                playerPosition: { 
-                    x: p.player_position_x || 1, 
-                    y: p.player_position_y || 4 
-                },
-                questionsSolved: p.questions_solved || 0,
-                mistakes: p.mistakes || 0,
-                unlockedDemons: p.unlocked_demons || [],
-                lastPlayed: p.last_played
+            currentDifficulty: p.current_difficulty || 1,
+            playerPosition: { 
+                x: p.player_position_x || 1, 
+                y: p.player_position_y || 4 
             },
+            questionsSolved: p.questions_solved || 0,
+            mistakes: p.mistakes || 0,
+            unlockedDemons: p.unlocked_demons || [],
             statistics: {
                 totalDemonsCollected: p.total_demons_collected || 0,
                 totalQuestionsSolved: p.total_questions_solved || 0,
@@ -283,7 +294,6 @@ app.post('/api/unlock-level', async (req, res) => {
             return res.status(400).json({ success: false, error: 'Требуется токен и уровень' });
         }
 
-        // Находим пользователя
         const userResult = await pool.query(
             'SELECT id FROM users WHERE token = $1',
             [token]
@@ -295,7 +305,6 @@ app.post('/api/unlock-level', async (req, res) => {
 
         const userId = userResult.rows[0].id;
 
-        // Получаем текущие разблокированные уровни
         const progressResult = await pool.query(
             'SELECT unlocked_difficulties FROM progress WHERE user_id = $1',
             [userId]
@@ -303,7 +312,6 @@ app.post('/api/unlock-level', async (req, res) => {
 
         let unlocked = progressResult.rows[0]?.unlocked_difficulties || [1];
 
-        // Добавляем уровень, если его еще нет
         if (!unlocked.includes(level)) {
             unlocked.push(level);
             unlocked.sort((a, b) => a - b);
@@ -362,12 +370,12 @@ app.get('/api/leaderboard', async (req, res) => {
     }
 });
 
-// Проверка здоровья сервера (для Render)
+// Проверка здоровья сервера
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-// Отдаем index.html для всех остальных маршрутов (SPA режим)
+// Отдаем index.html для всех остальных маршрутов
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
