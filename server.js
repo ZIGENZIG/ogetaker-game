@@ -204,6 +204,16 @@
     };
 
     // ========================
+    // ФУНКЦИЯ ДЛЯ ПРИНУДИТЕЛЬНОГО ФОКУСА
+    // ========================
+    setInterval(() => {
+        if (gameScreen.style.display === 'block') {
+            window.focus();
+            document.body.focus();
+        }
+    }, 1000);
+
+    // ========================
     // СИСТЕМА АВТОРИЗАЦИИ
     // ========================
     function showLoginModal() {
@@ -486,7 +496,6 @@
     // ФУНКЦИИ ИГРЫ
     // ========================
     
-    // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДВИЖЕНИЯ
     function movePlayer(dx, dy) {
         console.log('Попытка движения:', dx, dy);
         
@@ -1057,7 +1066,7 @@
 
         musicControl.addEventListener('click', toggleMusic);
 
-        // ПРОСТОЙ И НАДЁЖНЫЙ ОБРАБОТЧИК КЛАВИШ
+        // ПРОСТОЙ ОБРАБОТЧИК - ТОЛЬКО WASD
         document.addEventListener('keydown', function(e) {
             console.log('Клавиша нажата:', e.key);
             
@@ -1065,51 +1074,43 @@
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
                 return;
             }
-            
+
             // Проверяем, открыты ли другие экраны
             if (questionScreen.style.display === 'flex') return;
             if (leaderboardScreen.style.display === 'flex') return;
             if (howToPlayScreen.style.display === 'flex') return;
-            
+
             // Только если игровой экран открыт
             if (gameScreen.style.display === 'block') {
-                // Отключаем скролл страницы
-                if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || 
-                    e.key === 'w' || e.key === 'W' || e.key === 's' || e.key === 'S' || e.key === 'a' || e.key === 'A' || e.key === 'd' || e.key === 'D') {
+                // Отключаем скролл страницы для WASD
+                if (e.key === 'w' || e.key === 'W' || e.key === 'a' || e.key === 'A' || e.key === 's' || e.key === 'S' || e.key === 'd' || e.key === 'D') {
                     e.preventDefault();
                     e.stopPropagation();
                 }
-                
-                // Движение
-                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+
+                // Движение ТОЛЬКО по WASD
+                if (e.key === 'w' || e.key === 'W') {
                     movePlayer(0, -1);
-                } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                } else if (e.key === 's' || e.key === 'S') {
                     movePlayer(0, 1);
-                } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                } else if (e.key === 'a' || e.key === 'A') {
                     movePlayer(-1, 0);
-                } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                } else if (e.key === 'd' || e.key === 'D') {
                     movePlayer(1, 0);
                 }
             }
-            
-            // Escape работает везде
+
+            // Escape для выхода в меню
             if (e.key === 'Escape') {
                 if (gameScreen.style.display === 'block') {
                     gameScreen.style.display = 'none';
                     modeSelectionScreen.style.display = 'flex';
                 }
             }
-        }, true);
+        }, true); // Важно: capturing phase
 
         document.addEventListener('contextmenu', e => e.preventDefault());
     }
-
-    // ПРИНУДИТЕЛЬНЫЙ ФОКУС НА ИГРЕ
-    document.body.addEventListener('click', function() {
-        if (gameScreen.style.display === 'block') {
-            document.body.focus();
-        }
-    });
 
     // Запуск при загрузке страницы
     window.addEventListener('DOMContentLoaded', () => {
