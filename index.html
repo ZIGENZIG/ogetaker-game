@@ -829,26 +829,6 @@
             line-height: 1.4;
         }
 
-        /* Подсказка по управлению */
-        .controls-hint {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0,0,0,0.7);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #ff4757;
-            color: #fff;
-            font-size: 1.2rem;
-            z-index: 5;
-        }
-
-        .controls-hint span {
-            color: #ff4757;
-            font-weight: bold;
-            margin: 0 5px;
-        }
-
         @media (max-width: 1200px) {
             .level-grid {
                 grid-template-columns: repeat(12, 50px);
@@ -1002,11 +982,6 @@
             
             <div id="music-control">🎵</div>
             
-            <!-- Подсказка по управлению -->
-            <div class="controls-hint">
-                <span>WASD</span> - движение
-            </div>
-            
             <div class="level-container">
                 <div class="level-grid" id="level-grid">
                     <!-- Уровень будет сгенерирован JavaScript -->
@@ -1045,7 +1020,7 @@
                 
                 <div class="how-to-play-section">
                     <h3>🎮 УПРАВЛЕНИЕ</h3>
-                    <p><strong style="color: #ff4757;">WASD</strong> - движение персонажа</p>
+                    <p><strong style="color: #ff4757;">WASD</strong> или <strong style="color: #ff4757;">ЦФЫВ</strong> - движение персонажа</p>
                     <p>Мышь - нажимай на кнопки в меню</p>
                     <p>Esc - выход в меню выбора уровня</p>
                 </div>
@@ -1401,7 +1376,7 @@
         };
 
         // ========================
-        // ФУНКЦИЯ ДВИЖЕНИЯ (ИСПРАВЛЕННАЯ)
+        // ФУНКЦИЯ ДВИЖЕНИЯ
         // ========================
         function movePlayer(dx, dy) {
             if (gameState.isMoving) return;
@@ -1465,7 +1440,7 @@
         }
 
         // ========================
-        // ОБРАБОТЧИК КЛАВИШ (ТОЛЬКО WASD)
+        // ОБРАБОТЧИК КЛАВИШ (WASD + ЦФЫВ)
         // ========================
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -1483,24 +1458,23 @@
                 return;
             }
             
-            // Только WASD
+            // Только WASD и ЦФЫВ
             if (gameScreen.style.display === 'block') {
                 e.preventDefault(); // Предотвращаем скролл
                 
-                switch(e.key.toLowerCase()) {
-                    case 'w':
-                        movePlayer(0, -1);
-                        break;
-                    case 's':
-                        movePlayer(0, 1);
-                        break;
-                    case 'a':
-                        movePlayer(-1, 0);
-                        break;
-                    case 'd':
-                        movePlayer(1, 0);
-                        break;
-                }
+                const key = e.key.toLowerCase();
+                
+                // Английская раскладка (WASD)
+                if (key === 'w') movePlayer(0, -1);
+                else if (key === 's') movePlayer(0, 1);
+                else if (key === 'a') movePlayer(-1, 0);
+                else if (key === 'd') movePlayer(1, 0);
+                
+                // Русская раскладка (ЦФЫВ)
+                else if (key === 'ц') movePlayer(0, -1); // ц = w
+                else if (key === 'ы') movePlayer(0, 1);  // ы = s
+                else if (key === 'ф') movePlayer(-1, 0); // ф = a
+                else if (key === 'в') movePlayer(1, 0);  // в = d
             }
             
             // Escape
