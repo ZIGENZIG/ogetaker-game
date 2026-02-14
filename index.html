@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OGETAKER - Готовься к ОГЭ с демонессами!</title>
     <style>
-        /* Твой стиль остается без изменений - я его не трогаю */
+        /* Твой стиль остается без изменений */
         * {
             margin: 0;
             padding: 0;
@@ -829,60 +829,24 @@
             line-height: 1.4;
         }
 
-        /* Debug консоль */
-        #debug-console {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #00ff00;
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 10000;
-            font-family: monospace;
-            max-width: 400px;
-            max-height: 200px;
-            overflow-y: auto;
+        /* Подсказка по управлению */
+        .controls-hint {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
             border: 2px solid #ff4757;
-            font-size: 12px;
+            color: #fff;
+            font-size: 1.2rem;
+            z-index: 5;
         }
 
-        .debug-title {
+        .controls-hint span {
             color: #ff4757;
             font-weight: bold;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #ff4757;
-        }
-
-        #debug-log {
-            word-wrap: break-word;
-        }
-
-        /* Тестовые кнопки */
-        #test-buttons {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 10000;
-            border: 2px solid #3742fa;
-        }
-
-        .test-btn {
-            margin: 2px;
-            padding: 5px 10px;
-            background: #3742fa;
-            color: white;
-            border: 1px solid #000;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .test-btn:hover {
-            background: #5352ed;
+            margin: 0 5px;
         }
 
         @media (max-width: 1200px) {
@@ -930,26 +894,6 @@
             .how-to-play-grid {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Подсказка по управлению */
-        .controls-hint {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0,0,0,0.7);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #ff4757;
-            color: #fff;
-            font-size: 1.2rem;
-            z-index: 5;
-        }
-
-        .controls-hint span {
-            color: #ff4757;
-            font-weight: bold;
-            margin: 0 5px;
         }
     </style>
 </head>
@@ -1159,41 +1103,7 @@
         </audio>
     </div>
 
-    <!-- Debug консоль (можно удалить после отладки) -->
-    <div id="debug-console">
-        <div class="debug-title">🔧 DEBUG CONSOLE</div>
-        <div id="debug-log"></div>
-    </div>
-
-    <!-- Тестовые кнопки (можно удалить после отладки) -->
-    <div id="test-buttons">
-        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(1,0)'); movePlayer(1,0)">➡️ Вправо</button>
-        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(-1,0)'); movePlayer(-1,0)">⬅️ Влево</button>
-        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(0,-1)'); movePlayer(0,-1)">⬆️ Вверх</button>
-        <button class="test-btn" onclick="debug('Ручной тест: movePlayer(0,1)'); movePlayer(0,1)">⬇️ Вниз</button>
-        <button class="test-btn" onclick="console.log(gameState); alert('gameState в консоли (F12)')">ℹ️ Состояние</button>
-        <button class="test-btn" onclick="updatePlayerPosition()">🔄 Обновить</button>
-    </div>
-
     <script>
-        // ========================
-        // DEBUG ФУНКЦИЯ
-        // ========================
-        function debug(message) {
-            console.log(message);
-            const log = document.getElementById('debug-log');
-            if (log) {
-                const entry = document.createElement('div');
-                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-                log.appendChild(entry);
-                log.scrollTop = log.scrollHeight;
-                
-                if (log.children.length > 10) {
-                    log.removeChild(log.children[0]);
-                }
-            }
-        }
-
         // ========================
         // КОНФИГУРАЦИЯ
         // ========================
@@ -1491,57 +1401,28 @@
         };
 
         // ========================
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДВИЖЕНИЯ
+        // ФУНКЦИЯ ДВИЖЕНИЯ (ИСПРАВЛЕННАЯ)
         // ========================
         function movePlayer(dx, dy) {
-            debug(`🎮 movePlayer вызван: dx=${dx}, dy=${dy}`);
-            debug(`📍 Текущая позиция: x=${gameState.playerPosition.x}, y=${gameState.playerPosition.y}`);
-            debug(`🚦 isMoving = ${gameState.isMoving}`);
+            if (gameState.isMoving) return;
             
-            if (gameState.isMoving) {
-                debug('⛔ Движение заблокировано - уже движется');
-                return;
-            }
+            if (gameScreen.style.display !== 'block') return;
             
-            const gameScreenDisplay = gameScreen.style.display;
-            debug(`🖥️ gameScreen.display = ${gameScreenDisplay}`);
-            
-            if (gameScreenDisplay !== 'block') {
-                debug('⛔ Игровой экран не активен');
-                return;
-            }
-            
-            if (questionScreen.style.display === 'flex') {
-                debug('⛔ Открыт экран вопроса');
-                return;
-            }
-            
-            if (leaderboardScreen.style.display === 'flex') {
-                debug('⛔ Открыт экран рейтинга');
-                return;
-            }
-            
-            if (howToPlayScreen.style.display === 'flex') {
-                debug('⛔ Открыт экран "Как играть"');
+            if (questionScreen.style.display === 'flex' ||
+                leaderboardScreen.style.display === 'flex' ||
+                howToPlayScreen.style.display === 'flex') {
                 return;
             }
             
             const newX = gameState.playerPosition.x + dx;
             const newY = gameState.playerPosition.y + dy;
             
-            debug(`🎯 Новая позиция: x=${newX}, y=${newY}`);
-            
             if (newX < 0 || newX >= 12 || newY < 0 || newY >= 8) {
-                debug('⛔ Выход за границы карты');
-                
                 if (gameState.exitsCreated) {
                     const isOnExit = gameState.currentLevelLayout.exitPositions.some(exit => 
                         exit.x === gameState.playerPosition.x && exit.y === gameState.playerPosition.y
                     );
-                    debug(`🚪 Находится на выходе: ${isOnExit}`);
-                    
                     if (isOnExit) {
-                        debug('🎉 Активация выхода!');
                         handleExit();
                     }
                 }
@@ -1549,60 +1430,36 @@
             }
             
             const targetCell = document.querySelector(`.cell[data-x="${newX}"][data-y="${newY}"]`);
-            debug(`🔍 targetCell найден: ${targetCell ? 'да' : 'нет'}`);
             
-            if (!targetCell) {
-                debug('❌ Клетка не найдена в DOM!');
-                return;
-            }
-            
-            debug(`📋 Классы клетки: ${targetCell.className}`);
-            const isWall = targetCell.classList.contains('wall');
-            debug(`🧱 Это стена: ${isWall}`);
-            
-            if (isWall) {
-                debug('❌ Целевая клетка - стена!');
-                return;
-            }
-            
-            debug('✅ Движение разрешено!');
+            if (!targetCell || targetCell.classList.contains('wall')) return;
             
             gameState.isMoving = true;
-            debug('🔒 isMoving установлен в true');
             
             const player = document.getElementById('player');
-            debug(`👤 player элемент найден: ${player ? 'да' : 'нет'}`);
             
             if (!player) {
-                debug('❌ player не найден! Создаем заново...');
                 createPlayer();
             }
             
             if (player) {
                 player.classList.add('walking');
-                debug('👣 Добавлен класс walking');
             }
             
             gameState.playerPosition = {x: newX, y: newY};
-            debug(`✅ Позиция обновлена: x=${newX}, y=${newY}`);
-            
             updatePlayerPosition();
-            debug('🔄 updatePlayerPosition() вызван');
             
             if (moveSound) {
-                moveSound.play().catch(e => debug(`🔇 Ошибка звука: ${e.message}`));
+                moveSound.play().catch(() => {});
             }
             
             if (player) {
                 const rect = player.getBoundingClientRect();
-                debug(`📐 Позиция на экране: left=${Math.round(rect.left)}, top=${Math.round(rect.top)}`);
                 createParticles(rect.left + 15, rect.top + 65, '#ff4757', 3);
             }
             
             setTimeout(() => {
                 if (player) player.classList.remove('walking');
                 gameState.isMoving = false;
-                debug('🔓 Блокировка движения снята');
                 checkCollisions();
             }, 300);
         }
@@ -1611,17 +1468,11 @@
         // ОБРАБОТЧИК КЛАВИШ (ТОЛЬКО WASD)
         // ========================
         document.addEventListener('keydown', function(e) {
-            debug(`⌨️ Нажата клавиша: ${e.key} (code: ${e.code})`);
-            
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                debug('⏭️ Игнорируем - ввод в текстовое поле');
-                return;
-            }
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             
             // Блокируем все клавиши со стрелками
             if (e.key.startsWith('Arrow')) {
                 e.preventDefault();
-                debug('🚫 Стрелки заблокированы');
                 return;
             }
             
@@ -1629,7 +1480,6 @@
             if (questionScreen.style.display === 'flex' ||
                 leaderboardScreen.style.display === 'flex' ||
                 howToPlayScreen.style.display === 'flex') {
-                debug('⏭️ Игнорируем - открыт другой экран');
                 return;
             }
             
@@ -1639,33 +1489,25 @@
                 
                 switch(e.key.toLowerCase()) {
                     case 'w':
-                        debug('⬆️ WASD: Вверх');
                         movePlayer(0, -1);
                         break;
                     case 's':
-                        debug('⬇️ WASD: Вниз');
                         movePlayer(0, 1);
                         break;
                     case 'a':
-                        debug('⬅️ WASD: Влево');
                         movePlayer(-1, 0);
                         break;
                     case 'd':
-                        debug('➡️ WASD: Вправо');
                         movePlayer(1, 0);
                         break;
-                    default:
-                        debug(`ℹ️ Другая клавиша: ${e.key}`);
                 }
             }
             
             // Escape
             if (e.key === 'Escape') {
-                debug('🔙 Escape нажат');
                 if (gameScreen.style.display === 'block') {
                     gameScreen.style.display = 'none';
                     modeSelectionScreen.style.display = 'flex';
-                    debug('✅ Возврат в меню выбора уровня');
                 }
             }
         });
@@ -1677,52 +1519,33 @@
         // ФУНКЦИИ ИГРЫ
         // ========================
         function updatePlayerPosition() {
-            debug('🔄 updatePlayerPosition() вызван');
-            
             const player = document.getElementById('player');
             const cell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
             
-            debug(`👤 player: ${player ? 'есть' : 'НЕТ!'}`);
-            debug(`🧱 cell: ${cell ? 'есть' : 'НЕТ!'}`);
-            
             if (!player) {
-                debug('❌ КРИТИЧЕСКАЯ ОШИБКА: player не существует!');
                 createPlayer();
                 return;
             }
             
-            if (!cell) {
-                debug(`❌ КРИТИЧЕСКАЯ ОШИБКА: клетка [${gameState.playerPosition.x},${gameState.playerPosition.y}] не найдена!`);
-                return;
-            }
+            if (!cell) return;
             
             const rect = cell.getBoundingClientRect();
             const containerRect = document.querySelector('.level-container').getBoundingClientRect();
             
-            debug(`📐 rect клетки: left=${Math.round(rect.left)}, top=${Math.round(rect.top)}`);
-            debug(`📐 containerRect: left=${Math.round(containerRect.left)}, top=${Math.round(containerRect.top)}`);
-            
             const left = rect.left - containerRect.left + rect.width / 2 - 25;
             const top = rect.top - containerRect.top + rect.height / 2 - 35;
-            
-            debug(`🎯 Новая позиция: left=${Math.round(left)}px, top=${Math.round(top)}px`);
             
             player.style.left = left + 'px';
             player.style.top = top + 'px';
             player.style.transform = 'scale(1.2)';
             player.style.opacity = '1';
             player.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            
-            debug('✅ Позиция игрока обновлена');
         }
 
         function createPlayer() {
-            debug('👤 createPlayer() вызван');
-            
             const oldPlayer = document.getElementById('player');
             if (oldPlayer) {
                 oldPlayer.remove();
-                debug('✅ Старый игрок удален');
             }
             
             const player = document.createElement('div');
@@ -1730,24 +1553,16 @@
             player.id = 'player';
             document.querySelector('.level-container').appendChild(player);
             
-            debug('✅ Новый игрок создан');
-            
-            // Даем время на отрисовку
             setTimeout(() => {
                 updatePlayerPosition();
             }, 50);
         }
 
         function initLevel() {
-            debug('🏁 initLevel() вызван');
-            debug(`🎮 Выбран уровень сложности: ${gameState.difficulty}`);
-            
             levelGrid.innerHTML = '';
-            debug('✅ levelGrid очищен');
             
             const layout = gameState.currentLevelLayout;
             gameState.playerPosition = {...layout.startPosition};
-            debug(`📍 Стартовая позиция: x=${gameState.playerPosition.x}, y=${gameState.playerPosition.y}`);
             
             // Создаем клетки
             for (let y = 0; y < 8; y++) {
@@ -1766,7 +1581,6 @@
                     levelGrid.appendChild(cell);
                 }
             }
-            debug('✅ Клетки созданы');
             
             // Обновляем позиции демонов
             demons.forEach((demon, index) => {
@@ -1779,11 +1593,9 @@
             
             demons.forEach(demon => {
                 createDemon(demon);
-                debug(`✅ Демон ${demon.name} создан`);
             });
             
             createQuestions();
-            debug('✅ Вопросы созданы');
             
             gameState.exitsCreated = false;
             gameState.unlockedDemons = [];
@@ -1795,8 +1607,6 @@
             stats.demons.textContent = '0';
             
             if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected || 0;
-            
-            debug('🏁 initLevel() завершен');
         }
 
         function createDemon(demon) {
@@ -2071,7 +1881,7 @@
             
             if (gameState.musicEnabled) {
                 backgroundMusic.volume = 0.3;
-                backgroundMusic.play().catch(e => debug('🔇 Автовоспроизведение заблокировано'));
+                backgroundMusic.play().catch(() => {});
             }
             
             initLevel();
@@ -2240,11 +2050,9 @@
                         gameState.totalDemonsCollected = data.progress.statistics.totalDemonsCollected;
                         if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                     }
-                    
-                    debug('✅ Прогресс загружен с сервера');
                 }
             } catch (error) {
-                console.error('❌ Ошибка загрузки прогресса:', error);
+                console.error('Ошибка загрузки прогресса:', error);
             }
         }
 
@@ -2303,20 +2111,19 @@
                 });
                 
                 const data = await response.json();
-                if (data.success) {
-                    debug('✅ Прогресс сохранен на сервере');
+                if (!data.success) {
+                    console.error('Ошибка сохранения на сервере');
                 }
             } catch (error) {
-                console.error('❌ Ошибка сохранения прогресса:', error);
+                console.error('Ошибка сохранения прогресса:', error);
             }
         }
 
         function saveLocalProgress(progressData) {
             try {
                 localStorage.setItem('ogetaker_localProgress', JSON.stringify(progressData));
-                debug('✅ Прогресс сохранен локально');
             } catch (error) {
-                console.error('❌ Ошибка локального сохранения:', error);
+                console.error('Ошибка локального сохранения:', error);
             }
         }
 
@@ -2324,18 +2131,13 @@
             if (!isOnlineMode || !userToken) return;
             
             try {
-                const response = await fetch(`${SERVER_URL}/api/unlock-level`, {
+                await fetch(`${SERVER_URL}/api/unlock-level`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: userToken, level })
                 });
-                
-                const data = await response.json();
-                if (data.success) {
-                    debug(`✅ Уровень ${level} разблокирован на сервере`);
-                }
             } catch (error) {
-                console.error('❌ Ошибка разблокировки:', error);
+                console.error('Ошибка разблокировки:', error);
             }
         }
 
@@ -2475,7 +2277,7 @@
                     
                     if (gameState.musicEnabled) {
                         backgroundMusic.src = fileURL;
-                        backgroundMusic.play().catch(e => debug('🔇 Автовоспроизведение заблокировано'));
+                        backgroundMusic.play().catch(() => {});
                     }
                     
                     showNotification('🎵 Музыка успешно загружена!');
@@ -2487,8 +2289,6 @@
 
         // Запуск
         window.addEventListener('DOMContentLoaded', () => {
-            debug('🚀 Игра загружается...');
-            
             userToken = localStorage.getItem('ogetaker_userToken');
             currentUsername = localStorage.getItem('ogetaker_username');
             
@@ -2498,17 +2298,13 @@
                 currentPlayerDisplay.textContent = currentUsername;
                 userInfoDisplay.style.display = 'block';
                 loadServerProgress();
-                debug('✅ Загружен онлайн режим');
             } else {
                 setTimeout(showLoginModal, 1000);
-                debug('👤 Показано окно входа');
             }
             
             setupEventListeners();
             window.addEventListener('beforeunload', saveProgress);
             setInterval(saveProgress, 30000);
-            
-            debug('✅ Инициализация завершена');
         });
     </script>
 </body>
