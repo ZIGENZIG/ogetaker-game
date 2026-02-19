@@ -385,6 +385,15 @@
             animation: exitPulse 2s ease-in-out infinite;
         }
 
+        .cell.exit::after {
+            content: "🚪";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+
         @keyframes exitPulse {
             0%, 100% { 
                 transform: scale(1); 
@@ -517,6 +526,7 @@
             color: #fff;
             line-height: 1.6;
             text-align: center;
+            white-space: pre-line;
         }
 
         .answers-grid {
@@ -930,7 +940,7 @@
                 <button class="difficulty-button" id="difficulty-1">
                     <span class="difficulty-number">1</span>
                     ЛЁГКИЙ УРОВЕНЬ
-                    <span class="difficulty-label">Прямоугольная карта</span>
+                    <span class="difficulty-label">Вопросы ОГЭ по информатике</span>
                 </button>
                 
                 <button class="difficulty-button locked" id="difficulty-2">
@@ -1013,7 +1023,7 @@
             </div>
         </div>
 
-        <!-- Экран как играть (ОБНОВЛЕН) -->
+        <!-- Экран как играть -->
         <div id="how-to-play-screen">
             <div class="how-to-play-container">
                 <h2 class="how-to-play-title">❓ КАК ИГРАТЬ</h2>
@@ -1033,9 +1043,9 @@
 
                 <div class="how-to-play-section">
                     <h3>🏰 УРОВНИ</h3>
-                    <p>Уровень 1: Прямоугольная карта</p>
-                    <p>Уровень 2: Карта "Змейка" (нужно пройти 1 уровень)</p>
-                    <p>Уровень 3: Сложный лабиринт (нужно пройти 2 уровень)</p>
+                    <p>Уровень 1: Вопросы ОГЭ по информатике (фиксированные)</p>
+                    <p>Уровень 2: Карта "Змейка" + рандомные вопросы</p>
+                    <p>Уровень 3: Сложный лабиринт + рандомные вопросы</p>
                 </div>
 
                 <div class="how-to-play-section">
@@ -1089,7 +1099,7 @@
         let isOnlineMode = false;
 
         // ========================
-        // ДАННЫЕ ИГРЫ
+        // ДАННЫЕ ИГРЫ - ДЕМОНЕССЫ С ФИКСИРОВАННЫМИ ВОПРОСАМИ (ТОЛЬКО ДЛЯ 1 УРОВНЯ)
         // ========================
         const demons = [
             {
@@ -1097,12 +1107,12 @@
                 description: "Королева логики и последовательностей",
                 color: "#ff4757",
                 position: {x: 3, y: 2},
-                question: "Что такое алгоритм?",
+                question: "В кодировке Windows-1251 каждый символ кодируется 8 битами. Вова хотел написать текст:\n\n«Скользя по утреннему снегу,\nДруг милый, предадимся бегу\nНетерпеливого коня\nИ навестим поля пустые...»\n\nОдно из слов ученик написал два раза подряд, поставив между одинаковыми словами один пробел. При этом размер написанного предложения в данной кодировке оказался на 8 байт больше, чем размер нужного предложения. Напишите в ответе лишнее слово.",
                 answers: [
-                    "Последовательность действий для решения задачи",
-                    "Язык программирования", 
-                    "Математическая формула",
-                    "Тип данных"
+                    "скользя",
+                    "друг",
+                    "поля",
+                    "коня"
                 ],
                 correct: 0
             },
@@ -1111,12 +1121,12 @@
                 description: "Хранительница кода и синтаксиса", 
                 color: "#3742fa",
                 position: {x: 8, y: 2},
-                question: "Какой язык программирования используется для веб-страниц?",
+                question: "В кодировке КОИ-8 каждый символ кодируется 8 битами. Вова написал текст:\n\n«Бор, азот, гелий, натрий, водород, кислород, рентгений, менделевий, резерфордий — химические элементы».\n\nУченик вычеркнул из списка название одного химического элемента. Заодно он вычеркнул ставшие лишними запятую и пробел — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 11 байт меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название элемента.",
                 answers: [
-                    "Python",
-                    "JavaScript",
-                    "C++",
-                    "Java"
+                    "бор",
+                    "рентгений",
+                    "кислород",
+                    "водород"
                 ],
                 correct: 1
             },
@@ -1125,12 +1135,12 @@
                 description: "Повелительница операционных систем",
                 color: "#2ed573",
                 position: {x: 2, y: 5},
-                question: "Что такое ОЗУ?",
+                question: "В одной из кодировок Unicode каждый символ кодируется 16 битами. Вова написал текст:\n\n«Алый, синий, фуксия, красный, янтарный, оранжевый, фиолетовый, канареечный, баклажановый — цвета».\n\nУченик вычеркнул из списка название одного цвета. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 12 байт меньше, чем размер исходного предложения. Напишите в ответе вычеркнутое название цвета.",
                 answers: [
-                    "Оперативное запоминающее устройство",
-                    "Основное защитное управление",
-                    "Оптическое запоминающее устройство",
-                    "Объемное защитное управление"
+                    "алый",
+                    "синий",
+                    "красный",
+                    "янтарный"
                 ],
                 correct: 0
             },
@@ -1139,17 +1149,20 @@
                 description: "Богиня фундаментальных знаний",
                 color: "#ffa502",
                 position: {x: 7, y: 5},
-                question: "Сколько бит в одном байте?",
+                question: "Статья, набранная на компьютере, содержит 10 страниц, на каждой странице 32 строки, в каждой строке 48 символов. В одном из представлений Unicode каждый символ кодируется 16 битами. Определите информационный объем статьи в Кбайтах в этом варианте представления Unicode.",
                 answers: [
-                    "8",
-                    "16", 
-                    "32",
-                    "64"
+                    "20",
+                    "25", 
+                    "30",
+                    "35"
                 ],
-                correct: 0
+                correct: 2
             }
         ];
 
+        // ========================
+        // ДОПОЛНИТЕЛЬНЫЕ ВОПРОСЫ (ДЛЯ ЗНАКОВ ВОПРОСА НА 2 И 3 УРОВНЯХ)
+        // ========================
         const additionalQuestions = [
             {
                 question: "Что такое HTML?",
@@ -1324,7 +1337,9 @@
             unlockedDifficulties: [1],
             currentLevelLayout: levelLayouts[1],
             isOnline: false,
-            totalDemonsCollected: 0
+            totalDemonsCollected: 0,
+            totalQuestionsSolved: 0,
+            totalMistakes: 0
         };
 
         // ========================
@@ -1538,6 +1553,15 @@
             const layout = gameState.currentLevelLayout;
             gameState.playerPosition = {...layout.startPosition};
             
+            // Обновляем позиции демонов для текущего уровня
+            demons.forEach((demon, index) => {
+                if (layout.demonPositions[index]) {
+                    demon.position = {...layout.demonPositions[index]};
+                } else {
+                    console.warn(`Нет позиции для демона ${index} на уровне ${gameState.difficulty}`);
+                }
+            });
+            
             // Создаем клетки
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 12; x++) {
@@ -1555,13 +1579,6 @@
                     levelGrid.appendChild(cell);
                 }
             }
-            
-            // Обновляем позиции демонов
-            demons.forEach((demon, index) => {
-                if (layout.demonPositions[index]) {
-                    demon.position = {...layout.demonPositions[index]};
-                }
-            });
             
             createPlayer();
             
@@ -1625,7 +1642,6 @@
                 if (exitCell) {
                     exitCell.classList.remove('wall');
                     exitCell.classList.add('exit');
-                    exitCell.innerHTML = '🚪';
                 }
             });
             
@@ -1644,6 +1660,7 @@
             
             const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
             if (currentCell && currentCell.classList.contains('question')) {
+                // На 2 и 3 уровнях показываем рандомные вопросы, на 1 - тоже рандомные (знаки вопроса)
                 showAdditionalQuestion();
                 currentCell.classList.remove('question', 'pulse');
             }
@@ -1683,6 +1700,8 @@
                 stats.demons.textContent = new Set(gameState.unlockedDemons).size;
                 
                 gameState.totalDemonsCollected++;
+                gameState.totalQuestionsSolved++;
+                
                 if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                 
                 const portrait = document.querySelector('.demon-portrait');
@@ -1703,6 +1722,7 @@
             } else {
                 wrongSound.play();
                 gameState.mistakes++;
+                gameState.totalMistakes++;
                 stats.mistakes.textContent = gameState.mistakes;
             }
             
@@ -1736,6 +1756,7 @@
             if (isCorrect) {
                 correctSound.play();
                 gameState.questionsSolved++;
+                gameState.totalQuestionsSolved++;
                 stats.solved.textContent = gameState.questionsSolved;
                 
                 const portrait = document.querySelector('.demon-portrait');
@@ -1750,6 +1771,7 @@
             } else {
                 wrongSound.play();
                 gameState.mistakes++;
+                gameState.totalMistakes++;
                 stats.mistakes.textContent = gameState.mistakes;
             }
             
@@ -1998,10 +2020,17 @@
                 currentUsername = null;
                 isOnlineMode = false;
                 gameState.totalDemonsCollected = 0;
+                gameState.totalQuestionsSolved = 0;
+                gameState.totalMistakes = 0;
                 
                 userInfoDisplay.style.display = 'none';
                 gameState.unlockedDifficulties = [1];
                 updateDifficultyButtons();
+                
+                // Возвращаемся на стартовый экран
+                gameScreen.style.display = 'none';
+                modeSelectionScreen.style.display = 'none';
+                startScreen.style.display = 'flex';
                 
                 showNotification('✅ Вы вышли из аккаунта', 2000);
             }
@@ -2020,8 +2049,11 @@
                         updateDifficultyButtons();
                     }
                     
-                    if (data.progress.statistics && data.progress.statistics.totalDemonsCollected) {
-                        gameState.totalDemonsCollected = data.progress.statistics.totalDemonsCollected;
+                    if (data.progress.statistics) {
+                        gameState.totalDemonsCollected = data.progress.statistics.totalDemonsCollected || 0;
+                        gameState.totalQuestionsSolved = data.progress.statistics.totalQuestionsSolved || 0;
+                        gameState.totalMistakes = data.progress.statistics.totalMistakes || 0;
+                        
                         if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                     }
                 }
@@ -2039,8 +2071,11 @@
                         gameState.unlockedDifficulties = progress.unlockedDifficulties;
                         updateDifficultyButtons();
                     }
-                    if (progress.statistics && progress.statistics.totalDemonsCollected) {
-                        gameState.totalDemonsCollected = progress.statistics.totalDemonsCollected;
+                    if (progress.statistics) {
+                        gameState.totalDemonsCollected = progress.statistics.totalDemonsCollected || 0;
+                        gameState.totalQuestionsSolved = progress.statistics.totalQuestionsSolved || 0;
+                        gameState.totalMistakes = progress.statistics.totalMistakes || 0;
+                        
                         if (totalDemonsDisplay) totalDemonsDisplay.textContent = gameState.totalDemonsCollected;
                     }
                 } catch (e) {
@@ -2049,7 +2084,7 @@
             }
         }
 
-        async function saveProgress() {
+        function saveProgress() {
             const progressData = {
                 unlockedDifficulties: gameState.unlockedDifficulties,
                 currentDifficulty: gameState.difficulty,
@@ -2059,13 +2094,13 @@
                 unlockedDemons: gameState.unlockedDemons,
                 statistics: {
                     totalDemonsCollected: gameState.totalDemonsCollected || 0,
-                    totalQuestionsSolved: gameState.questionsSolved || 0,
-                    totalMistakes: gameState.mistakes || 0
+                    totalQuestionsSolved: gameState.totalQuestionsSolved || 0,
+                    totalMistakes: gameState.totalMistakes || 0
                 }
             };
             
             if (isOnlineMode && userToken) {
-                await saveServerProgress(progressData);
+                saveServerProgress(progressData);
             } else {
                 saveLocalProgress(progressData);
             }
@@ -2073,23 +2108,20 @@
 
         async function saveServerProgress(progressData) {
             try {
-                const dataToSend = {
-                    token: userToken,
-                    progress: progressData
-                };
-                
                 const response = await fetch(`${SERVER_URL}/api/save-progress`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataToSend)
+                    body: JSON.stringify({ token: userToken, progress: progressData })
                 });
                 
                 const data = await response.json();
                 if (!data.success) {
                     console.error('Ошибка сохранения на сервере');
+                    showNotification('⚠️ Ошибка сохранения на сервере', 2000);
                 }
             } catch (error) {
                 console.error('Ошибка сохранения прогресса:', error);
+                showNotification('⚠️ Ошибка соединения с сервером', 2000);
             }
         }
 
