@@ -1339,7 +1339,8 @@
             isOnline: false,
             totalDemonsCollected: 0,
             totalQuestionsSolved: 0,
-            totalMistakes: 0
+            totalMistakes: 0,
+            portalActive: false // 👈 Флаг для блокировки движения при входе в портал
         };
 
         // ========================
@@ -1391,10 +1392,15 @@
         };
 
         // ========================
-        // ФУНКЦИЯ ДВИЖЕНИЯ
+        // ФУНКЦИЯ ДВИЖЕНИЯ (ИСПРАВЛЕННАЯ)
         // ========================
         function movePlayer(dx, dy) {
-            if (gameState.isMoving) return;
+            // Блокируем движение если:
+            // 1. Уже идет анимация движения
+            // 2. Игрок в процессе выхода (portalActive)
+            // 3. Экран игры не активен
+            // 4. Открыты другие экраны
+            if (gameState.isMoving || gameState.portalActive) return;
             
             if (gameScreen.style.display !== 'block') return;
             
@@ -1407,12 +1413,17 @@
             const newX = gameState.playerPosition.x + dx;
             const newY = gameState.playerPosition.y + dy;
             
+            // Проверяем выход за границы карты
             if (newX < 0 || newX >= 12 || newY < 0 || newY >= 8) {
+                // Если выходы созданы и игрок на клетке выхода
                 if (gameState.exitsCreated) {
                     const isOnExit = gameState.currentLevelLayout.exitPositions.some(exit => 
                         exit.x === gameState.playerPosition.x && exit.y === gameState.playerPosition.y
                     );
+                    
                     if (isOnExit) {
+                        // Блокируем дальнейшее движение и активируем портал
+                        gameState.portalActive = true;
                         handleExit();
                     }
                 }
@@ -1473,6 +1484,12 @@
                 return;
             }
             
+            // Если портал активен - блокируем все клавиши движения
+            if (gameState.portalActive) {
+                e.preventDefault();
+                return;
+            }
+            
             // Только WASD и ЦФЫВ
             if (gameScreen.style.display === 'block') {
                 e.preventDefault(); // Предотвращаем скролл
@@ -1494,7 +1511,7 @@
             
             // Escape
             if (e.key === 'Escape') {
-                if (gameScreen.style.display === 'block') {
+                if (gameScreen.style.display === 'block' && !gameState.portalActive) {
                     gameScreen.style.display = 'none';
                     modeSelectionScreen.style.display = 'flex';
                 }
@@ -1552,6 +1569,7 @@
             
             const layout = gameState.currentLevelLayout;
             gameState.playerPosition = {...layout.startPosition};
+            gameState.portalActive = false; // Сбрасываем флаг портала
             
             // Обновляем позиции демонов для текущего уровня
             demons.forEach((demon, index) => {
@@ -1778,26 +1796,58 @@
             questionScreen.style.display = 'none';
         }
 
+        // ========================
+        // ОБРАБОТКА ВХОДА В ПОРТАЛ (ИСПРАВЛЕННАЯ)
+        // ========================
         function handleExit() {
+            // Блокируем движение через portalActive
+            gameState.portalActive = true;
+            
             showNotification(`🎉 Поздравляем! Вы прошли ${gameState.difficulty} уровень!`, 3000);
             
             completeLevel();
             
             const player = document.getElementById('player');
-            player.style.transition = 'all 1.5s ease-out';
-            player.style.transform = 'scale(0.5) rotate(360deg)';
-            player.style.opacity = '0';
             
-            const playerRect = player.getBoundingClientRect();
-            createParticles(playerRect.left + 25, playerRect.top + 35, '#2ed573', 30);
+            if (player) {
+                // Убираем класс анимации ходьбы
+                player.classList.remove('walking');
+                
+                // Анимация исчезновения в портале
+                player.style.transition = 'all 1.5s ease-out';
+                player.style.transform = 'scale(0.5) rotate(360deg)';
+                player.style.opacity = '0';
+                
+                const playerRect = player.getBoundingClientRect();
+                createParticles(playerRect.left + 25, playerRect.top + 35, '#2ed573', 30);
+            }
+            
+            // Блокируем клавиши через setTimeout, чтобы они не нажимались во время анимации
+            const originalOnKeyDown = document.onkeydown;
+            document.onkeydown = function(e) {
+                if (e.key.startsWith('Arrow') || e.key === 'w' || e.key === 'a' || e.key === 's' || e.key === 'd' ||
+                    e.key === 'ц' || e.key === 'ф' || e.key === 'ы' || e.key === 'в') {
+                    e.preventDefault();
+                    return false;
+                }
+            };
             
             setTimeout(() => {
+                // Скрываем игровой экран и показываем меню выбора уровня
                 gameScreen.style.display = 'none';
                 modeSelectionScreen.style.display = 'flex';
                 
-                player.style.transition = '';
-                player.style.transform = '';
-                player.style.opacity = '1';
+                // Восстанавливаем обработчик клавиш
+                document.onkeydown = originalOnKeyDown;
+                
+                // Сбрасываем состояние портала
+                gameState.portalActive = false;
+                
+                if (player) {
+                    player.style.transition = '';
+                    player.style.transform = '';
+                    player.style.opacity = '1';
+                }
                 
                 resetGameState();
             }, 3000);
@@ -1833,6 +1883,7 @@
             gameState.currentDemon = null;
             gameState.unlockedDemons = [];
             gameState.exitsCreated = false;
+            gameState.portalActive = false; // Сбрасываем флаг портала
             
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
@@ -2022,6 +2073,7 @@
                 gameState.totalDemonsCollected = 0;
                 gameState.totalQuestionsSolved = 0;
                 gameState.totalMistakes = 0;
+                gameState.portalActive = false;
                 
                 userInfoDisplay.style.display = 'none';
                 gameState.unlockedDifficulties = [1];
@@ -2122,6 +2174,50 @@
             } catch (error) {
                 console.error('Ошибка сохранения прогресса:', error);
                 showNotification('⚠️ Ошибка соединения с сервером', 2000);
+            }
+        }
+
+        function saveLocalProgress(progressData) {
+            try {
+                localStorage.setItem('ogetaker_localProgress', JSON.stringify(progressData));
+            } catch (error) {
+                console.error('Ошибка локального сохранения:', error);
+            }
+        }
+
+        async function unlockLevelOnServer(level) {
+            if (!isOnlineMode || !userToken) return;
+            
+            try {
+                await fetch(`${SERVER_URL}/api/unlock-level`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: userToken, level })
+                });
+            } catch (error) {
+                console.error('Ошибка разблокировки:', error);
+            }
+        }
+
+        async function showLeaderboard() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/leaderboard`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    leaderboardList.innerHTML = '';
+                    
+                    if (data.leaderboard.length === 0) {
+                        leaderboardList.innerHTML = '<p style="text-align: center; color: #aaa;">Рейтинг пуст</p>';
+                    } else {
+                        data.leaderboard.forEach((player, index) => {
+                            const playerElement = document.createElement('div');
+                            playerElement.className = 'leaderboard-item';
+                            
+                            let medal = '';
+                            let medalColor = '';
+                
+это не весь HTML код допиши его до конца с этого момента       showNotification('⚠️ Ошибка соединения с сервером', 2000);
             }
         }
 
