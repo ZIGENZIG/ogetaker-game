@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OGETAKER - Готовься к ОГЭ с демонессами!</title>
     <style>
-        /* ========== СТИЛИ (без изменений, как в вашем файле) ========== */
+        /* ========== СТИЛИ (без изменений) ========== */
         * {
             margin: 0;
             padding: 0;
@@ -1099,7 +1099,7 @@
         let isOnlineMode = false;
 
         // ========================
-        // ДАННЫЕ ИГРЫ - ДЕМОНЕССЫ С ФИКСИРОВАННЫМИ ВОПРОСАМИ (ТОЛЬКО ДЛЯ 1 УРОВНЯ)
+        // ДАННЫЕ ИГРЫ - ДЕМОНЕССЫ С ФИКСИРОВАННЫМИ ВОПРОСАМИ
         // ========================
         const demons = [
             {
@@ -1161,7 +1161,7 @@
         ];
 
         // ========================
-        // ДОПОЛНИТЕЛЬНЫЕ ВОПРОСЫ (ДЛЯ ЗНАКОВ ВОПРОСА НА 2 И 3 УРОВНЯХ)
+        // ДОПОЛНИТЕЛЬНЫЕ ВОПРОСЫ
         // ========================
         const additionalQuestions = [
             {
@@ -1320,7 +1320,7 @@
         };
 
         // ========================
-        // СОСТОЯНИЕ ИГРЫ (ИСПРАВЛЕНО!)
+        // СОСТОЯНИЕ ИГРЫ (С ФЛАГАМИ БЛОКИРОВКИ)
         // ========================
         let gameState = {
             playerPosition: {x: 1, y: 4},
@@ -1341,7 +1341,7 @@
             totalQuestionsSolved: 0,
             totalMistakes: 0,
             portalActive: false,
-            exitTriggered: false // 👈 НОВЫЙ ФЛАГ ДЛЯ ПОЛНОЙ БЛОКИРОВКИ
+            exitTriggered: false
         };
 
         // ========================
@@ -1393,11 +1393,12 @@
         };
 
         // ========================
-        // ФУНКЦИЯ ДВИЖЕНИЯ (ИСПРАВЛЕННАЯ - ПОЛНАЯ БЛОКИРОВКА!)
+        // ФУНКЦИЯ ДВИЖЕНИЯ (АБСОЛЮТНАЯ БЛОКИРОВКА)
         // ========================
         function movePlayer(dx, dy) {
-            // 🚫 ПОЛНАЯ БЛОКИРОВКА при активации выхода
+            // 🚫 ЖЕСТКАЯ БЛОКИРОВКА - если хоть один флаг активен, движение невозможно
             if (gameState.isMoving || gameState.portalActive || gameState.exitTriggered) {
+                console.log('⛔ Движение заблокировано');
                 return;
             }
             
@@ -1412,7 +1413,7 @@
             const newX = gameState.playerPosition.x + dx;
             const newY = gameState.playerPosition.y + dy;
             
-            // Проверяем выход за границы карты
+            // ПРОВЕРКА ВЫХОДА ЗА ГРАНИЦЫ
             if (newX < 0 || newX >= 12 || newY < 0 || newY >= 8) {
                 // Если выходы созданы и игрок на клетке выхода
                 if (gameState.exitsCreated) {
@@ -1421,39 +1422,34 @@
                     );
                     
                     if (isOnExit) {
-                        // 🚫 АКТИВИРУЕМ ВСЕ ФЛАГИ БЛОКИРОВКИ
+                        console.log('🚪 ПОРТАЛ АКТИВИРОВАН!');
+                        // 🚫 МГНОВЕННАЯ БЛОКИРОВКА ВСЕГО
                         gameState.exitTriggered = true;
                         gameState.portalActive = true;
                         gameState.isMoving = true;
                         
+                        // НЕМЕДЛЕННО вызываем выход
                         handleExit();
+                        return;
                     }
                 }
                 return;
             }
             
             const targetCell = document.querySelector(`.cell[data-x="${newX}"][data-y="${newY}"]`);
-            
             if (!targetCell || targetCell.classList.contains('wall')) return;
             
             gameState.isMoving = true;
             
             const player = document.getElementById('player');
+            if (!player) createPlayer();
             
-            if (!player) {
-                createPlayer();
-            }
-            
-            if (player) {
-                player.classList.add('walking');
-            }
+            if (player) player.classList.add('walking');
             
             gameState.playerPosition = {x: newX, y: newY};
             updatePlayerPosition();
             
-            if (moveSound) {
-                moveSound.play().catch(() => {});
-            }
+            if (moveSound) moveSound.play().catch(() => {});
             
             if (player) {
                 const rect = player.getBoundingClientRect();
@@ -1468,31 +1464,30 @@
         }
 
         // ========================
-        // ОБРАБОТЧИК КЛАВИШ (ВЫНЕСЕН ОТДЕЛЬНО)
+        // ОБРАБОТЧИК КЛАВИШ (С ЖЕСТКОЙ ПРОВЕРКОЙ)
         // ========================
         function handleKeyDown(e) {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            
-            // 🚫 ПОЛНАЯ БЛОКИРОВКА при активации выхода
+            // 🚫 ПРОВЕРКА БЛОКИРОВКИ В САМОМ НАЧАЛЕ
             if (gameState.exitTriggered || gameState.portalActive) {
                 e.preventDefault();
-                return;
+                e.stopPropagation();
+                console.log('⛔ Клавиша отклонена (портал активен)');
+                return false;
             }
             
-            // Блокируем все клавиши со стрелками
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
             if (e.key.startsWith('Arrow')) {
                 e.preventDefault();
                 return;
             }
             
-            // Проверяем экраны
             if (questionScreen.style.display === 'flex' ||
                 leaderboardScreen.style.display === 'flex' ||
                 howToPlayScreen.style.display === 'flex') {
                 return;
             }
             
-            // Только WASD и ЦФЫВ
             if (gameScreen.style.display === 'block') {
                 e.preventDefault();
                 
@@ -1504,7 +1499,6 @@
                 else if (key === 'd' || key === 'в') movePlayer(1, 0);
             }
             
-            // Escape
             if (e.key === 'Escape') {
                 if (gameScreen.style.display === 'block' && !gameState.exitTriggered && !gameState.portalActive) {
                     gameScreen.style.display = 'none';
@@ -1514,26 +1508,28 @@
         }
 
         // ========================
-        // ОБРАБОТКА ВХОДА В ПОРТАЛ (ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ)
+        // ОБРАБОТКА ВХОДА В ПОРТАЛ (ЖЕСТКАЯ БЛОКИРОВКА)
         // ========================
         function handleExit() {
-            console.log('🚪 Вход в портал! Движение ПОЛНОСТЬЮ заблокировано!');
+            console.log('🚪 ВХОД В ПОРТАЛ - ПОЛНАЯ БЛОКИРОВКА!');
             
             // 🚫 АКТИВИРУЕМ ВСЕ ФЛАГИ БЛОКИРОВКИ
             gameState.exitTriggered = true;
             gameState.portalActive = true;
             gameState.isMoving = true;
             
-            // Удаляем основной обработчик клавиш
+            // 🚫 УДАЛЯЕМ ВСЕ ОБРАБОТЧИКИ КЛАВИШ
             document.removeEventListener('keydown', handleKeyDown);
             
-            // Добавляем временный обработчик, который блокирует ВСЁ
-            function blockAllKeys(e) {
+            // 🚫 ДОБАВЛЯЕМ ЖЕСТКИЙ БЛОКИРОВЩИК
+            function hardBlock(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+                console.log('⛔ Клавиша заблокирована:', e.key);
                 return false;
             }
-            document.addEventListener('keydown', blockAllKeys, { capture: true });
+            document.addEventListener('keydown', hardBlock, { capture: true });
             
             showNotification(`🎉 Поздравляем! Вы прошли ${gameState.difficulty} уровень!`, 3000);
             
@@ -1552,17 +1548,14 @@
             }
             
             setTimeout(() => {
-                // Скрываем игровой экран
+                console.log('✅ Возврат в меню');
+                
                 gameScreen.style.display = 'none';
                 modeSelectionScreen.style.display = 'flex';
                 
-                // Удаляем временный блокировщик
-                document.removeEventListener('keydown', blockAllKeys, { capture: true });
-                
-                // Возвращаем основной обработчик
+                document.removeEventListener('keydown', hardBlock, { capture: true });
                 document.addEventListener('keydown', handleKeyDown);
                 
-                // Сбрасываем флаги
                 gameState.exitTriggered = false;
                 gameState.portalActive = false;
                 gameState.isMoving = false;
@@ -1578,7 +1571,7 @@
         }
 
         // ========================
-        // ОСТАЛЬНЫЕ ФУНКЦИИ (БЕЗ ИЗМЕНЕНИЙ)
+        // ОСТАЛЬНЫЕ ФУНКЦИИ ИГРЫ
         // ========================
         function updatePlayerPosition() {
             const player = document.getElementById('player');
@@ -1619,19 +1612,17 @@
             const layout = gameState.currentLevelLayout;
             gameState.playerPosition = {...layout.startPosition};
             
-            // 🚫 СБРАСЫВАЕМ ВСЕ ФЛАГИ БЛОКИРОВКИ
+            // 🚫 ПРИНУДИТЕЛЬНЫЙ СБРОС ВСЕХ ФЛАГОВ
             gameState.portalActive = false;
             gameState.exitTriggered = false;
             gameState.isMoving = false;
             
-            // Обновляем позиции демонов
             demons.forEach((demon, index) => {
                 if (layout.demonPositions[index]) {
                     demon.position = {...layout.demonPositions[index]};
                 }
             });
             
-            // Создаем клетки
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 12; x++) {
                     const cell = document.createElement('div');
@@ -1872,7 +1863,7 @@
             gameState.unlockedDemons = [];
             gameState.exitsCreated = false;
             
-            // 🚫 СБРАСЫВАЕМ ФЛАГИ БЛОКИРОВКИ
+            // 🚫 ПРИНУДИТЕЛЬНЫЙ СБРОС ФЛАГОВ
             gameState.portalActive = false;
             gameState.exitTriggered = false;
             gameState.isMoving = false;
@@ -1888,17 +1879,27 @@
             if (gameState.unlockedDifficulties.includes(2)) {
                 difficulty2Button.classList.remove('locked');
                 difficulty2Button.style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
+                difficulty2Button.style.cursor = 'pointer';
+                difficulty2Button.style.color = '#fff';
                 
                 const lockIcon = difficulty2Button.querySelector('.lock-icon');
                 if (lockIcon) lockIcon.style.display = 'none';
+                
+                const label2 = difficulty2Button.querySelector('.difficulty-label');
+                if (label2) label2.textContent = 'Карта "Змейка"';
             }
             
             if (gameState.unlockedDifficulties.includes(3)) {
                 difficulty3Button.classList.remove('locked');
                 difficulty3Button.style.background = 'linear-gradient(145deg, #ff4757, #ff3742)';
+                difficulty3Button.style.cursor = 'pointer';
+                difficulty3Button.style.color = '#fff';
                 
                 const lockIcon = difficulty3Button.querySelector('.lock-icon');
                 if (lockIcon) lockIcon.style.display = 'none';
+                
+                const label3 = difficulty3Button.querySelector('.difficulty-label');
+                if (label3) label3.textContent = 'Карта "Лабиринт"';
             }
         }
 
@@ -1949,8 +1950,7 @@
                     { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
                 ], {
                     duration: 800 + Math.random() * 400,
-                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    fill: 'forwards'
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 });
                 
                 setTimeout(() => particle.remove(), 1200);
@@ -2340,10 +2340,7 @@
             }
             
             setupEventListeners();
-            
-            // 👈 ВАЖНО: добавляем обработчик клавиш
             document.addEventListener('keydown', handleKeyDown);
-            
             window.addEventListener('beforeunload', saveProgress);
             setInterval(saveProgress, 30000);
         });
