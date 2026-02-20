@@ -1099,7 +1099,7 @@
         let isOnlineMode = false;
 
         // ========================
-        // ДАННЫЕ ИГРЫ - ДЕМОНЕССЫ С ФИКСИРОВАННЫМИ ВОПРОСАМИ
+        // ДАННЫЕ ИГРЫ - ДЕМОНЕССЫ
         // ========================
         const demons = [
             {
@@ -1320,7 +1320,7 @@
         };
 
         // ========================
-        // СОСТОЯНИЕ ИГРЫ (С ФЛАГАМИ БЛОКИРОВКИ)
+        // СОСТОЯНИЕ ИГРЫ (УПРОЩЕННОЕ)
         // ========================
         let gameState = {
             playerPosition: {x: 1, y: 4},
@@ -1340,8 +1340,7 @@
             totalDemonsCollected: 0,
             totalQuestionsSolved: 0,
             totalMistakes: 0,
-            portalActive: false,
-            exitTriggered: false
+            portalActive: false // 👈 ЕДИНСТВЕННЫЙ ФЛАГ БЛОКИРОВКИ
         };
 
         // ========================
@@ -1393,15 +1392,16 @@
         };
 
         // ========================
-        // ФУНКЦИЯ ДВИЖЕНИЯ (АБСОЛЮТНАЯ БЛОКИРОВКА)
+        // ФУНКЦИЯ ДВИЖЕНИЯ (ПРОСТАЯ И НАДЕЖНАЯ)
         // ========================
         function movePlayer(dx, dy) {
-            // 🚫 ЖЕСТКАЯ БЛОКИРОВКА - если хоть один флаг активен, движение невозможно
-            if (gameState.isMoving || gameState.portalActive || gameState.exitTriggered) {
-                console.log('⛔ Движение заблокировано');
+            // Если портал активен - НИКАКИХ ДВИЖЕНИЙ
+            if (gameState.portalActive) {
+                console.log('⛔ Движение заблокировано (портал активен)');
                 return;
             }
             
+            if (gameState.isMoving) return;
             if (gameScreen.style.display !== 'block') return;
             
             if (questionScreen.style.display === 'flex' ||
@@ -1413,24 +1413,18 @@
             const newX = gameState.playerPosition.x + dx;
             const newY = gameState.playerPosition.y + dy;
             
-            // ПРОВЕРКА ВЫХОДА ЗА ГРАНИЦЫ
+            // Проверяем выход за границы
             if (newX < 0 || newX >= 12 || newY < 0 || newY >= 8) {
-                // Если выходы созданы и игрок на клетке выхода
+                // Если на клетке выхода
                 if (gameState.exitsCreated) {
                     const isOnExit = gameState.currentLevelLayout.exitPositions.some(exit => 
                         exit.x === gameState.playerPosition.x && exit.y === gameState.playerPosition.y
                     );
                     
                     if (isOnExit) {
-                        console.log('🚪 ПОРТАЛ АКТИВИРОВАН!');
-                        // 🚫 МГНОВЕННАЯ БЛОКИРОВКА ВСЕГО
-                        gameState.exitTriggered = true;
-                        gameState.portalActive = true;
-                        gameState.isMoving = true;
-                        
-                        // НЕМЕДЛЕННО вызываем выход
+                        console.log('🚪 Вход в портал!');
+                        gameState.portalActive = true; // Блокируем движение
                         handleExit();
-                        return;
                     }
                 }
                 return;
@@ -1443,7 +1437,6 @@
             
             const player = document.getElementById('player');
             if (!player) createPlayer();
-            
             if (player) player.classList.add('walking');
             
             gameState.playerPosition = {x: newX, y: newY};
@@ -1464,15 +1457,14 @@
         }
 
         // ========================
-        // ОБРАБОТЧИК КЛАВИШ (С ЖЕСТКОЙ ПРОВЕРКОЙ)
+        // ОБРАБОТЧИК КЛАВИШ (ПРОСТОЙ)
         // ========================
         function handleKeyDown(e) {
-            // 🚫 ПРОВЕРКА БЛОКИРОВКИ В САМОМ НАЧАЛЕ
-            if (gameState.exitTriggered || gameState.portalActive) {
+            // Если портал активен - ИГНОРИРУЕМ ВСЕ КЛАВИШИ
+            if (gameState.portalActive) {
                 e.preventDefault();
-                e.stopPropagation();
-                console.log('⛔ Клавиша отклонена (портал активен)');
-                return false;
+                console.log('⛔ Клавиша заблокирована (портал активен)');
+                return;
             }
             
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -1500,7 +1492,7 @@
             }
             
             if (e.key === 'Escape') {
-                if (gameScreen.style.display === 'block' && !gameState.exitTriggered && !gameState.portalActive) {
+                if (gameScreen.style.display === 'block' && !gameState.portalActive) {
                     gameScreen.style.display = 'none';
                     modeSelectionScreen.style.display = 'flex';
                 }
@@ -1508,28 +1500,13 @@
         }
 
         // ========================
-        // ОБРАБОТКА ВХОДА В ПОРТАЛ (ЖЕСТКАЯ БЛОКИРОВКА)
+        // ОБРАБОТКА ВЫХОДА (ПРОСТАЯ)
         // ========================
         function handleExit() {
-            console.log('🚪 ВХОД В ПОРТАЛ - ПОЛНАЯ БЛОКИРОВКА!');
+            console.log('🚪 ВХОД В ПОРТАЛ');
             
-            // 🚫 АКТИВИРУЕМ ВСЕ ФЛАГИ БЛОКИРОВКИ
-            gameState.exitTriggered = true;
+            // Просто ставим флаг блокировки
             gameState.portalActive = true;
-            gameState.isMoving = true;
-            
-            // 🚫 УДАЛЯЕМ ВСЕ ОБРАБОТЧИКИ КЛАВИШ
-            document.removeEventListener('keydown', handleKeyDown);
-            
-            // 🚫 ДОБАВЛЯЕМ ЖЕСТКИЙ БЛОКИРОВЩИК
-            function hardBlock(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                console.log('⛔ Клавиша заблокирована:', e.key);
-                return false;
-            }
-            document.addEventListener('keydown', hardBlock, { capture: true });
             
             showNotification(`🎉 Поздравляем! Вы прошли ${gameState.difficulty} уровень!`, 3000);
             
@@ -1553,12 +1530,8 @@
                 gameScreen.style.display = 'none';
                 modeSelectionScreen.style.display = 'flex';
                 
-                document.removeEventListener('keydown', hardBlock, { capture: true });
-                document.addEventListener('keydown', handleKeyDown);
-                
-                gameState.exitTriggered = false;
+                // Сбрасываем флаг
                 gameState.portalActive = false;
-                gameState.isMoving = false;
                 
                 if (player) {
                     player.style.transition = '';
@@ -1612,10 +1585,8 @@
             const layout = gameState.currentLevelLayout;
             gameState.playerPosition = {...layout.startPosition};
             
-            // 🚫 ПРИНУДИТЕЛЬНЫЙ СБРОС ВСЕХ ФЛАГОВ
+            // Сбрасываем флаг портала
             gameState.portalActive = false;
-            gameState.exitTriggered = false;
-            gameState.isMoving = false;
             
             demons.forEach((demon, index) => {
                 if (layout.demonPositions[index]) {
@@ -1862,11 +1833,7 @@
             gameState.currentDemon = null;
             gameState.unlockedDemons = [];
             gameState.exitsCreated = false;
-            
-            // 🚫 ПРИНУДИТЕЛЬНЫЙ СБРОС ФЛАГОВ
-            gameState.portalActive = false;
-            gameState.exitTriggered = false;
-            gameState.isMoving = false;
+            gameState.portalActive = false; // Сбрасываем флаг портала
             
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
