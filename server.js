@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
 const { Pool } = require('pg');
 const path = require('path');
+const bcrypt = require('bcrypt'); // Добавляем для хеширования паролей
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,7 +30,7 @@ async function initializeDatabase() {
             CREATE TABLE IF NOT EXISTS users (
                 id VARCHAR(36) PRIMARY KEY,
                 username VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(100) NOT NULL,
+                password VARCHAR(255) NOT NULL,
                 token VARCHAR(36) UNIQUE,
                 created TIMESTAMP DEFAULT NOW(),
                 last_login TIMESTAMP
@@ -74,6 +75,14 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ success: false, error: 'Имя и пароль обязательны' });
         }
 
+        if (username.length < 3 || username.length > 20) {
+            return res.status(400).json({ success: false, error: 'Имя должно быть от 3 до 20 символов' });
+        }
+
+        if (password.length < 4) {
+            return res.status(400).json({ success: false, error: 'Пароль должен быть минимум 4 символа' });
+        }
+
         // Ищем пользователя
         const userResult = await pool.query(
             'SELECT * FROM users WHERE username = $1',
@@ -84,8 +93,10 @@ app.post('/api/register', async (req, res) => {
         if (userResult.rows.length > 0) {
             const user = userResult.rows[0];
             
-            // Проверяем пароль
-            if (user.password === password) {
+            // Проверяем пароль с использованием bcrypt
+            const validPassword = await bcrypt.compare(password, user.password);
+            
+            if (validPassword) {
                 const newToken = uuidv4();
                 await pool.query(
                     'UPDATE users SET token = $1, last_login = NOW() WHERE id = $2',
@@ -103,13 +114,26 @@ app.post('/api/register', async (req, res) => {
             }
         }
 
+        // Проверяем, не занято ли имя (дополнительная проверка)
+        const existingUser = await pool.query(
+            'SELECT id FROM users WHERE username = $1',
+            [username]
+        );
+
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, error: 'Имя пользователя уже занято' });
+        }
+
+        // Хешируем пароль
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         // Создаём нового пользователя
         const userId = uuidv4();
         const token = uuidv4();
         
         await pool.query(
             'INSERT INTO users (id, username, password, token, created, last_login) VALUES ($1, $2, $3, $4, NOW(), NOW())',
-            [userId, username, password, token]
+            [userId, username, hashedPassword, token]
         );
 
         // Создаём запись прогресса для нового пользователя
@@ -130,6 +154,12 @@ app.post('/api/register', async (req, res) => {
 
     } catch (error) {
         console.error('❌ Ошибка регистрации:', error);
+        
+        // Проверяем на уникальность (если bcrypt не сработал)
+        if (error.code === '23505') {
+            return res.status(400).json({ success: false, error: 'Имя пользователя уже занято' });
+        }
+        
         res.status(500).json({ success: false, error: 'Ошибка сервера' });
     }
 });
@@ -141,6 +171,10 @@ app.post('/api/save-progress', async (req, res) => {
         
         if (!token) {
             return res.status(401).json({ success: false, error: 'Требуется токен' });
+        }
+
+        if (!progress) {
+            return res.status(400).json({ success: false, error: 'Нет данных прогресса' });
         }
 
         // Находим пользователя по токену
@@ -294,6 +328,10 @@ app.post('/api/unlock-level', async (req, res) => {
             return res.status(400).json({ success: false, error: 'Требуется токен и уровень' });
         }
 
+        if (level < 2 || level > 3) {
+            return res.status(400).json({ success: false, error: 'Некорректный уровень' });
+        }
+
         const userResult = await pool.query(
             'SELECT id FROM users WHERE token = $1',
             [token]
@@ -348,7 +386,7 @@ app.get('/api/leaderboard', async (req, res) => {
                     array_length(unlocked_difficulties, 1) as unlocked_levels
              FROM progress 
              WHERE total_demons_collected > 0 OR total_questions_solved > 0
-             ORDER BY total_demons_collected DESC, total_questions_solved DESC
+             ORDER BY total_demons_collected DESC, total_questions_solved DESC, unlocked_levels DESC
              LIMIT 20`
         );
 
@@ -372,7 +410,7 @@ app.get('/api/leaderboard', async (req, res) => {
 
 // Проверка здоровья сервера
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Отдаем index.html для всех остальных маршрутов
@@ -382,10 +420,20 @@ app.get('*', (req, res) => {
 
 // Запуск сервера
 async function startServer() {
-    await initializeDatabase();
-    app.listen(PORT, () => {
-        console.log(`✅ Сервер запущен на порту ${PORT}`);
-    });
+    try {
+        await initializeDatabase();
+        app.listen(PORT, () => {
+            console.log(`✅ Сервер запущен на порту ${PORT}`);
+        });
+    } catch (error) {
+        console.error('❌ Ошибка запуска сервера:', error);
+        process.exit(1);
+    }
 }
 
 startServer();
+
+// Обработка неожиданных ошибок
+process.on('unhandledRejection', (error) => {
+    console.error('❌ Необработанная ошибка:', error);
+});
