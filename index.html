@@ -243,41 +243,45 @@
 
         .player {
             position: absolute;
-            width: 75px;
-            height: 105px;
-            transform: scale(1.2);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: 60px;
+            height: 60px;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10;
             filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="35" r="20" fill="%23ff4757" stroke="%23000" stroke-width="3"/><rect x="40" y="55" width="20" height="40" fill="%233742fa" stroke="%23000" stroke-width="3"/><circle cx="40" cy="30" r="4" fill="%23fff"/><circle cx="60" cy="30" r="4" fill="%23fff"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="20" r="12" fill="%23ff4757" stroke="%23000" stroke-width="2"/><rect x="22" y="32" width="16" height="24" fill="%233742fa" stroke="%23000" stroke-width="2"/><circle cx="24" cy="16" r="3" fill="%23fff"/><circle cx="36" cy="16" r="3" fill="%23fff"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             pointer-events: none;
+            left: 0;
+            top: 0;
         }
 
         .demon {
             position: absolute;
-            width: 75px;
-            height: 105px;
-            transform: scale(1.2);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: 60px;
+            height: 60px;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 10;
             filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20 50 L40 20 L60 20 L80 50 L60 80 L40 80 Z" fill="%23ff4757" stroke="%23000" stroke-width="3"/><circle cx="40" cy="40" r="5" fill="%23fff"/><circle cx="60" cy="40" r="5" fill="%23fff"/><circle cx="50" cy="60" r="5" fill="%23000"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             pointer-events: none;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
         }
 
         @keyframes demonFloat {
-            0%, 100% { transform: translateY(0) scale(1.2); }
-            50% { transform: translateY(-5px) scale(1.2); }
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -55%); }
         }
 
         .floating {
-            animation: demonFloat 3s ease-in-out infinite;
+            animation: demonFloat 2s ease-in-out infinite;
         }
 
         .question {
@@ -988,7 +992,8 @@
             totalQuestionsSolved: 0,
             totalMistakes: 0,
             gameActive: true,
-            exitTriggered: false
+            exitTriggered: false,
+            portalActive: false
         };
 
         // ========================
@@ -1086,7 +1091,7 @@
             const player = document.getElementById('player');
             if (player) {
                 player.style.animation = 'none';
-                player.style.transform = 'scale(1.2) rotate(180deg)';
+                player.style.transform = 'translate(-50%, -50%) rotate(180deg)';
                 player.style.opacity = '0.5';
             }
             
@@ -1102,7 +1107,7 @@
             
             gameState.exitTriggered = true;
             gameState.gameActive = false;
-            gameState.portalActive = true;
+            gameState.portalActive = true; // Блокируем движение
             
             // Активируем визуальный эффект
             exitCell.classList.add('active-exit');
@@ -1114,13 +1119,14 @@
             const player = document.getElementById('player');
             if (player) {
                 player.style.transition = 'all 1s ease-out';
-                player.style.transform = 'scale(0.1) rotate(720deg)';
+                player.style.transform = 'translate(-50%, -50%) scale(0.1) rotate(720deg)';
                 player.style.opacity = '0';
             }
             
             // Создаем частицы
             const rect = exitCell.getBoundingClientRect();
-            createParticles(rect.left + 30, rect.top + 30, '#2ed573', 20);
+            const containerRect = document.querySelector('.level-container').getBoundingClientRect();
+            createParticles(rect.left - containerRect.left + 30, rect.top - containerRect.top + 30, '#2ed573', 20);
             
             // Задержка перед завершением уровня
             setTimeout(() => {
@@ -1137,7 +1143,7 @@
                     
                     if (player) {
                         player.style.transition = '';
-                        player.style.transform = '';
+                        player.style.transform = 'translate(-50%, -50%)';
                         player.style.opacity = '1';
                     }
                     
@@ -1149,7 +1155,7 @@
         // Проверка нажатия на выход
         function checkExitClick(e) {
             const exitCell = e.target.closest('.cell.exit');
-            if (exitCell && gameState.exitsCreated && gameState.gameActive && !gameState.exitTriggered) {
+            if (exitCell && gameState.exitsCreated && gameState.gameActive && !gameState.exitTriggered && !gameState.portalActive) {
                 const x = parseInt(exitCell.dataset.x);
                 const y = parseInt(exitCell.dataset.y);
                 
@@ -1162,9 +1168,16 @@
             }
         }
 
-        // Движение игрока (исправленная версия)
+        // Движение игрока (исправленная версия с полной блокировкой)
         function movePlayer(dx, dy) {
+            // Полная блокировка движения при любых условиях
             if (!gameState.gameActive || gameState.portalActive || gameState.isMoving || gameState.exitTriggered) {
+                console.log('⛔ Движение заблокировано:', { 
+                    gameActive: gameState.gameActive, 
+                    portalActive: gameState.portalActive, 
+                    isMoving: gameState.isMoving, 
+                    exitTriggered: gameState.exitTriggered 
+                });
                 return;
             }
             
@@ -1216,11 +1229,28 @@
             const rect = cell.getBoundingClientRect();
             const containerRect = document.querySelector('.level-container').getBoundingClientRect();
             
-            const left = rect.left - containerRect.left + rect.width / 2 - 37.5;
-            const top = rect.top - containerRect.top + rect.height / 2 - 52.5;
+            // Центрируем игрока ровно по центру клетки
+            const left = rect.left - containerRect.left + rect.width / 2;
+            const top = rect.top - containerRect.top + rect.height / 2;
             
             player.style.left = left + 'px';
             player.style.top = top + 'px';
+        }
+
+        // Обновление позиции демонессы
+        function updateDemonPosition(demon, demonElement) {
+            const cell = document.querySelector(`.cell[data-x="${demon.position.x}"][data-y="${demon.position.y}"]`);
+            if (cell) {
+                const rect = cell.getBoundingClientRect();
+                const containerRect = document.querySelector('.level-container').getBoundingClientRect();
+                
+                // Центрируем демонессу ровно по центру клетки
+                const left = rect.left - containerRect.left + rect.width / 2;
+                const top = rect.top - containerRect.top + rect.height / 2;
+                
+                demonElement.style.left = left + 'px';
+                demonElement.style.top = top + 'px';
+            }
         }
 
         // Создание игрока
@@ -1283,32 +1313,27 @@
             }
             
             createPlayer();
-            demons.forEach(demon => createDemon(demon));
+            
+            // Создаем демонесс с правильным позиционированием
+            demons.forEach(demon => {
+                const demonElement = document.createElement('div');
+                demonElement.className = `demon floating`;
+                demonElement.dataset.name = demon.name;
+                demonElement.style.background = `linear-gradient(145deg, ${demon.color}, ${demon.color}99)`;
+                document.querySelector('.level-container').appendChild(demonElement);
+                
+                // Центрируем демонессу
+                setTimeout(() => updateDemonPosition(demon, demonElement), 50);
+                
+                // Сохраняем ссылку на элемент
+                demon.element = demonElement;
+            });
+            
             createQuestions();
             
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
             stats.demons.textContent = '0';
-        }
-
-        // Создание демонессы
-        function createDemon(demon) {
-            const demonElement = document.createElement('div');
-            demonElement.className = `demon floating`;
-            demonElement.dataset.name = demon.name;
-            demonElement.style.background = `linear-gradient(145deg, ${demon.color}, ${demon.color}99)`;
-            document.querySelector('.level-container').appendChild(demonElement);
-            
-            setTimeout(() => {
-                const cell = document.querySelector(`.cell[data-x="${demon.position.x}"][data-y="${demon.position.y}"]`);
-                if (cell) {
-                    const rect = cell.getBoundingClientRect();
-                    const containerRect = document.querySelector('.level-container').getBoundingClientRect();
-                    
-                    demonElement.style.left = (rect.left - containerRect.left + rect.width / 2 - 37.5) + 'px';
-                    demonElement.style.top = (rect.top - containerRect.top + rect.height / 2 - 52.5) + 'px';
-                }
-            }, 50);
         }
 
         // Создание дополнительных вопросов
@@ -1342,21 +1367,21 @@
 
         // Проверка столкновений
         function checkCollisions() {
-            if (!gameState.gameActive) return;
+            if (!gameState.gameActive || gameState.portalActive) return;
             
             // Проверка демонесс
             demons.forEach(demon => {
                 if (demon.position.x === gameState.playerPosition.x && 
                     demon.position.y === gameState.playerPosition.y &&
                     !gameState.unlockedDemons.includes(demon.name) &&
-                    gameState.gameActive) {
+                    gameState.gameActive && !gameState.portalActive) {
                     showDemonQuestion(demon);
                 }
             });
             
             // Проверка дополнительных вопросов
             const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
-            if (currentCell && currentCell.classList.contains('question') && gameState.gameActive) {
+            if (currentCell && currentCell.classList.contains('question') && gameState.gameActive && !gameState.portalActive) {
                 showAdditionalQuestion();
                 currentCell.classList.remove('question');
             }
@@ -1581,7 +1606,7 @@
                 particle.style.pointerEvents = 'none';
                 particle.style.zIndex = '1000';
                 
-                document.getElementById('game-container').appendChild(particle);
+                document.querySelector('.level-container').appendChild(particle);
                 
                 const angle = Math.random() * Math.PI * 2;
                 const distance = 20 + Math.random() * 30;
@@ -1602,10 +1627,10 @@
         // ОБРАБОТЧИКИ СОБЫТИЙ
         // ========================
         function handleKeyDown(e) {
-            if (e.target.tag === 'INPUT' || e.target.tag === 'TEXTAREA') return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             
             // Выход по пробелу или Enter
-            if ((e.key === ' ' || e.key === 'Enter') && gameState.exitsCreated && gameState.gameActive && !gameState.exitTriggered) {
+            if ((e.key === ' ' || e.key === 'Enter') && gameState.exitsCreated && gameState.gameActive && !gameState.exitTriggered && !gameState.portalActive) {
                 e.preventDefault();
                 
                 // Проверяем, стоит ли игрок на выходе
@@ -1849,7 +1874,7 @@
             setupEventListeners();
             document.addEventListener('keydown', handleKeyDown);
             
-            // Добавляем обработчик клика для выходов (на всякий случай)
+            // Добавляем обработчик клика для выходов
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('cell') && e.target.classList.contains('exit')) {
                     checkExitClick(e);
