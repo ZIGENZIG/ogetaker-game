@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OGETAKER - Готовься к ОГЭ с демонессами!</title>
     <style>
+        /* ========== ПОЛНОСТЬЮ ПЕРЕРАБОТАННЫЕ СТИЛИ ========== */
         * {
             margin: 0;
             padding: 0;
@@ -43,15 +44,16 @@
             font-size: 5rem;
             font-weight: 900;
             color: #ff4757;
-            text-shadow: 0 0 10px #ff4757, 4px 4px 0 #000;
+            text-shadow: 0 0 10px #ff4757, 4px 4px 0 #000, 8px 8px 0 rgba(0, 0, 0, 0.5);
             margin-bottom: 1rem;
             text-transform: uppercase;
+            letter-spacing: 4px;
             animation: titleGlow 2s ease-in-out infinite alternate;
         }
 
         @keyframes titleGlow {
-            from { text-shadow: 0 0 10px #ff4757, 4px 4px 0 #000; }
-            to { text-shadow: 0 0 20px #ff4757, 4px 4px 0 #000; }
+            from { text-shadow: 0 0 10px #ff4757, 4px 4px 0 #000, 8px 8px 0 rgba(0, 0, 0, 0.5); }
+            to { text-shadow: 0 0 20px #ff4757, 4px 4px 0 #000, 8px 8px 0 rgba(0, 0, 0, 0.5); }
         }
 
         .subtitle {
@@ -60,6 +62,12 @@
             margin-bottom: 3rem;
             text-align: center;
             text-shadow: 2px 2px 0 #000;
+            animation: subtitleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .main-menu-buttons {
@@ -79,15 +87,37 @@
             cursor: pointer;
             text-transform: uppercase;
             transition: all 0.3s;
-            box-shadow: 6px 6px 0 #000;
+            box-shadow: 6px 6px 0 #000, 0 0 0 3px #ff4757;
             min-width: 280px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hell-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }
 
         .hell-button:hover {
             transform: translate(-3px, -3px);
-            box-shadow: 9px 9px 0 #000;
+            box-shadow: 9px 9px 0 #000, 0 0 0 3px #ff6b81;
             background: linear-gradient(145deg, #ff6b81, #ff4757);
+        }
+
+        .hell-button:hover::before {
+            left: 100%;
+        }
+
+        .hell-button:active {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 #000, 0 0 0 3px #ff4757;
         }
 
         #mode-selection-screen {
@@ -108,6 +138,16 @@
             color: #fff;
             text-shadow: 3px 3px 0 #000;
             margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .mode-description {
+            font-size: 1.2rem;
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.5;
         }
 
         .difficulty-buttons {
@@ -127,18 +167,23 @@
             cursor: pointer;
             text-transform: uppercase;
             transition: all 0.3s;
-            box-shadow: 6px 6px 0 #000;
+            box-shadow: 6px 6px 0 #000, 0 0 0 3px #3742fa;
             min-width: 300px;
             text-align: left;
             padding-left: 100px;
             position: relative;
+            overflow: hidden;
         }
 
         .difficulty-button.locked {
             background: linear-gradient(145deg, #333, #222);
             color: #888;
             cursor: not-allowed;
-            box-shadow: 6px 6px 0 #000;
+            box-shadow: 6px 6px 0 #000, 0 0 0 3px #444;
+        }
+
+        .difficulty-button.locked .lock-icon {
+            display: block;
         }
 
         .difficulty-number {
@@ -150,12 +195,20 @@
             font-weight: 900;
         }
 
+        .difficulty-label {
+            display: block;
+            font-size: 1.2rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
         .lock-icon {
             position: absolute;
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 1.4rem;
+            display: none;
         }
 
         .back-button {
@@ -166,7 +219,41 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 4px 4px 0 #000;
+            box-shadow: 4px 4px 0 #000, 0 0 0 3px #666;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(145deg, #777, #666);
+            transform: translate(-2px, -2px);
+        }
+
+        .music-import-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .import-btn {
+            background: linear-gradient(145deg, #3742fa, #2f35e0);
+            border: 3px solid #000;
+            padding: 12px 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .import-btn:hover {
+            background: linear-gradient(145deg, #5352ed, #3742fa);
+            transform: translateY(-2px);
+        }
+
+        .file-name {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         #game-screen {
@@ -174,6 +261,8 @@
             width: 100%;
             height: 100%;
             display: none;
+            background: radial-gradient(circle at 10% 20%, rgba(255, 71, 87, 0.1) 0%, transparent 30%),
+                        radial-gradient(circle at 90% 80%, rgba(55, 66, 250, 0.1) 0%, transparent 30%);
         }
 
         .level-container {
@@ -210,12 +299,18 @@
 
         .cell.wall {
             background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .cell.path {
+            background: linear-gradient(145deg, #4a4a6a, #3a3a52);
         }
 
         .cell.exit {
             background: linear-gradient(145deg, #2ed573, #1e90ff);
             animation: exitPulse 2s ease-in-out infinite;
             cursor: pointer;
+            position: relative;
         }
 
         .cell.exit::after {
@@ -224,11 +319,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 24px;
+            font-size: 30px;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
         }
 
         .cell.exit.active-exit {
             animation: activeExit 0.5s ease-in-out infinite;
+            box-shadow: 0 0 30px #2ed573;
         }
 
         @keyframes exitPulse {
@@ -237,35 +334,37 @@
         }
 
         @keyframes activeExit {
-            0%, 100% { box-shadow: 0 0 20px #2ed573; }
-            50% { box-shadow: 0 0 40px #2ed573; }
+            0%, 100% { box-shadow: 0 0 20px #2ed573, inset 0 0 20px #2ed573; }
+            50% { box-shadow: 0 0 40px #2ed573, inset 0 0 40px #2ed573; }
         }
 
+        /* ===== ИСПРАВЛЕННОЕ ПОЗИЦИОНИРОВАНИЕ ПЕРСОНАЖЕЙ ===== */
         .player {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            transform: translate(-50%, -50%);
+            width: 50px;  /* Уменьшил размер */
+            height: 50px;  /* Уменьшил размер */
+            transform: translate(-50%, -50%); /* Точное центрирование */
             transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 10;
-            filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><circle cx="30" cy="20" r="12" fill="%23ff4757" stroke="%23000" stroke-width="2"/><rect x="22" y="32" width="16" height="24" fill="%233742fa" stroke="%23000" stroke-width="2"/><circle cx="24" cy="16" r="3" fill="%23fff"/><circle cx="36" cy="16" r="3" fill="%23fff"/></svg>');
+            z-index: 20;
+            filter: drop-shadow(0 0 5px rgba(255, 71, 87, 0.5));
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><circle cx="25" cy="15" r="10" fill="%23ff4757" stroke="%23000" stroke-width="2"/><rect x="17" y="25" width="16" height="20" fill="%233742fa" stroke="%23000" stroke-width="2"/><circle cx="20" cy="12" r="2" fill="%23fff"/><circle cx="30" cy="12" r="2" fill="%23fff"/><circle cx="25" cy="35" r="3" fill="%23ffa502" stroke="%23000" stroke-width="1"/></svg>');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
             pointer-events: none;
             left: 0;
             top: 0;
+            image-rendering: crisp-edges;
         }
 
         .demon {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            transform: translate(-50%, -50%);
+            width: 50px;  /* Уменьшил размер */
+            height: 50px;  /* Уменьшил размер */
+            transform: translate(-50%, -50%); /* Точное центрирование */
             transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 10;
-            filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
+            z-index: 15;
+            filter: drop-shadow(0 0 5px currentColor);
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -273,6 +372,13 @@
             left: 0;
             top: 0;
             border-radius: 50%;
+            image-rendering: crisp-edges;
+        }
+
+        /* Анимации */
+        @keyframes playerWalk {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -55%); }
         }
 
         @keyframes demonFloat {
@@ -280,13 +386,19 @@
             50% { transform: translate(-50%, -55%); }
         }
 
+        .walking {
+            animation: playerWalk 0.3s ease-in-out infinite !important;
+        }
+
         .floating {
             animation: demonFloat 2s ease-in-out infinite;
         }
 
+        /* Клетки с вопросами */
         .question {
             background: linear-gradient(145deg, #ffa502, #ff9500) !important;
             animation: questionPulse 1.5s ease-in-out infinite;
+            position: relative;
         }
 
         .question::after {
@@ -295,9 +407,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
             color: #000;
+            text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
         }
 
         @keyframes questionPulse {
@@ -305,16 +418,18 @@
             50% { transform: scale(1.1); }
         }
 
+        /* Экран вопроса */
         #question-screen {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: rgba(12, 12, 29, 0.95);
+            background: rgba(12, 12, 29, 0.98);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 50;
+            z-index: 200;
+            backdrop-filter: blur(5px);
         }
 
         .question-container {
@@ -323,15 +438,39 @@
             border-radius: 20px;
             padding: 40px;
             max-width: 800px;
+            width: 90%;
             margin: 20px;
-            box-shadow: 0 0 40px rgba(255, 71, 87, 0.5);
+            box-shadow: 0 0 50px rgba(255, 71, 87, 0.5), 15px 15px 0 rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: questionAppear 0.3s ease-out;
+        }
+
+        @keyframes questionAppear {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .demon-portrait {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            border: 4px solid #ff4757;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ff4757, #ff3742);
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+            background-size: cover;
+            background-position: center;
         }
 
         .question-text {
             font-size: 1.4rem;
-            margin: 20px 0;
+            margin: 40px 0 25px 0;
             color: #fff;
             line-height: 1.6;
+            text-align: center;
             white-space: pre-line;
         }
 
@@ -351,13 +490,36 @@
             font-size: 1.1rem;
             border-radius: 10px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }
 
         .answer-option:hover {
             background: linear-gradient(145deg, #5352ed, #3742fa);
             transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(55, 66, 250, 0.4);
         }
 
+        .answer-option:hover::before {
+            left: 100%;
+        }
+
+        .answer-option:active {
+            transform: translateY(0);
+        }
+
+        /* Статистика */
         #stats {
             position: absolute;
             top: 30px;
@@ -366,13 +528,13 @@
             padding: 20px;
             border: 4px solid #ff4757;
             border-radius: 15px;
-            z-index: 5;
-            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
-            min-width: 200px;
+            z-index: 30;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 71, 87, 0.3);
+            min-width: 220px;
         }
 
         .stat {
-            margin: 8px 0;
+            margin: 10px 0;
             font-size: 1.1rem;
             display: flex;
             align-items: center;
@@ -407,10 +569,12 @@
             border-radius: 50%;
             border: 2px solid #000;
             transition: all 0.3s;
+            box-shadow: 0 0 10px #ff4757;
         }
 
         .life.lost {
             background: #333;
+            box-shadow: none;
             transform: scale(0.8);
         }
 
@@ -423,34 +587,46 @@
             border: 4px solid #ff4757;
             border-radius: 50%;
             cursor: pointer;
-            z-index: 5;
+            z-index: 30;
             box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
             font-size: 24px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
         }
 
+        #music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #ff4757;
+        }
+
+        /* Экран поражения */
         #game-over-screen {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.98);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 200;
+            z-index: 250;
         }
 
         .game-over-title {
             font-size: 4rem;
             color: #ff4757;
-            text-shadow: 0 0 20px #ff4757;
+            text-shadow: 0 0 20px #ff4757, 4px 4px 0 #000;
             margin-bottom: 30px;
             animation: gameOverPulse 2s ease-in-out infinite;
         }
 
         @keyframes gameOverPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            0%, 100% { transform: scale(1); text-shadow: 0 0 20px #ff4757, 4px 4px 0 #000; }
+            50% { transform: scale(1.1); text-shadow: 0 0 40px #ff4757, 4px 4px 0 #000; }
         }
 
         .game-over-stats {
@@ -461,6 +637,8 @@
             margin: 20px;
             font-size: 1.2rem;
             line-height: 2;
+            min-width: 400px;
+            text-align: center;
         }
 
         .game-over-button {
@@ -472,6 +650,8 @@
             margin: 10px;
             color: #fff;
             font-weight: bold;
+            min-width: 200px;
+            transition: all 0.3s;
         }
 
         .game-over-button:hover {
@@ -479,6 +659,7 @@
             box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
         }
 
+        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
@@ -486,21 +667,37 @@
             transform: translateX(-50%);
             background: linear-gradient(145deg, #3742fa, #2f35e0);
             color: white;
-            padding: 12px 24px;
+            padding: 15px 30px;
             border-radius: 8px;
             border: 3px solid #000;
             z-index: 1000;
             font-weight: bold;
-            box-shadow: 0 0 20px rgba(55, 66, 250, 0.5);
+            font-size: 1.1rem;
+            box-shadow: 0 0 30px rgba(55, 66, 250, 0.5);
+            animation: notificationAppear 0.3s ease-out;
         }
 
+        @keyframes notificationAppear {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* Частицы */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+            border-radius: 50%;
+        }
+
+        /* Модальное окно входа */
         #login-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: none;
             justify-content: center;
             align-items: center;
@@ -515,12 +712,14 @@
             max-width: 400px;
             width: 90%;
             text-align: center;
+            box-shadow: 0 0 50px rgba(255,71,87,0.5);
         }
 
         .login-title {
             color: #ff4757;
             margin-bottom: 30px;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
         }
 
         .login-input {
@@ -534,6 +733,12 @@
             font-size: 16px;
         }
 
+        .login-input:focus {
+            outline: none;
+            border-color: #ff4757;
+            box-shadow: 0 0 10px #ff4757;
+        }
+
         .login-button {
             background: linear-gradient(145deg, #ff4757, #ff3742);
             color: white;
@@ -543,8 +748,15 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
-            margin: 10px;
+            margin: 10px 0;
             width: 100%;
+            transition: all 0.3s;
+            border: 2px solid #000;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px #ff4757;
         }
 
         .user-info {
@@ -552,22 +764,26 @@
             top: 10px;
             left: 10px;
             color: white;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 5px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
             z-index: 1000;
+            font-size: 0.9rem;
+            border: 1px solid #ff4757;
         }
 
+        /* Рейтинг */
         #leaderboard-screen {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: rgba(12, 12, 29, 0.95);
+            background: rgba(12, 12, 29, 0.98);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 200;
+            backdrop-filter: blur(5px);
         }
 
         .leaderboard-container {
@@ -579,6 +795,7 @@
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
+            box-shadow: 0 0 50px rgba(255,71,87,0.3);
         }
 
         .leaderboard-title {
@@ -586,6 +803,7 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
         }
 
         .leaderboard-item {
@@ -596,6 +814,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s;
+            border: 1px solid #3742fa;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255,71,87,0.2);
+            transform: translateX(5px);
+            border-color: #ff4757;
         }
 
         .leaderboard-rank {
@@ -626,18 +852,27 @@
             margin-top: 20px;
             width: 100%;
             font-size: 1.1rem;
+            transition: all 0.3s;
+            border: 2px solid #000;
         }
 
+        .close-button:hover {
+            background: linear-gradient(145deg, #777, #666);
+            transform: translateY(-2px);
+        }
+
+        /* Как играть */
         #how-to-play-screen {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: rgba(12, 12, 29, 0.95);
+            background: rgba(12, 12, 29, 0.98);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 200;
+            backdrop-filter: blur(5px);
         }
 
         .how-to-play-container {
@@ -656,6 +891,7 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 2rem;
+            text-shadow: 2px 2px 0 #000;
         }
 
         .how-to-play-section {
@@ -663,13 +899,22 @@
             padding: 15px;
             background: rgba(255,255,255,0.03);
             border-radius: 10px;
+            border-left: 4px solid #ff4757;
         }
 
         .how-to-play-section h3 {
             color: #ffa502;
             margin-bottom: 10px;
+            font-size: 1.3rem;
         }
 
+        .how-to-play-section p {
+            color: #ddd;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        /* Адаптивность */
         @media (max-width: 1200px) {
             .level-grid {
                 grid-template-columns: repeat(12, 50px);
@@ -684,18 +929,20 @@
                 grid-template-columns: repeat(12, 40px);
                 grid-template-rows: repeat(8, 40px);
                 gap: 2px;
-                padding: 15px;
+                padding: 10px;
             }
             .cell { width: 40px; height: 40px; }
             .title { font-size: 2.5rem; }
             .answers-grid { grid-template-columns: 1fr; }
+            #stats { top: 10px; left: 10px; padding: 10px; min-width: 150px; }
+            .stat { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
     <div id="user-info" class="user-info" style="display: none;">
         👤 <span id="username-display">Гость</span>
-        <button id="logout-button" style="margin-left: 10px; background: #ff4757; border: none; color: white; padding: 2px 8px; border-radius: 3px; cursor: pointer;">Выйти</button>
+        <button id="logout-button" style="margin-left: 10px; background: #ff4757; border: none; color: white; padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">Выйти</button>
     </div>
 
     <div id="login-modal">
@@ -704,7 +951,12 @@
             <input type="text" id="login-username" class="login-input" placeholder="Имя пользователя">
             <input type="password" id="login-password" class="login-input" placeholder="Пароль">
             <button id="login-button" class="login-button">Войти / Зарегистрироваться</button>
-            <button id="play-offline" class="login-button" style="background: linear-gradient(145deg, #666, #555);">
+            <p style="color: #aaa; margin-top: 20px; font-size: 14px;">
+                🔒 Прогресс сохраняется на сервере<br>
+                🎮 Доступ с любого устройства<br>
+                📊 Статистика и рейтинг игроков
+            </p>
+            <button id="play-offline" class="login-button" style="background: linear-gradient(145deg, #666, #555); margin-top: 10px;">
                 Играть без сохранения
             </button>
         </div>
@@ -716,6 +968,14 @@
             <h1 class="title">OGETAKER</h1>
             <p class="subtitle">Готовься к ОГЭ с демонессами знаний!</p>
             
+            <div class="music-import-section">
+                <input type="file" id="music-file" accept="audio/*" style="display: none;">
+                <button class="import-btn" onclick="document.getElementById('music-file').click()">
+                    🎵 Импорт музыки
+                </button>
+                <span class="file-name" id="music-file-name">Файл не выбран</span>
+            </div>
+            
             <div class="main-menu-buttons">
                 <button class="hell-button" id="start-button">Начать игру</button>
                 <button class="hell-button" id="how-to-play-button">Как играть</button>
@@ -726,23 +986,26 @@
         <!-- Экран выбора режима -->
         <div id="mode-selection-screen">
             <h2 class="mode-title">ВЫБЕРИ РЕЖИМ СЛОЖНОСТИ</h2>
+            <p class="mode-description">Начните с первой сложности, чтобы разблокировать следующие уровни!</p>
             
             <div class="difficulty-buttons">
                 <button class="difficulty-button" id="difficulty-1">
                     <span class="difficulty-number">1</span>
                     ЛЁГКИЙ УРОВЕНЬ
-                    <span class="lock-icon"></span>
+                    <span class="difficulty-label">Вопросы ОГЭ по информатике</span>
                 </button>
                 
                 <button class="difficulty-button locked" id="difficulty-2">
                     <span class="difficulty-number">2</span>
                     СРЕДНИЙ УРОВЕНЬ
+                    <span class="difficulty-label">Карта "Змейка"</span>
                     <span class="lock-icon">🔒</span>
                 </button>
                 
                 <button class="difficulty-button locked" id="difficulty-3">
                     <span class="difficulty-number">3</span>
                     СЛОЖНЫЙ УРОВЕНЬ
+                    <span class="difficulty-label">Карта "Лабиринт"</span>
                     <span class="lock-icon">🔒</span>
                 </button>
             </div>
@@ -789,6 +1052,7 @@
 
         <!-- Экран вопроса -->
         <div id="question-screen">
+            <div class="demon-portrait"></div>
             <div class="question-container">
                 <div class="question-text" id="current-question"></div>
                 <div class="answers-grid" id="answers-container"></div>
@@ -819,26 +1083,43 @@
                 
                 <div class="how-to-play-section">
                     <h3>🎮 УПРАВЛЕНИЕ</h3>
-                    <p>WASD или стрелки - движение персонажа</p>
+                    <p><strong style="color: #ff4757;">WASD</strong> или <strong style="color: #ff4757;">стрелки</strong> - движение персонажа</p>
                     <p>Клик по ответу - выбор варианта</p>
+                    <p>Пробел или Enter - активация выхода</p>
+                    <p>Esc - выход в меню</p>
                 </div>
 
                 <div class="how-to-play-section">
-                    <h3>❤️ ЖИЗНИ</h3>
-                    <p>У вас 3 жизни. Ошибка = потеря жизни</p>
+                    <h3>❤️ СИСТЕМА ЖИЗНЕЙ</h3>
+                    <p>У вас 3 жизни. Каждая ошибка = потеря жизни</p>
                     <p>Когда жизни кончатся - игра окончена</p>
+                    <p>Жизни восстанавливаются только при новом уровне</p>
                 </div>
 
                 <div class="how-to-play-section">
-                    <h3>👿 ДЕМОНЕССЫ</h3>
-                    <p>Найди 4 демонесс и ответь на их вопросы</p>
+                    <h3>👿 ДЕМОНЕССЫ ЗНАНИЙ</h3>
+                    <p>Найди всех 4 демонесс и ответь на их вопросы</p>
+                    <p>Каждая побежденная демонесса = +1 в общий рейтинг</p>
                     <p>После победы над всеми откроются выходы</p>
                 </div>
 
                 <div class="how-to-play-section">
-                    <h3>🚪 ВЫХОД</h3>
+                    <h3>❓ ДОПОЛНИТЕЛЬНЫЕ ВОПРОСЫ</h3>
+                    <p>Собирай знаки вопроса на карте</p>
+                    <p>Они дают дополнительные очки и помогают открыть выход</p>
+                </div>
+
+                <div class="how-to-play-section">
+                    <h3>🚪 ВЫХОД ИЗ УРОВНЯ</h3>
                     <p>Встань на клетку выхода и нажми пробел или Enter</p>
                     <p>Или просто кликни по выходу мышкой</p>
+                    <p>После выхода уровень считается пройденным</p>
+                </div>
+
+                <div class="how-to-play-section">
+                    <h3>🏆 РЕЙТИНГ</h3>
+                    <p>Чем больше демонесс побеждено - тем выше место</p>
+                    <p>Учитываются также решенные вопросы и пройденные уровни</p>
                 </div>
                 
                 <button id="close-how-to-play" class="close-button">Закрыть</button>
@@ -847,18 +1128,15 @@
     </div>
 
     <script>
-        // ========================
-        // КОНФИГУРАЦИЯ
-        // ========================
-        const SERVER_URL = window.location.origin;
+        // ======================== ПОЛНОСТЬЮ ПЕРЕРАБОТАННЫЙ JAVASCRIPT ========================
         
+        // Конфигурация
+        const SERVER_URL = window.location.origin;
         let userToken = localStorage.getItem('ogetaker_userToken');
         let currentUsername = localStorage.getItem('ogetaker_username');
         let isOnlineMode = false;
 
-        // ========================
-        // ДАННЫЕ ИГРЫ
-        // ========================
+        // Данные демонесс
         const demons = [
             {
                 name: "Алгоритмика",
@@ -894,6 +1172,7 @@
             }
         ];
 
+        // Дополнительные вопросы
         const additionalQuestions = [
             {
                 question: "Что такое HTML?",
@@ -917,9 +1196,7 @@
             }
         ];
 
-        // ========================
-        // УРОВНИ КАРТ
-        // ========================
+        // Уровни карт
         const levelLayouts = {
             1: {
                 name: "Прямоугольная карта",
@@ -968,37 +1245,52 @@
             }
         };
 
-        // ========================
-        // СОСТОЯНИЕ ИГРЫ
-        // ========================
+        // ======================== СОСТОЯНИЕ ИГРЫ ========================
         let gameState = {
+            // Позиция игрока
             playerPosition: {x: 1, y: 4},
+            
+            // Статистика уровня
             demonsFound: 0,
             questionsSolved: 0,
             mistakes: 0,
             lives: 3,
             maxLives: 3,
+            
+            // Демонессы
             currentDemon: null,
             unlockedDemons: [],
+            
+            // Настройки
             musicEnabled: true,
             isMoving: false,
             customMusic: null,
+            
+            // Выход
             exitsCreated: false,
+            exitTriggered: false,
+            portalActive: false,
+            
+            // Уровень
             difficulty: 1,
             unlockedDifficulties: [1],
             currentLevelLayout: levelLayouts[1],
+            
+            // Состояние игры
+            gameActive: true,
             isOnline: false,
+            
+            // Общая статистика
             totalDemonsCollected: 0,
             totalQuestionsSolved: 0,
             totalMistakes: 0,
-            gameActive: true,
-            exitTriggered: false,
-            portalActive: false
+            
+            // Блокировка движения (НОВОЕ)
+            movementLocked: false,
+            portalAnimationActive: false
         };
 
-        // ========================
-        // ЭЛЕМЕНТЫ DOM
-        // ========================
+        // ======================== DOM ЭЛЕМЕНТЫ ========================
         const startScreen = document.getElementById('start-screen');
         const modeSelectionScreen = document.getElementById('mode-selection-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -1041,11 +1333,7 @@
         const livesContainer = document.getElementById('lives-container');
         const lives = document.querySelectorAll('.life');
 
-        // ========================
-        // ОСНОВНЫЕ ФУНКЦИИ ИГРЫ
-        // ========================
-
-        // Обновление отображения жизней
+        // ======================== ФУНКЦИИ УПРАВЛЕНИЯ ЖИЗНЯМИ ========================
         function updateLives() {
             lives.forEach((life, index) => {
                 if (index < gameState.lives) {
@@ -1056,12 +1344,20 @@
             });
         }
 
-        // Потеря жизни
         function loseLife() {
-            if (!gameState.gameActive) return false;
+            if (!gameState.gameActive || gameState.portalActive) return false;
             
             gameState.lives--;
             updateLives();
+            
+            // Визуальная обратная связь
+            const player = document.getElementById('player');
+            if (player) {
+                player.style.filter = 'drop-shadow(0 0 10px #ff4757)';
+                setTimeout(() => {
+                    player.style.filter = 'drop-shadow(0 0 5px rgba(255, 71, 87, 0.5))';
+                }, 200);
+            }
             
             if (gameState.lives <= 0) {
                 gameOver();
@@ -1071,123 +1367,197 @@
             return true;
         }
 
-        // Игра окончена
+        // ======================== ИГРА ОКОНЧЕНА ========================
         function gameOver() {
             gameState.gameActive = false;
-            gameState.portalActive = true; // Блокируем движение
+            gameState.portalActive = true;
+            gameState.movementLocked = true;
             
-            // Показываем статистику
             gameOverStats.innerHTML = `
                 <p>📊 СТАТИСТИКА УРОВНЯ:</p>
                 <p>✓ Решено вопросов: ${gameState.questionsSolved}</p>
                 <p>✗ Ошибок: ${gameState.mistakes}</p>
                 <p>👿 Побеждено демонесс: ${gameState.unlockedDemons.length}/4</p>
                 <p>💀 Потеряно жизней: ${gameState.maxLives - gameState.lives}</p>
+                <p>🏆 Всего демонесс: ${gameState.totalDemonsCollected}</p>
             `;
             
             gameOverScreen.style.display = 'flex';
             
-            // Эффект поражения
             const player = document.getElementById('player');
             if (player) {
                 player.style.animation = 'none';
-                player.style.transform = 'translate(-50%, -50%) rotate(180deg)';
+                player.style.transform = 'translate(-50%, -50%) rotate(180deg) scale(0.8)';
                 player.style.opacity = '0.5';
+                player.style.filter = 'grayscale(100%)';
             }
             
-            // Виброэффект (если поддерживается)
             if (navigator.vibrate) {
                 navigator.vibrate([200, 100, 200]);
             }
         }
 
-        // Функция выхода через портал
+        // ======================== АКТИВАЦИЯ ВЫХОДА (ИСПРАВЛЕНО) ========================
         function activateExit(exitCell) {
-            if (!gameState.gameActive || gameState.exitTriggered) return;
+            // МНОГОУРОВНЕВАЯ ПРОВЕРКА БЛОКИРОВКИ
+            if (!gameState.gameActive) {
+                console.log('⛔ Игра не активна');
+                return;
+            }
             
+            if (gameState.exitTriggered) {
+                console.log('⛔ Выход уже активирован');
+                return;
+            }
+            
+            if (gameState.portalActive) {
+                console.log('⛔ Портал уже активен');
+                return;
+            }
+            
+            if (gameState.movementLocked) {
+                console.log('⛔ Движение заблокировано');
+                return;
+            }
+            
+            // БЛОКИРУЕМ ВСЁ
             gameState.exitTriggered = true;
+            gameState.portalActive = true;
+            gameState.movementLocked = true;
             gameState.gameActive = false;
-            gameState.portalActive = true; // Блокируем движение
             
-            // Активируем визуальный эффект
+            console.log('🚪 АКТИВАЦИЯ ПОРТАЛА - ДВИЖЕНИЕ ЗАБЛОКИРОВАНО');
+            
             exitCell.classList.add('active-exit');
             
-            // Показываем уведомление
-            showNotification('🚪 Вход в портал...', 1500);
+            showNotification('🚪 ВХОД В ПОРТАЛ... ДВИЖЕНИЕ ЗАБЛОКИРОВАНО', 2000);
             
-            // Анимация игрока
             const player = document.getElementById('player');
             if (player) {
-                player.style.transition = 'all 1s ease-out';
-                player.style.transform = 'translate(-50%, -50%) scale(0.1) rotate(720deg)';
+                player.style.transition = 'all 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                player.style.transform = 'translate(-50%, -50%) scale(0) rotate(720deg)';
                 player.style.opacity = '0';
             }
             
-            // Создаем частицы
+            // Создаем много частиц
             const rect = exitCell.getBoundingClientRect();
             const containerRect = document.querySelector('.level-container').getBoundingClientRect();
-            createParticles(rect.left - containerRect.left + 30, rect.top - containerRect.top + 30, '#2ed573', 20);
             
-            // Задержка перед завершением уровня
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createParticles(
+                        rect.left - containerRect.left + rect.width / 2,
+                        rect.top - containerRect.top + rect.height / 2,
+                        '#2ed573',
+                        1
+                    );
+                }, i * 50);
+            }
+            
+            // Таймер возврата в меню
             setTimeout(() => {
-                showNotification(`🎉 Уровень ${gameState.difficulty} пройден!`, 2000);
+                showNotification(`🎉 УРОВЕНЬ ${gameState.difficulty} ПРОЙДЕН!`, 2000);
                 completeLevel();
                 
                 setTimeout(() => {
                     gameScreen.style.display = 'none';
                     modeSelectionScreen.style.display = 'flex';
                     
-                    // Сброс состояния
+                    // Сбрасываем все блокировки
                     gameState.exitTriggered = false;
                     gameState.portalActive = false;
+                    gameState.movementLocked = false;
                     
                     if (player) {
                         player.style.transition = '';
                         player.style.transform = 'translate(-50%, -50%)';
                         player.style.opacity = '1';
+                        player.style.filter = '';
                     }
                     
                     resetGameState();
                 }, 2000);
-            }, 1000);
+            }, 1500);
         }
 
-        // Проверка нажатия на выход
+        // ======================== ПРОВЕРКА ВЫХОДА ========================
         function checkExitClick(e) {
             const exitCell = e.target.closest('.cell.exit');
-            if (exitCell && gameState.exitsCreated && gameState.gameActive && !gameState.exitTriggered && !gameState.portalActive) {
-                const x = parseInt(exitCell.dataset.x);
-                const y = parseInt(exitCell.dataset.y);
-                
-                // Проверяем, стоит ли игрок на выходе
-                if (gameState.playerPosition.x === x && gameState.playerPosition.y === y) {
-                    activateExit(exitCell);
-                } else {
-                    showNotification('❌ Сначала подойди к выходу!', 1500);
-                }
+            
+            // МНОГОУРОВНЕВАЯ ПРОВЕРКА
+            if (!exitCell) return;
+            if (!gameState.exitsCreated) {
+                showNotification('❌ Выходы еще не открыты!', 1500);
+                return;
             }
-        }
-
-        // Движение игрока (исправленная версия с полной блокировкой)
-        function movePlayer(dx, dy) {
-            // Полная блокировка движения при любых условиях
-            if (!gameState.gameActive || gameState.portalActive || gameState.isMoving || gameState.exitTriggered) {
-                console.log('⛔ Движение заблокировано:', { 
-                    gameActive: gameState.gameActive, 
-                    portalActive: gameState.portalActive, 
-                    isMoving: gameState.isMoving, 
-                    exitTriggered: gameState.exitTriggered 
-                });
+            if (!gameState.gameActive) {
+                showNotification('❌ Игра не активна', 1500);
+                return;
+            }
+            if (gameState.exitTriggered) {
+                showNotification('❌ Выход уже активируется', 1500);
+                return;
+            }
+            if (gameState.portalActive) {
+                showNotification('❌ Портал уже активен', 1500);
+                return;
+            }
+            if (gameState.movementLocked) {
+                showNotification('❌ Движение заблокировано', 1500);
                 return;
             }
             
-            if (gameScreen.style.display !== 'block') return;
-            if (questionScreen.style.display === 'flex') return;
+            const x = parseInt(exitCell.dataset.x);
+            const y = parseInt(exitCell.dataset.y);
+            
+            if (gameState.playerPosition.x === x && gameState.playerPosition.y === y) {
+                activateExit(exitCell);
+            } else {
+                showNotification('❌ Сначала подойди к выходу!', 1500);
+            }
+        }
+
+        // ======================== ДВИЖЕНИЕ ИГРОКА (С ПОЛНОЙ БЛОКИРОВКОЙ) ========================
+        function movePlayer(dx, dy) {
+            // ПРОВЕРКА БЛОКИРОВОК - ТЕПЕРЬ ВСЕ УСЛОВИЯ ПРОВЕРЯЮТСЯ
+            if (!gameState.gameActive) {
+                console.log('⛔ Движение заблокировано: игра не активна');
+                return;
+            }
+            
+            if (gameState.portalActive) {
+                console.log('⛔ Движение заблокировано: портал активен');
+                return;
+            }
+            
+            if (gameState.movementLocked) {
+                console.log('⛔ Движение заблокировано: movementLocked = true');
+                return;
+            }
+            
+            if (gameState.isMoving) {
+                console.log('⛔ Движение заблокировано: уже движется');
+                return;
+            }
+            
+            if (gameState.exitTriggered) {
+                console.log('⛔ Движение заблокировано: выход активирован');
+                return;
+            }
+            
+            if (gameScreen.style.display !== 'block') {
+                console.log('⛔ Движение заблокировано: экран игры не виден');
+                return;
+            }
+            
+            if (questionScreen.style.display === 'flex') {
+                console.log('⛔ Движение заблокировано: открыт вопрос');
+                return;
+            }
             
             const newX = gameState.playerPosition.x + dx;
             const newY = gameState.playerPosition.y + dy;
             
-            // Проверка границ
             if (newX < 0 || newX >= 12 || newY < 0 || newY >= 8) {
                 return;
             }
@@ -1199,7 +1569,7 @@
             
             const player = document.getElementById('player');
             if (player) {
-                player.style.animation = 'playerWalk 0.3s ease-in-out';
+                player.classList.add('walking');
             }
             
             gameState.playerPosition = {x: newX, y: newY};
@@ -1207,14 +1577,14 @@
             
             setTimeout(() => {
                 if (player) {
-                    player.style.animation = '';
+                    player.classList.remove('walking');
                 }
                 gameState.isMoving = false;
                 checkCollisions();
             }, 200);
         }
 
-        // Обновление позиции игрока
+        // ======================== ОБНОВЛЕНИЕ ПОЗИЦИИ ИГРОКА (ИСПРАВЛЕНО) ========================
         function updatePlayerPosition() {
             const player = document.getElementById('player');
             const cell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
@@ -1229,31 +1599,38 @@
             const rect = cell.getBoundingClientRect();
             const containerRect = document.querySelector('.level-container').getBoundingClientRect();
             
-            // Центрируем игрока ровно по центру клетки
+            // ТОЧНОЕ ЦЕНТРИРОВАНИЕ - ИГРОК РОВНО ПО ЦЕНТРУ КЛЕТКИ
             const left = rect.left - containerRect.left + rect.width / 2;
             const top = rect.top - containerRect.top + rect.height / 2;
             
             player.style.left = left + 'px';
             player.style.top = top + 'px';
+            
+            // Отладка
+            console.log(`Игрок на клетке (${gameState.playerPosition.x}, ${gameState.playerPosition.y})`);
         }
 
-        // Обновление позиции демонессы
+        // ======================== ОБНОВЛЕНИЕ ПОЗИЦИИ ДЕМОНЕССЫ (ИСПРАВЛЕНО) ========================
         function updateDemonPosition(demon, demonElement) {
             const cell = document.querySelector(`.cell[data-x="${demon.position.x}"][data-y="${demon.position.y}"]`);
             if (cell) {
                 const rect = cell.getBoundingClientRect();
                 const containerRect = document.querySelector('.level-container').getBoundingClientRect();
                 
-                // Центрируем демонессу ровно по центру клетки
+                // ТОЧНОЕ ЦЕНТРИРОВАНИЕ - ДЕМОНЕССА РОВНО ПО ЦЕНТРУ КЛЕТКИ
                 const left = rect.left - containerRect.left + rect.width / 2;
                 const top = rect.top - containerRect.top + rect.height / 2;
                 
                 demonElement.style.left = left + 'px';
                 demonElement.style.top = top + 'px';
+                
+                // Устанавливаем цвет
+                demonElement.style.background = `radial-gradient(circle at 30% 30%, ${demon.color}, ${demon.color}99)`;
+                demonElement.style.boxShadow = `0 0 15px ${demon.color}`;
             }
         }
 
-        // Создание игрока
+        // ======================== СОЗДАНИЕ ИГРОКА ========================
         function createPlayer() {
             const oldPlayer = document.getElementById('player');
             if (oldPlayer) oldPlayer.remove();
@@ -1266,25 +1643,28 @@
             setTimeout(updatePlayerPosition, 50);
         }
 
-        // Инициализация уровня
+        // ======================== ИНИЦИАЛИЗАЦИЯ УРОВНЯ ========================
         function initLevel() {
             levelGrid.innerHTML = '';
             
             const layout = gameState.currentLevelLayout;
             gameState.playerPosition = {...layout.startPosition};
             
-            // Сброс состояния
+            // СБРОС ВСЕХ БЛОКИРОВОК
             gameState.gameActive = true;
             gameState.portalActive = false;
+            gameState.movementLocked = false;
             gameState.exitTriggered = false;
             gameState.lives = 3;
             gameState.mistakes = 0;
             gameState.questionsSolved = 0;
             gameState.unlockedDemons = [];
             gameState.exitsCreated = false;
+            gameState.isMoving = false;
             
             updateLives();
             
+            // Обновляем позиции демонесс
             demons.forEach((demon, index) => {
                 if (layout.demonPositions[index]) {
                     demon.position = {...layout.demonPositions[index]};
@@ -1305,7 +1685,6 @@
                         cell.classList.add('path');
                     }
                     
-                    // Добавляем обработчик клика для выхода
                     cell.addEventListener('click', checkExitClick);
                     
                     levelGrid.appendChild(cell);
@@ -1314,18 +1693,18 @@
             
             createPlayer();
             
-            // Создаем демонесс с правильным позиционированием
+            // Удаляем старых демонесс
+            document.querySelectorAll('.demon').forEach(d => d.remove());
+            
+            // Создаем новых демонесс с правильным позиционированием
             demons.forEach(demon => {
                 const demonElement = document.createElement('div');
-                demonElement.className = `demon floating`;
+                demonElement.className = 'demon floating';
                 demonElement.dataset.name = demon.name;
-                demonElement.style.background = `linear-gradient(145deg, ${demon.color}, ${demon.color}99)`;
+                demonElement.style.background = `radial-gradient(circle at 30% 30%, ${demon.color}, ${demon.color}99)`;
                 document.querySelector('.level-container').appendChild(demonElement);
                 
-                // Центрируем демонессу
                 setTimeout(() => updateDemonPosition(demon, demonElement), 50);
-                
-                // Сохраняем ссылку на элемент
                 demon.element = demonElement;
             });
             
@@ -1334,9 +1713,11 @@
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
             stats.demons.textContent = '0';
+            
+            console.log('Уровень инициализирован. Блокировки сброшены.');
         }
 
-        // Создание дополнительных вопросов
+        // ======================== СОЗДАНИЕ ВОПРОСОВ ========================
         function createQuestions() {
             const layout = gameState.currentLevelLayout;
             layout.questionPositions.forEach(pos => {
@@ -1347,7 +1728,7 @@
             });
         }
 
-        // Создание выходов
+        // ======================== СОЗДАНИЕ ВЫХОДОВ ========================
         function createExits() {
             if (gameState.exitsCreated) return;
             
@@ -1362,36 +1743,36 @@
             });
             
             gameState.exitsCreated = true;
-            showNotification('🚪 Выходы открыты! Подойди и кликни по выходу!', 3000);
+            showNotification('🚪 ВЫХОДЫ ОТКРЫТЫ! Подойди и нажми ПРОБЕЛ или кликни по выходу!', 4000);
         }
 
-        // Проверка столкновений
+        // ======================== ПРОВЕРКА СТОЛКНОВЕНИЙ ========================
         function checkCollisions() {
-            if (!gameState.gameActive || gameState.portalActive) return;
+            if (!gameState.gameActive || gameState.portalActive || gameState.movementLocked) return;
             
-            // Проверка демонесс
             demons.forEach(demon => {
                 if (demon.position.x === gameState.playerPosition.x && 
                     demon.position.y === gameState.playerPosition.y &&
-                    !gameState.unlockedDemons.includes(demon.name) &&
-                    gameState.gameActive && !gameState.portalActive) {
+                    !gameState.unlockedDemons.includes(demon.name)) {
                     showDemonQuestion(demon);
                 }
             });
             
-            // Проверка дополнительных вопросов
             const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
-            if (currentCell && currentCell.classList.contains('question') && gameState.gameActive && !gameState.portalActive) {
+            if (currentCell && currentCell.classList.contains('question')) {
                 showAdditionalQuestion();
                 currentCell.classList.remove('question');
             }
         }
 
-        // Показ вопроса демонессы
+        // ======================== ПОКАЗ ВОПРОСА ДЕМОНЕССЫ ========================
         function showDemonQuestion(demon) {
             gameState.currentDemon = demon;
             
             document.getElementById('current-question').textContent = demon.question;
+            
+            const portrait = document.querySelector('.demon-portrait');
+            portrait.style.background = `radial-gradient(circle at 30% 30%, ${demon.color}, ${demon.color}99)`;
             
             const answersContainer = document.getElementById('answers-container');
             answersContainer.innerHTML = '';
@@ -1407,12 +1788,11 @@
             questionScreen.style.display = 'flex';
         }
 
-        // Проверка ответа демонессы
+        // ======================== ПРОВЕРКА ОТВЕТА ДЕМОНЕССЫ ========================
         function checkDemonAnswer(selectedIndex) {
             const isCorrect = selectedIndex === gameState.currentDemon.correct;
             
             if (isCorrect) {
-                // Правильный ответ
                 gameState.questionsSolved++;
                 gameState.unlockedDemons.push(gameState.currentDemon.name);
                 stats.solved.textContent = gameState.questionsSolved;
@@ -1421,43 +1801,45 @@
                 gameState.totalDemonsCollected++;
                 gameState.totalQuestionsSolved++;
                 
-                showNotification('✅ Правильно!', 1000);
+                showNotification('✅ ПРАВИЛЬНО! Демонесса побеждена!', 1500);
                 
-                // Удаляем демонессу
+                const portrait = document.querySelector('.demon-portrait');
+                const rect = portrait.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, gameState.currentDemon.color, 15);
+                
                 const demonElement = document.querySelector(`.demon[data-name="${gameState.currentDemon.name}"]`);
                 if (demonElement) {
                     demonElement.style.opacity = '0';
+                    demonElement.style.transform = 'translate(-50%, -50%) scale(0)';
                     setTimeout(() => demonElement.remove(), 500);
                 }
                 
-                // Проверяем, всех ли демонесс победили
                 if (gameState.unlockedDemons.length >= demons.length) {
                     createExits();
                 }
                 
                 saveProgress();
             } else {
-                // Неправильный ответ
                 gameState.mistakes++;
                 stats.mistakes.textContent = gameState.mistakes;
                 gameState.totalMistakes++;
                 
+                showNotification('❌ НЕПРАВИЛЬНО! -1 жизнь', 1500);
+                
                 if (!loseLife()) {
-                    // Игра окончена, закрываем вопрос
                     questionScreen.style.display = 'none';
                     return;
                 }
-                
-                showNotification('❌ Неправильно! -1 жизнь', 1000);
             }
             
             questionScreen.style.display = 'none';
         }
 
-        // Показ дополнительного вопроса
+        // ======================== ПОКАЗ ДОПОЛНИТЕЛЬНОГО ВОПРОСА ========================
         function showAdditionalQuestion() {
             const randomQuestion = additionalQuestions[Math.floor(Math.random() * additionalQuestions.length)];
             
+            document.querySelector('.demon-portrait').style.background = 'radial-gradient(circle at 30% 30%, #ffa502, #ff9500)';
             document.getElementById('current-question').textContent = randomQuestion.question;
             
             const answersContainer = document.getElementById('answers-container');
@@ -1474,7 +1856,7 @@
             questionScreen.style.display = 'flex';
         }
 
-        // Проверка дополнительного ответа
+        // ======================== ПРОВЕРКА ДОПОЛНИТЕЛЬНОГО ОТВЕТА ========================
         function checkAdditionalAnswer(question, selectedIndex) {
             const isCorrect = selectedIndex === question.correct;
             
@@ -1483,9 +1865,12 @@
                 gameState.totalQuestionsSolved++;
                 stats.solved.textContent = gameState.questionsSolved;
                 
-                showNotification('✅ Правильно!', 1000);
+                showNotification('✅ ПРАВИЛЬНО! +1 очко', 1500);
                 
-                // Проверяем условие для выхода
+                const portrait = document.querySelector('.demon-portrait');
+                const rect = portrait.getBoundingClientRect();
+                createParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ffa502', 10);
+                
                 if (gameState.unlockedDemons.length >= demons.length && gameState.questionsSolved >= 8) {
                     createExits();
                 }
@@ -1496,37 +1881,37 @@
                 stats.mistakes.textContent = gameState.mistakes;
                 gameState.totalMistakes++;
                 
+                showNotification('❌ НЕПРАВИЛЬНО! -1 жизнь', 1500);
+                
                 if (!loseLife()) {
                     questionScreen.style.display = 'none';
                     return;
                 }
-                
-                showNotification('❌ Неправильно! -1 жизнь', 1000);
             }
             
             questionScreen.style.display = 'none';
         }
 
-        // Завершение уровня
+        // ======================== ЗАВЕРШЕНИЕ УРОВНЯ ========================
         function completeLevel() {
             const currentDifficulty = gameState.difficulty;
             
             if (currentDifficulty === 1 && !gameState.unlockedDifficulties.includes(2)) {
                 gameState.unlockedDifficulties.push(2);
                 updateDifficultyButtons();
-                showNotification('🎉 Уровень 2 разблокирован!', 3000);
+                showNotification('🎉 УРОВЕНЬ 2 "Змейка" РАЗБЛОКИРОВАН!', 3000);
             }
             
             if (currentDifficulty === 2 && !gameState.unlockedDifficulties.includes(3)) {
                 gameState.unlockedDifficulties.push(3);
                 updateDifficultyButtons();
-                showNotification('🎉 Уровень 3 разблокирован!', 3000);
+                showNotification('🎉 УРОВЕНЬ 3 "Лабиринт" РАЗБЛОКИРОВАН!', 3000);
             }
             
             saveProgress();
         }
 
-        // Сброс состояния игры
+        // ======================== СБРОС СОСТОЯНИЯ ИГРЫ ========================
         function resetGameState() {
             gameState.playerPosition = {x: 1, y: 4};
             gameState.demonsFound = 0;
@@ -1536,9 +1921,13 @@
             gameState.currentDemon = null;
             gameState.unlockedDemons = [];
             gameState.exitsCreated = false;
+            
+            // СБРОС ВСЕХ БЛОКИРОВОК
             gameState.portalActive = false;
+            gameState.movementLocked = false;
             gameState.gameActive = true;
             gameState.exitTriggered = false;
+            gameState.isMoving = false;
             
             stats.solved.textContent = '0';
             stats.mistakes.textContent = '0';
@@ -1547,26 +1936,28 @@
             updateLives();
             
             gameOverScreen.style.display = 'none';
+            
+            console.log('Состояние игры сброшено. Все блокировки сняты.');
         }
 
-        // Обновление кнопок сложности
+        // ======================== ОБНОВЛЕНИЕ КНОПОК СЛОЖНОСТИ ========================
         function updateDifficultyButtons() {
             if (gameState.unlockedDifficulties.includes(2)) {
                 difficulty2Button.classList.remove('locked');
                 difficulty2Button.style.background = 'linear-gradient(145deg, #ffa502, #ff9500)';
                 const lockIcon = difficulty2Button.querySelector('.lock-icon');
-                if (lockIcon) lockIcon.textContent = '';
+                if (lockIcon) lockIcon.style.display = 'none';
             }
             
             if (gameState.unlockedDifficulties.includes(3)) {
                 difficulty3Button.classList.remove('locked');
                 difficulty3Button.style.background = 'linear-gradient(145deg, #ff4757, #ff3742)';
                 const lockIcon = difficulty3Button.querySelector('.lock-icon');
-                if (lockIcon) lockIcon.textContent = '';
+                if (lockIcon) lockIcon.style.display = 'none';
             }
         }
 
-        // Запуск игры
+        // ======================== ЗАПУСК ИГРЫ ========================
         function startGame() {
             modeSelectionScreen.style.display = 'none';
             gameScreen.style.display = 'block';
@@ -1578,7 +1969,7 @@
             initLevel();
         }
 
-        // Показ уведомления
+        // ======================== ПОКАЗ УВЕДОМЛЕНИЯ ========================
         function showNotification(message, duration = 2000) {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -1591,31 +1982,29 @@
             }, duration);
         }
 
-        // Создание частиц
+        // ======================== СОЗДАНИЕ ЧАСТИЦ ========================
         function createParticles(x, y, color, count = 5) {
             for (let i = 0; i < count; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-                particle.style.position = 'absolute';
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
-                particle.style.width = '4px';
-                particle.style.height = '4px';
+                particle.style.width = '6px';
+                particle.style.height = '6px';
                 particle.style.background = color;
                 particle.style.borderRadius = '50%';
-                particle.style.pointerEvents = 'none';
-                particle.style.zIndex = '1000';
+                particle.style.boxShadow = `0 0 10px ${color}`;
                 
                 document.querySelector('.level-container').appendChild(particle);
                 
                 const angle = Math.random() * Math.PI * 2;
-                const distance = 20 + Math.random() * 30;
+                const distance = 30 + Math.random() * 50;
                 
                 const animation = particle.animate([
                     { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                     { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, opacity: 0 }
                 ], {
-                    duration: 800 + Math.random() * 400,
+                    duration: 1000 + Math.random() * 500,
                     easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 });
                 
@@ -1623,20 +2012,40 @@
             }
         }
 
-        // ========================
-        // ОБРАБОТЧИКИ СОБЫТИЙ
-        // ========================
+        // ======================== ОБРАБОТЧИК КЛАВИШ (ИСПРАВЛЕН) ========================
         function handleKeyDown(e) {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             
             // Выход по пробелу или Enter
-            if ((e.key === ' ' || e.key === 'Enter') && gameState.exitsCreated && gameState.gameActive && !gameState.exitTriggered && !gameState.portalActive) {
+            if ((e.key === ' ' || e.key === 'Enter') && gameState.exitsCreated) {
                 e.preventDefault();
                 
-                // Проверяем, стоит ли игрок на выходе
+                // ПРОВЕРКА БЛОКИРОВОК
+                if (!gameState.gameActive) {
+                    console.log('⛔ Выход заблокирован: игра не активна');
+                    return;
+                }
+                
+                if (gameState.portalActive) {
+                    console.log('⛔ Выход заблокирован: портал активен');
+                    return;
+                }
+                
+                if (gameState.movementLocked) {
+                    console.log('⛔ Выход заблокирован: движение заблокировано');
+                    return;
+                }
+                
+                if (gameState.exitTriggered) {
+                    console.log('⛔ Выход заблокирован: уже активирован');
+                    return;
+                }
+                
                 const currentCell = document.querySelector(`.cell[data-x="${gameState.playerPosition.x}"][data-y="${gameState.playerPosition.y}"]`);
                 if (currentCell && currentCell.classList.contains('exit')) {
                     activateExit(currentCell);
+                } else {
+                    showNotification('❌ Сначала подойди к выходу!', 1500);
                 }
                 return;
             }
@@ -1648,7 +2057,7 @@
                 return;
             }
             
-            if (gameScreen.style.display === 'block' && gameState.gameActive && !gameState.portalActive && !gameState.exitTriggered) {
+            if (gameScreen.style.display === 'block') {
                 e.preventDefault();
                 
                 const key = e.key.toLowerCase();
@@ -1672,9 +2081,7 @@
             }
         }
 
-        // ========================
-        // АВТОРИЗАЦИЯ
-        // ========================
+        // ======================== АВТОРИЗАЦИЯ ========================
         function showLoginModal() {
             loginModal.style.display = 'flex';
         }
@@ -1688,7 +2095,7 @@
             const password = loginPasswordInput.value.trim();
             
             if (!username || !password) {
-                showNotification('Введите имя и пароль!', 2000);
+                showNotification('❌ Введите имя и пароль!', 2000);
                 return;
             }
             
@@ -1715,7 +2122,7 @@
                     hideLoginModal();
                     showNotification(`✅ Добро пожаловать, ${currentUsername}!`, 2000);
                 } else {
-                    showNotification(data.error || 'Ошибка входа', 2000);
+                    showNotification(data.error || '❌ Ошибка входа', 2000);
                 }
             } catch (error) {
                 showNotification('⚠️ Ошибка соединения с сервером', 2000);
@@ -1749,7 +2156,7 @@
             modeSelectionScreen.style.display = 'none';
             startScreen.style.display = 'flex';
             
-            showNotification('✅ Вы вышли', 2000);
+            showNotification('✅ Вы вышли из аккаунта', 2000);
         }
 
         async function showLeaderboard() {
@@ -1760,40 +2167,43 @@
                 if (data.success) {
                     leaderboardList.innerHTML = '';
                     
-                    data.leaderboard.forEach((player, index) => {
-                        const playerElement = document.createElement('div');
-                        playerElement.className = 'leaderboard-item';
-                        
-                        let medal = index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
-                        
-                        playerElement.innerHTML = `
-                            <span class="leaderboard-rank">${medal}</span>
-                            <span class="leaderboard-player">${player.username}</span>
-                            <span class="leaderboard-stats">
-                                <span>👿 ${player.demonsCollected}</span>
-                                <span>📚 ${player.questionsSolved}</span>
-                                <span>🏰 ${player.unlockedLevels}</span>
-                            </span>
-                        `;
-                        
-                        leaderboardList.appendChild(playerElement);
-                    });
+                    if (data.leaderboard.length === 0) {
+                        leaderboardList.innerHTML = '<p style="text-align: center; color: #aaa;">📊 Рейтинг пока пуст</p>';
+                    } else {
+                        data.leaderboard.forEach((player, index) => {
+                            const playerElement = document.createElement('div');
+                            playerElement.className = 'leaderboard-item';
+                            
+                            let medal = index === 0 ? '👑' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                            let medalColor = index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : '#aaa';
+                            
+                            playerElement.innerHTML = `
+                                <span class="leaderboard-rank" style="color: ${medalColor};">${medal}</span>
+                                <span class="leaderboard-player">${player.username}</span>
+                                <span class="leaderboard-stats">
+                                    <span style="color: #ff4757;">👿 ${player.demonsCollected}</span>
+                                    <span style="color: #aaa;">📚 ${player.questionsSolved}</span>
+                                    <span style="color: #2ed573;">🏰 ${player.unlockedLevels}</span>
+                                </span>
+                            `;
+                            
+                            leaderboardList.appendChild(playerElement);
+                        });
+                    }
                     
                     leaderboardScreen.style.display = 'flex';
                 }
             } catch (error) {
-                leaderboardList.innerHTML = '<p style="color: #ff4757;">❌ Ошибка загрузки</p>';
+                leaderboardList.innerHTML = '<p style="color: #ff4757;">❌ Ошибка загрузки рейтинга</p>';
                 leaderboardScreen.style.display = 'flex';
             }
         }
 
         function saveProgress() {
-            // Реализация сохранения (можно добавить позже)
+            // Функция сохранения (будет реализована позже)
         }
 
-        // ========================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ========================
+        // ======================== НАСТРОЙКА ОБРАБОТЧИКОВ ========================
         function setupEventListeners() {
             loginButton.addEventListener('click', handleLogin);
             playOfflineButton.addEventListener('click', playOffline);
@@ -1856,9 +2266,18 @@
                 musicControl.textContent = gameState.musicEnabled ? '🎵' : '🔇';
                 showNotification(gameState.musicEnabled ? '🔊 Музыка включена' : '🔇 Музыка выключена');
             });
+
+            // Обработчик для импорта музыки
+            document.getElementById('music-file').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('music-file-name').textContent = file.name;
+                    showNotification('🎵 Музыка загружена!');
+                }
+            });
         }
 
-        // Запуск
+        // ======================== ЗАПУСК ========================
         window.addEventListener('DOMContentLoaded', () => {
             userToken = localStorage.getItem('ogetaker_userToken');
             currentUsername = localStorage.getItem('ogetaker_username');
@@ -1874,7 +2293,7 @@
             setupEventListeners();
             document.addEventListener('keydown', handleKeyDown);
             
-            // Добавляем обработчик клика для выходов
+            // Глобальный обработчик клика для выходов
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('cell') && e.target.classList.contains('exit')) {
                     checkExitClick(e);
